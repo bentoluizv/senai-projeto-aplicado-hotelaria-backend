@@ -8,7 +8,7 @@ link: https://plataforma.gpinovacao.senai.br/plataforma/demandas-da-industria/in
 
 ## Inicializando o Banco de Dados
 
-Para inicializar rode o seguinde comando paraa aplicação criar um banco de dados sqlite rodando o arquivo sql com o schema das tabelas:
+Para inicializar rode o seguinde comando para a aplicação criar um banco de dados sqlite rodando o arquivo sql com o schema das tabelas:
 
 ```bash
   flask --app app init-db
