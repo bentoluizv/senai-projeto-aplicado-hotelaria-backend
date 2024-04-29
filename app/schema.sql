@@ -1,12 +1,4 @@
-DROP TABLE IF EXISTS guest;
-DROP TABLE IF EXISTS accommodation;
-DROP TABLE IF EXISTS booking;
-DROP TABLE IF EXISTS booking_with_special_request;
-DROP TABLE IF EXISTS amenities;
-DROP TABLE IF EXISTS amenities_per_accommodation;
-DROP TABLE IF EXISTS phones_per_guest;
-
-CREATE TABLE guest (
+CREATE TABLE IF NOT EXISTS guest (
     uuid                    BLOB PRIMARY KEY,
     created_at              TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     name                    TEXT NOT NULL,
@@ -14,7 +6,7 @@ CREATE TABLE guest (
     country                 TEXT NOT NULL
 );
 
-CREATE TABLE accommodation (
+CREATE TABLE IF NOT EXISTS accommodation (
     uuid                    BLOB PRIMARY KEY,
     created_at              TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     status                  TEXT NOT NULL,
@@ -25,7 +17,7 @@ CREATE TABLE accommodation (
     min_nights              INTEGER NOT NULL
 );
 
-CREATE TABLE booking (
+CREATE TABLE IF NOT EXISTS booking (
     uuid                    BLOB PRIMARY KEY,
     created_at              TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     status                  TEXT NOT NULL,
@@ -37,19 +29,19 @@ CREATE TABLE booking (
     FOREIGN KEY(accommodation_uuid) REFERENCES accommodation(uuid)
 );
 
-CREATE TABLE booking_with_special_request (
+CREATE TABLE IF NOT EXISTS booking_with_special_request (
     id                      INTEGER PRIMARY KEY AUTOINCREMENT,
     booking_uuid            BLOB NOT NULL,
     special_request         VARCHAR(500) NOT NULL,
     FOREIGN KEY(booking_uuid) REFERENCES booking(uuid)
 );
 
-CREATE TABLE amenities (
+CREATE TABLE IF NOT EXISTS amenities (
     id                      INTEGER PRIMARY KEY AUTOINCREMENT,
     amenitie                TEXT NOT NULL
 );
 
-CREATE TABLE amenities_per_accommodation (
+CREATE TABLE IF NOT EXISTS amenities_per_accommodation (
     id                      INTEGER PRIMARY KEY AUTOINCREMENT,
     accommodation_uuid      BLOB NOT NULL,
     amenitie_id             INTEGER NOT NULL,
@@ -57,7 +49,7 @@ CREATE TABLE amenities_per_accommodation (
     FOREIGN KEY(amenitie_id) REFERENCES amenities(id)
 );
 
-CREATE TABLE phones_per_guest (
+CREATE TABLE IF NOT EXISTS phones_per_guest (
     id                      INTEGER PRIMARY KEY AUTOINCREMENT,
     guest_uuid              BLOB NOT NULL,
     phone                   TEXT NOT NULL,
