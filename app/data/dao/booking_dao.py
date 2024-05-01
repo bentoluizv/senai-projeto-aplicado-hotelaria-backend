@@ -21,7 +21,7 @@ class BookingDAO:
         cursor.close()
         return res
 
-    def  find_many(self):
+    def find_many(self):
         """find many searches for all registered values"""
         cursor = self.db.cursor()
         cursor.execute('SELECT * FROM booking JOIN guest ON booking.guest_uuid = guest.uuid JOIN accommodation ON booking.accommodation_uuid = accommodation.uuid;')

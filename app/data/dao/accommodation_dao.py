@@ -20,7 +20,7 @@ class AccommodationDAO:
         cursor.close()
         return res
 
-    def  find_many(self):
+    def find_many(self):
         """find many searches for all registered values"""
         cursor = self.db.cursor()
         cursor.execute('SELECT status, name, total_guests, single_beds, double_beds, min_nights FROM accommodation')
