@@ -2,8 +2,9 @@
 
 import os
 from flask import Flask
+from flask import render_template
 from .data.database import db
-
+from flask import request
 
 def create_app(test_config=None):
     """create and config the app"""
@@ -23,10 +24,35 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    @app.get("/hello")
-    def hello():
-        return "Hello World"
-
+    @app.get('/')
+    @app.get('/index')
+    def index():
+        return render_template('index.html')
+    
+    @app.get('/cadastroHospedes')
+    def cadastroHospedes():
+        return render_template ('cadastroHospedes.html')
+    
+    @app.get('/alteraHospedes')
+    def alteraHospedes():
+        return render_template ('alteraHospedes.html')
+              
+    @app.get('/cadastroAcomodacoes')
+    def cadastroAcomodacoes():
+        return render_template('cadastroAcomodacoes.html')
+    
+    @app.get('/alteraAcomodacoes')
+    def alteraAcomodacoes():
+        return render_template('alteraAcomodacoes.html')
+    
+    @app.get('/cadastroComodidades')
+    def cadastroComodidades():
+        return render_template('cadastroComodidades.html')
+    
+    @app.get('/cadastroReservas')
+    def cadastroReservas():
+        return render_template('cadastroReservas.html')
+    
     db.init_app(app)
 
     return app

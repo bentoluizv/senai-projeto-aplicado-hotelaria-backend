@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block conteudo %}
+
+<body style="font-family:Verdana;color:#aaaaaa;">
+
+    <div style="overflow:auto">
+        <div class="menu">
+            <a href="/index">Pagina Inicial</a> 
+            <a href="/cadastroHospedes">Cadastro Hóspedes</a> 
+            <a href="/alteraHospedes">Alteração Hóspedes</a> 
+            <a href="/cadastroAcomodacoes">Cadastro Acomodações</a> 
+            <a href="/alteraAcomodacoes">Alteração Acomodações</a> 
+            <a href="/cadastroComodidades">Cadastro Comodidades</a> 
+            <a href="/cadastroReservas">Cadastro Reservas</a> 
+        </div>
+
+        <div class="main">
+            <h1>Cadastro Hóspedes</h1>
+            <form method="get" action="cadastroHospedes">
+                <p>
+                    <label for="name">Nome</label><br>
+                    <input type="text" id="name" name="name" size="30" required>
+                </p>
+                <p>
+                    <label for="surname">Sobrenome</label><br>
+                    <input type="text" id="surname" name="surname" size="30" required>
+                </p>
+                <p>
+                    <label for="country">País</label><br>
+                    <input type="text" id="country" name="country" size="30" required>
+                </p>
+                <p>
+                    <label for="phone">Telefone</label><br>
+                    <input type="text" id="phone" name="phone" size="30" required>
+                </p>
+                <p><input type="submit" value="Cadastrar" class="button button1"></p>
+            </form>
+        </div>
+    </div>
+
+</body>
+
+
+{% endblock %}

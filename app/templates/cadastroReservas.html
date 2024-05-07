@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block conteudo %}
+
+<body style="font-family:Verdana;color:#aaaaaa;">
+    <div style="overflow:auto">
+        <div class="menu">
+            <a href="/index">Pagina Inicial</a>
+            <a href="/cadastroHospedes">Cadastro Hóspedes</a>
+            <a href="/alteraHospedes">Alteração Hóspedes</a>
+            <a href="/cadastroAcomodacoes">Cadastro Acomodações</a>
+            <a href="/alteraAcomodacoes">Alteração Acomodações</a>
+            <a href="/cadastroComodidades">Cadastro Comodidades</a>
+            <a href="/cadastroReservas">Cadastro Reservas</a>
+        </div>
+
+        <div class="main">
+            <h1>Cadastro Reservas</h1>
+            <form method="POST">
+                <p>
+                    <label for="status">Status</label><br>
+                    <select name="status" id="status" required>
+                        <option value="" hidden></option>
+                        <option value="ativa">Ativa</option>
+                        <option value="cancelada">Cancelada</option>
+                    </select>
+                <p>
+                    <label for="acomodacao">Acomodação</label><br>
+                    <select name="acomodacao" id="acomodacao" required>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                    </select>
+                </p>
+                <p>
+                    <label for="comodiades">Comodidades</label><br>
+                <ol class="ol ol li">
+                    <li>Ar Condicionado</li>
+                    <li>Banheira</li>
+                </ol>
+                </p>
+                <p>
+                    <label for="check_in">Check-in</label><br>
+                    <input type="datetime-local" id="check_in" name="check_in" required>
+                </p>
+                <p>
+                    <label for="check_out">Check-out</label><br>
+                    <input type="datetime-local" id="check_out" name="check_out" required>
+                </p>
+                <p>
+                    <label for="special_request">Pedido Especial</label><br>
+                    <textarea id="special_request" name="special_request" rows="5" cols="50" required></textarea>
+                </p>
+                <p><input type="submit" value="Cadastrar" class="button button1"></p>
+            </form>
+        </div>
+    </div>
+
+</body>
+
+
+
+{% endblock %}
