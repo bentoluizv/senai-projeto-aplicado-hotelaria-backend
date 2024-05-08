@@ -18,7 +18,7 @@ def test_count(guest_dao):
 
 def test_insert(guest_dao):
     data = {
-        'uuid': str(uuid4()),
+        'document': "03093331056",
         'created_at': datetime.now().isoformat(),
         'name': 'Ana Claudia',
         'surname': 'Costa',
@@ -31,7 +31,7 @@ def test_insert(guest_dao):
 
 
 def test_select(guest_dao):
-    res = guest_dao.select({ 'uuid': "ed59e12f-b8e9-46ba-86ac-5ef69ea011a3" })
+    res = guest_dao.select({ 'document': "00157624242" })
     assert res['name'] == 'Bento Luiz'
 
 
@@ -41,7 +41,7 @@ def test_select_many(guest_dao):
 
 def test_update(guest_dao):
     data_to_update = {
-        'uuid': "ed59e12f-b8e9-46ba-86ac-5ef69ea011a3",
+        'document': "00157624242",
         'name': 'Bento Luiz',
         'surname': 'V M da S Neto',
         'country': 'Brazil',
@@ -49,11 +49,11 @@ def test_update(guest_dao):
     }
 
     guest_dao.update(data_to_update)
-    res = guest_dao.select({'uuid': data_to_update['uuid']})
+    res = guest_dao.select({'document': data_to_update['document']})
     assert res['surname'] == 'V M da S Neto'
 
 
 def test_delete(guest_dao):
-    guest_dao.delete({ 'uuid': "ed59e12f-b8e9-46ba-86ac-5ef69ea011a3" })
-    res = guest_dao.select({ 'uuid': "ed59e12f-b8e9-46ba-86ac-5ef69ea011a3" })
+    guest_dao.delete({ 'document': "00157624242" })
+    res = guest_dao.select({ 'document': "00157624242" })
     assert res is None
