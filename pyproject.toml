@@ -1,0 +1,12 @@
+[project]
+name = "app"
+version = "1.0.0"
+description = "Hotel booking system"
+dependencies = [
+    "flask",
+    "pytest",
+]
+
+[build-system]
+requires = ["flit_core<4"]
+build-backend = "flit_core.buildapi"
