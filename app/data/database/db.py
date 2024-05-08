@@ -6,7 +6,7 @@ from flask import Flask, current_app, g
 
 
 def get_db():
-    """Create a connection to database if it not exists"""
+    """Return database connection if exists or create a new one"""
     if 'db' not in g:
         g.db = sqlite3.connect(
             current_app.config['DATABASE'],
@@ -29,16 +29,29 @@ def init_db():
     db = get_db()
 
     with current_app.open_resource('./data/database/schema.sql') as f:
-        db.executescript(f.read().decode('utf8'))
+        db.executescript(f.read().decode())
+
+def seed_db():
+    db = get_db()
+
+    with current_app.open_resource('./data/database/seed.sql') as f:
+        db.executescript(f.read().decode())
 
 @click.command('init-db')
 def init_db_command():
     """execute init_db function"""
     init_db()
-    click.echo('Initialized the database')
+    click.echo('Initialized the database...')
+
+@click.command('seed-db')
+def seed_db_command():
+    """execute init_db function"""
+    seed_db()
+    click.echo('Database filled with some data...')
 
 
 def init_app(app: Flask):
     """set close_db to be called after return any response and register init_db_command to cli"""
     app.teardown_appcontext(close_db)
     app.cli.add_command(init_db_command)
+    app.cli.add_command(seed_db_command)
