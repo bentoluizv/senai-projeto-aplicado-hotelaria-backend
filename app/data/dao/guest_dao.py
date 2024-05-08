@@ -3,7 +3,6 @@
 """Data Access for Guests"""
 
 from sqlite3 import Connection
-from typing import Any
 
 
 class GuestDAO:
@@ -12,30 +11,40 @@ class GuestDAO:
     def __init__(self, db: Connection):
         self.db = db
 
-    def find(self, params: dict[str, str]):
-        """find searches for a value according to its uuid, params -> { uuid: str }"""
+    def count(self):
+        """counts all records"""
+        cursor = self.db.cursor()
+        res = cursor.execute('SELECT COUNT(*) FROM guest').fetchone()
+        return res
+
+    def insert(self, params):
+        """creates a new register"""
+        cursor = self.db.cursor()
+        cursor.execute('INSERT INTO guest (uuid, created_at, name, surname, country) VALUES (:uuid, :created_at, :name, :surname, :country);', params)
+        if len(params['phones']) > 0:
+            for phone in params['phones']:
+                cursor.execute('INSERT INTO phones_per_guest (guest_uuid, phone) VALUES (?, ?);', (params['uuid'], phone))
+
+    def select(self, params):
+        """searches for a value according to its uuid, params -> { uuid: str }"""
         cursor = self.db.cursor()
         cursor.execute('SELECT * FROM guest WHERE uuid = :uuid;',  params)
         res = cursor.fetchone()
-        cursor.close()
         return res
 
-    def find_many(self):
-        """find many searches for all registered values"""
+    def select_many(self):
+        """searches for all registered values"""
         cursor = self.db.cursor()
         cursor.execute('SELECT * FROM guest;')
         res = cursor.fetchall()
-        cursor.close()
         return res
 
-    def update(self, params: dict[str, Any]) -> None:
+    def update(self, params):
         """updates a record in the table as a whole. params must have the uuid of the data to be updated as well as all the entity values in the table"""
         cursor = self.db.cursor()
-        cursor.execute('UPDATE accommodation SET name = :name, surname = :surname, country = :country WHERE uuid = :uuid', params)
-        cursor.close()
+        cursor.execute('UPDATE guest SET name = :name, surname = :surname, country = :country WHERE uuid = :uuid;', params)
 
-    def delete(self, params: dict[str, str]):
+    def delete(self, params):
         """delete a record based on its uuid, params -> { uuid: str }"""
         cursor = self.db.cursor()
         cursor.execute('DELETE FROM guest WHERE uuid = :uuid', params)
-        cursor.close()
