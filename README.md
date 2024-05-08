@@ -237,9 +237,9 @@ Booking DAO
   GET /api/accommodations/${uuid}
 ```
 
-| Parâmetro | Tipo     | Descrição                                                |
-| :-------- | :------- | :------------------------------------------------------- |
-| `uuid`    | `string` | **Obrigatório**. O documento de identificação do hóspede |
+| Parâmetro | Tipo     | Descrição                             |
+| :-------- | :------- | :------------------------------------ |
+| `uuid`    | `string` | **Obrigatório**. O uuid da acomodação |
 
 #### > Retorna todas as reservas
 
@@ -253,6 +253,6 @@ Booking DAO
   GET /api/bookings/${uuid}
 ```
 
-| Parâmetro | Tipo     | Descrição                                                |
-| :-------- | :------- | :------------------------------------------------------- |
-| `uuid`    | `string` | **Obrigatório**. O documento de identificação do hóspede |
+| Parâmetro | Tipo     | Descrição                          |
+| :-------- | :------- | :--------------------------------- |
+| `uuid`    | `string` | **Obrigatório**. O uuid da reserva |
