@@ -28,31 +28,14 @@ def create_app(test_config=None):
     @app.get('/index')
     def index():
         return render_template('index.html')
-    
-    @app.get('/cadastroHospedes')
-    def cadastroHospedes():
-        return render_template ('cadastroHospedes.html')
-    
-    @app.get('/alteraHospedes')
-    def alteraHospedes():
-        return render_template ('alteraHospedes.html')
-              
-    @app.get('/cadastroAcomodacoes')
-    def cadastroAcomodacoes():
-        return render_template('cadastroAcomodacoes.html')
-    
-    @app.get('/alteraAcomodacoes')
-    def alteraAcomodacoes():
-        return render_template('alteraAcomodacoes.html')
-    
-    @app.get('/cadastroComodidades')
-    def cadastroComodidades():
-        return render_template('cadastroComodidades.html')
-    
-    @app.get('/cadastroReservas')
-    def cadastroReservas():
-        return render_template('cadastroReservas.html')
-    
+
+    @app.get('/hello')
+    def hello():
+        return 'Hello, World!'
+
     db.init_app(app)
+
+    from . import  guests
+    app.register_blueprint(guests.bp)
 
     return app
