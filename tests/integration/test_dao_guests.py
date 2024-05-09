@@ -12,11 +12,11 @@ def guest_dao(app):
         dao = GuestDAO(db)
         yield dao
 
-def test_count(guest_dao):
+def test_guest_dao_count(guest_dao):
     assert guest_dao.count()[0] == 4
 
 
-def test_insert(guest_dao):
+def test_guest_dao_insert(guest_dao):
     data = {
         'document': "03093331056",
         'created_at': datetime.now().isoformat(),
@@ -30,22 +30,22 @@ def test_insert(guest_dao):
     assert guest_dao.count()[0] == 5
 
 
-def test_select(guest_dao):
+def test_guest_dao_select(guest_dao):
     res = guest_dao.select({ 'document': "00157624242" })
     assert res['name'] == 'Bento Luiz'
 
 
-def test_select_many(guest_dao):
+def test_guest_dao_select_many(guest_dao):
     res = guest_dao.select_many()
     assert len(res) == 4
 
-def test_update(guest_dao):
+def test_guest_dao_update(guest_dao):
     data_to_update = {
         'document': "00157624242",
         'name': 'Bento Luiz',
         'surname': 'V M da S Neto',
         'country': 'Brazil',
-        'phones': ['4832395853']
+        'phones': '4832395853'
     }
 
     guest_dao.update(data_to_update)
@@ -53,7 +53,7 @@ def test_update(guest_dao):
     assert res['surname'] == 'V M da S Neto'
 
 
-def test_delete(guest_dao):
+def test_guest_dao_delete(guest_dao):
     guest_dao.delete({ 'document': "00157624242" })
     res = guest_dao.select({ 'document': "00157624242" })
     assert res is None
