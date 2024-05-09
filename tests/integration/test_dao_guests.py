@@ -3,6 +3,7 @@ from datetime import datetime
 from pytest import fixture
 from app.data.dao.guest_dao import GuestDAO
 from app.data.database.db import get_db
+from app.domain.Guests import Guest
 
 @fixture
 def guest_dao(app):
@@ -16,22 +17,14 @@ def test_guest_dao_count(guest_dao):
 
 
 def test_guest_dao_insert(guest_dao):
-    data = {
-        'document': "03093331056",
-        'created_at': datetime.now().isoformat(),
-        'name': 'Ana Claudia',
-        'surname': 'Costa',
-        'country': 'Brazil',
-        'phone': '4832395853'
-    }
-
-    guest_dao.insert(data)
+    guest = Guest('03093331056','Ana Claudia', 'Costa', 'Brazil', '4832395853')
+    guest_dao.insert(guest)
     assert guest_dao.count() == 5
 
 
 def test_guest_dao_select(guest_dao):
-    res = guest_dao.select("00157624242")
-    assert res['name'] == 'Bento Luiz'
+    guest = guest_dao.select("00157624242")
+    assert guest.name == 'Bento Luiz'
 
 
 def test_guest_dao_select_many(guest_dao):
@@ -39,17 +32,11 @@ def test_guest_dao_select_many(guest_dao):
     assert len(res) == 4
 
 def test_guest_dao_update(guest_dao):
-    data_to_update = {
-        'document': "00157624242",
-        'name': 'Bento Luiz',
-        'surname': 'V M da S Neto',
-        'country': 'Brazil',
-        'phone': '4832395853'
-    }
-
-    guest_dao.update(data_to_update)
-    res = guest_dao.select(data_to_update['document'])
-    assert res['surname'] == 'V M da S Neto'
+    exists = guest_dao.select('00157624242')
+    assert exists is not None
+    guest = Guest("00157624242", 'Bento Luiz', 'V M da S Neto', 'Brazil', '4832395853', exists.created_at)
+    guest_dao.update(guest)
+    assert guest_dao.select('00157624242').surname == 'V M da S Neto'
 
 
 def test_guest_dao_delete(guest_dao):

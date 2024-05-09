@@ -1,6 +1,8 @@
 from datetime import datetime
 import json
 
+from app.domain.Guests import Guest
+
 def test_api_get_guests(client):
     response = client.get('/hospedes/')
     guests = json.loads(response.data)
@@ -18,16 +20,8 @@ def test_api_get_guests_id_not_found(client):
     assert response.status_code == 404
 
 def test_api_post_guests(client):
-    data = {
-        'document': "03093331056",
-        'created_at': datetime.now().isoformat(),
-        'name': 'Ana Claudia',
-        'surname': 'Costa',
-        'country': 'Brazil',
-        'phone': '4832395853'
-    }
-
-    response = client.post('/hospedes/cadastro', data=data)
+    guest = Guest('03093331056', 'Ana Claudia', 'Costa', 'Brazil', '4832395853')
+    response = client.post('/hospedes/cadastro', data=guest.toObj())
     assert response.status_code == 201
     assert response.text == 'CREATED'
 
