@@ -23,7 +23,7 @@ def test_guest_dao_insert(guest_dao):
         'name': 'Ana Claudia',
         'surname': 'Costa',
         'country': 'Brazil',
-        'phones': ['4832395853']
+        'phone': '4832395853'
     }
 
     guest_dao.insert(data)

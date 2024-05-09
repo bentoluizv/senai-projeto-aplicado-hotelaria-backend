@@ -24,7 +24,7 @@ class GuestDAO:
             'INSERT INTO guest (document, created_at, name, surname, country) VALUES (:document, :created_at, :name, :surname, :country);', params)
         cursor.execute(
             'INSERT INTO phones_per_guest (document, phone) VALUES (?, ?);',
-            (params['document'], params.phone))
+            (params['document'], params['phone']))
 
     def select(self, params):
         """searches for a value according to its document, params -> { document: str }"""
