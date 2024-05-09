@@ -36,7 +36,7 @@ class GuestDAO:
     def select_many(self):
         """searches for all registered values"""
         cursor = self.db.cursor()
-        cursor.execute('SELECT * FROM guest;')
+        cursor.execute('SELECT guest.document, guest.created_at, guest.name, guest.surname, guest.country, phones_per_guest.phone FROM guest JOIN phones_per_guest ON guest.document = phones_per_guest.document;')
         res = cursor.fetchall()
         return res
 
