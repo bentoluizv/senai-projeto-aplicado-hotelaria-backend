@@ -72,46 +72,6 @@ Para inicializar um servidor de desenvolvimento flask rode:
 
 ```
 
-### Tipos
-
-```bash
-  guest = {
-    'uuid': str,
-    'created_at': datetime,
-    'document': str,
-    'name': str,
-    'surname': str,
-    'country': str,
-    'phones': List[str]
-  }
-
-  accommodation = {
-    'uuid': str
-    'created_at': datetime
-    'name': str,
-    'status': str,
-    'name': str,
-    'total_guests': int,
-    'single_beds': int,
-    'double_beds': int,
-    'min_nights': int,
-    'price': int
-    'amenities': List[str]
-  }
-
-    booking = {
-    'uuid': str,
-    'created_at': datetime,
-    'guest': Guest,
-    'accommodation': Accommodation,
-    'status': str,
-    'check_in': datetime,
-    'check_out': datetime,
-  }
-
-
-```
-
 ### Data Access Objects
 
 Guest DAO
@@ -203,6 +163,45 @@ Booking DAO
 
   booking_dao.delete(uuid)
   # Deleta um registro passando o numero do documto de identificação
+
+
+```
+
+### Tipos
+
+```bash
+  guest = {
+    'document': str,
+    'created_at': datetime,
+    'name': str,
+    'surname': str,
+    'country': str,
+    'phones': List[str]
+  }
+
+  accommodation = {
+    'uuid': str
+    'created_at': datetime
+    'name': str,
+    'status': str,
+    'name': str,
+    'total_guests': int,
+    'single_beds': int,
+    'double_beds': int,
+    'min_nights': int,
+    'price': int
+    'amenities': List[str]
+  }
+
+    booking = {
+    'uuid': str,
+    'created_at': datetime,
+    'guest': Guest,
+    'accommodation': Accommodation,
+    'status': str,
+    'check_in': datetime,
+    'check_out': datetime,
+  }
 
 
 ```
