@@ -1,16 +1,18 @@
+DROP TABLE IF EXISTS guest;
+DROP TABLE IF EXISTS accommodation;
+DROP TABLE IF EXISTS amenities;
+DROP TABLE IF EXISTS amenities_per_accommodation;
+DROP TABLE IF EXISTS booking;
+DROP TABLE IF EXISTS requests_per_bookings;
+
+
 CREATE TABLE IF NOT EXISTS guest (
     document,               TEXT PRIMARY KEY,
     created_at              TEXT NOT NULL,
     name                    TEXT NOT NULL,
     surname                 TEXT NOT NULL,
-    country                 TEXT NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS phones_per_guest (
-    id                      INTEGER PRIMARY KEY AUTOINCREMENT,
-    document                TEXT NOT NULL,
-    phone                   TEXT NOT NULL,
-    FOREIGN KEY(document) REFERENCES guest(document)
+    country                 TEXT NOT NULL,
+    phone                   TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS accommodation (

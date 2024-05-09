@@ -13,7 +13,7 @@ def hospedes():
     db = get_db()
     guest_dao = GuestDAO(db)
     guests = guest_dao.select_many()
-    return jsonify(guests)
+    return jsonify(guests) # Retorna um JSON com os dados, deve retornar um render_page com a pagina que lista todos os registros.
 
 
 @bp.post('/cadastro')
@@ -43,7 +43,7 @@ def hospede(document):
     db = get_db()
     guest_dao = GuestDAO(db)
     url_param = escape(document)
-    guest = guest_dao.select({ 'document', url_param })
+    guest = guest_dao.select(url_param)
 
     if guest is None:
         abort(404)

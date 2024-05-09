@@ -1,5 +1,4 @@
 from datetime import datetime
-from uuid import uuid4
 
 from pytest import fixture
 from app.data.dao.guest_dao import GuestDAO
@@ -13,7 +12,7 @@ def guest_dao(app):
         yield dao
 
 def test_guest_dao_count(guest_dao):
-    assert guest_dao.count()[0] == 4
+    assert guest_dao.count() == 4
 
 
 def test_guest_dao_insert(guest_dao):
@@ -27,11 +26,11 @@ def test_guest_dao_insert(guest_dao):
     }
 
     guest_dao.insert(data)
-    assert guest_dao.count()[0] == 5
+    assert guest_dao.count() == 5
 
 
 def test_guest_dao_select(guest_dao):
-    res = guest_dao.select({ 'document': "00157624242" })
+    res = guest_dao.select("00157624242")
     assert res['name'] == 'Bento Luiz'
 
 
@@ -45,15 +44,15 @@ def test_guest_dao_update(guest_dao):
         'name': 'Bento Luiz',
         'surname': 'V M da S Neto',
         'country': 'Brazil',
-        'phones': '4832395853'
+        'phone': '4832395853'
     }
 
     guest_dao.update(data_to_update)
-    res = guest_dao.select({'document': data_to_update['document']})
+    res = guest_dao.select(data_to_update['document'])
     assert res['surname'] == 'V M da S Neto'
 
 
 def test_guest_dao_delete(guest_dao):
-    guest_dao.delete({ 'document': "00157624242" })
-    res = guest_dao.select({ 'document': "00157624242" })
+    guest_dao.delete("00157624242")
+    res = guest_dao.select("00157624242")
     assert res is None
