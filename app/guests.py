@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask import abort, redirect
+from flask import abort, make_response, redirect
 from flask import Blueprint, jsonify, request
 from markupsafe import escape
 
@@ -35,7 +35,7 @@ def cria_hospede():
     guest_dao = GuestDAO(db)
     guest_dao.insert(guest)
 
-    return redirect('/hospedes')
+    return 'CREATED', 201
 
 
 @bp.get('/<document>')
@@ -58,15 +58,16 @@ def deletar_hospede(document):
     guest_dao = GuestDAO(db)
     url_param = escape(document)
 
-    try:
-        guest_dao.delete(url_param)
-    except:
-        abort(400)
+    exists = guest_dao.select(url_param)
 
-    return redirect('/hospedes')
+    if not exists:
+        abort(404)
+
+    guest_dao.delete(url_param)
+    return 'DELETED', 200
 
 
-@bp.put('/<document>')
+@bp.put('/')
 def atualizar_hospede():
 # deve atualizar hospede
     guest = {
@@ -80,9 +81,15 @@ def atualizar_hospede():
     db = get_db()
     guest_dao = GuestDAO(db)
 
-    try:
-        guest_dao.update(guest)
-    except:
+    if guest['document'] is None or guest['document'] == '':
         abort(400)
 
-    return redirect('/hospedes')
+    exists = guest_dao.select(guest['document'])
+
+    if not exists:
+        abort(404)
+
+    guest_dao.update(guest)
+
+
+    return 'UPDATED', 200
