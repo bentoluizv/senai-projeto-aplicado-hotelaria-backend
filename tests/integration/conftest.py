@@ -4,7 +4,7 @@ import tempfile
 from pytest import fixture
 
 from app import create_app
-from app.data.database.db import get_db, init_db, seed_db
+from app.data.database.db import init_db, seed_db
 
 
 with open(os.path.join(os.path.dirname(__file__), '/home/bentoluiz/Workspace/senai_projeto_aplicado_01/app/data/database/seed.sql'), 'rb') as f:
