@@ -18,8 +18,8 @@ CREATE TABLE IF NOT EXISTS guest (
 CREATE TABLE IF NOT EXISTS accommodation (
     uuid                    TEXT PRIMARY KEY,
     created_at              TEXT NOT NULL,
-    status                  TEXT NOT NULL,
     name                    TEXT NOT NULL,
+    status                  TEXT NOT NULL,
     total_guests            INTEGER NOT NULL,
     single_beds             INTEGER NOT NULL,
     double_beds             INTEGER NOT NULL,
@@ -29,15 +29,15 @@ CREATE TABLE IF NOT EXISTS accommodation (
 
 CREATE TABLE IF NOT EXISTS amenities (
     id                      INTEGER PRIMARY KEY AUTOINCREMENT,
-    amenitie                TEXT NOT NULL
+    amenitie                TEXT NOT NULL UNIQUE
 );
 
 CREATE TABLE IF NOT EXISTS amenities_per_accommodation (
     id                      INTEGER PRIMARY KEY AUTOINCREMENT,
     accommodation_uuid      TEXT NOT NULL,
-    amenitie_id             INTEGER NOT NULL,
+    amenitie_name            INTEGER NOT NULL,
     FOREIGN KEY(accommodation_uuid) REFERENCES accommodation(uuid),
-    FOREIGN KEY(amenitie_id) REFERENCES amenities(id)
+    FOREIGN KEY(amenitie_name) REFERENCES amenities(amenitie)
 );
 
 
