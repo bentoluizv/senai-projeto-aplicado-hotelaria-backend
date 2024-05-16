@@ -1,11 +1,11 @@
 from datetime import datetime
-from flask import abort, make_response, redirect
+from flask import abort, make_response, redirect, render_template
 from flask import Blueprint, jsonify, request
 from markupsafe import escape
 
 from app.data.dao.guest_dao import GuestDAO
 from app.data.database.db import get_db
-from app.domain.Guests import Guest
+from app.domain.Guests import Guest, GuestDTO
 
 bp = Blueprint('guests', __name__, url_prefix='/hospedes')
 
@@ -13,15 +13,29 @@ bp = Blueprint('guests', __name__, url_prefix='/hospedes')
 def hospedes():
     db = get_db()
     guest_dao = GuestDAO(db)
-    guests = guest_dao.select_many()
-    return jsonify(guests) # Retorna um JSON com os dados, deve retornar um render_page com a pagina que lista todos os registros.
+    guests = guest_dao.find_many()
+
+    guests = list(map( lambda guest: guest.to_dict(), guests))
+    return jsonify(guests)
+    # return render_template('cadastroHospedes.html', guests=guests) # Retorna um JSON com os dados, deve retornar um render_page com a pagina que lista todos os registros.
 
 
 @bp.post('/cadastro')
 def cria_hospede():
     if request.form is None:
         abort(400)
-    guest =  Guest(request.form['document'], request.form['name'], request.form['surname'], request.form['country'],request.form['phone'])
+
+    guest_dto: GuestDTO = {
+        'document': request.form['document'],
+        'name': request.form['name'],
+        'surname': request.form['surname'],
+        'country': request.form['country'],
+        'phone': request.form['phone'],
+        'created_at': None
+    }
+
+    guest =  Guest(guest_dto)
+
     db = get_db()
     guest_dao = GuestDAO(db)
     guest_dao.insert(guest)
@@ -33,10 +47,10 @@ def hospede(document):
     db = get_db()
     guest_dao = GuestDAO(db)
     url_param = escape(document)
-    guest = guest_dao.select(url_param)
+    guest = guest_dao.find(str(url_param))
     if guest is None:
         abort(404)
-    return jsonify(guest.toObj())
+    return jsonify(guest.to_dict())
 
 
 @bp.delete('/<document>')
@@ -45,7 +59,7 @@ def deletar_hospede(document):
     db = get_db()
     guest_dao = GuestDAO(db)
     url_param = escape(document)
-    exists = guest_dao.select(url_param)
+    exists = guest_dao.find(str(url_param))
     if not exists:
         abort(404)
     guest_dao.delete(url_param)
@@ -57,11 +71,23 @@ def atualizar_hospede():
 # deve atualizar hospede
     db = get_db()
     guest_dao = GuestDAO(db)
+
     if request.form['document'] is None or request.form['document'] == '':
         abort(400)
-    exists = guest_dao.select(request.form['document'])
+
+    exists = guest_dao.find(request.form['document'])
+
     if not exists:
         abort(404)
-    guest = Guest(request.form['document'], request.form['name'], request.form['surname'], request.form['country'],request.form['phone'], exists.created_at)
+
+    guest_dto: GuestDTO = {
+        'document': request.form['document'],
+        'name': request.form['name'],
+        'surname': request.form['surname'],
+        'country': request.form['country'],
+        'phone': request.form['phone'],
+        'created_at': exists.created_at
+    }
+    guest = Guest(guest_dto)
     guest_dao.update(guest)
     return 'UPDATED', 200
