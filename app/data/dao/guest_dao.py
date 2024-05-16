@@ -4,7 +4,7 @@
 
 from sqlite3 import Connection
 
-from app.domain.Guests import Guest
+from app.domain.Guests import Guest, GuestDTO
 
 
 class GuestDAO:
@@ -19,44 +19,60 @@ class GuestDAO:
         count = cursor.execute('SELECT COUNT(*) FROM guest').fetchone().get('COUNT(*)')
         return count
 
-    def insert(self, guest: Guest):
+    def insert(self, guest: Guest) -> None:
         """creates a new register"""
-        params = guest.toObj()
+        guest_dto = guest.to_dict()
         cursor = self.db.cursor()
         cursor.execute(
-            'INSERT INTO guest (document, created_at, name, surname, country, phone) VALUES (:document, :created_at, :name, :surname, :country, :phone);'
-            , params)
+            'INSERT INTO guest (document, created_at, name, surname, country, phone) VALUES (?, ?, ?, ?, ?, ?);'
+            , (guest_dto['document'], guest_dto['created_at'], guest_dto['name'], guest_dto['surname'], guest_dto['country'], guest_dto['phone'],))
 
-    def select(self, document) -> Guest | None:
+
+    def find(self, document) -> Guest | None:
         cursor = self.db.cursor()
         cursor.execute('SELECT document, created_at, name, surname, country, phone FROM guest WHERE guest.document = ?;',  (document,))
-        response = cursor.fetchone()
+        result = cursor.fetchone()
 
-        if response is None:
+        if result is None:
             return
 
-        guest = Guest(response['document'], response['name'], response['surname'], response['phone'], response['created_at'])
+        guest_dto: GuestDTO = {
+            'document': result['document'],
+            'name': result['name'],
+            'surname': result['surname'],
+            'phone': result['phone'],
+            'country': result['country'],
+            'created_at':result['created_at']}
+
+        guest = Guest(guest_dto)
         return guest
 
-    def select_many(self) -> list[Guest]:
+    def find_many(self) -> list[Guest]:
         """searches for all registered values"""
         cursor = self.db.cursor()
         cursor.execute('SELECT document, created_at, name, surname, country, phone FROM guest;')
-        response = cursor.fetchall()
+        result = cursor.fetchall()
 
-        if len(response) < 1:
-            return response
+        if len(result) < 1:
+            return result
 
-        guests = [ Guest(guest['document'], guest['name'], guest['surname'], guest['phone'], guest['created_at']) for guest in response ]
+        guests = [ Guest({
+                'document': guest['document'],
+                'name': guest['name'],
+                'surname': guest['surname'],
+                'country': guest['country'] ,
+                'phone': guest['phone'],
+                'created_at': guest['created_at']
+            }) for guest in result ]
 
         return guests
 
 
-    def update(self, guest: Guest):
+    def update(self, guest: Guest) -> None:
         """updates a record in the table as a whole. params must have the document of the data to be updated as well as all the entity values in the table"""
-        params = guest.toObj()
+        guest_dto = guest.to_dict()
         cursor = self.db.cursor()
-        cursor.execute('UPDATE guest SET name = :name, surname = :surname, country = :country, phone = :phone WHERE document = :document;', params)
+        cursor.execute('UPDATE guest SET name = :name, surname = :surname, country = :country, phone = :phone WHERE document = :document;', guest_dto)
 
     def delete(self, document):
         """delete a record based on its document, params -> { document: str }"""
