@@ -1,9 +1,9 @@
-from datetime import datetime
 import json
 
 import pytest
 
-from app.domain.Guests import Guest, GuestDTO
+
+from app.entity.Guests import GuestDTO
 
 
 def test_api_get_guests(client):
