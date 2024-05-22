@@ -6,6 +6,10 @@ from flask import render_template
 from .data.database import db
 from flask import request
 
+from app.data.dao.GuestDAO import GuestDAO
+from app.data.database.db import get_db
+from markupsafe import escape
+
 def create_app(test_config=None):
     """create and config the app"""
     app = Flask(__name__, instance_relative_config=True)
@@ -38,9 +42,7 @@ def create_app(test_config=None):
         return render_template('cadastroReservas.html')
     
     
-    @app.get('/list')
-    def list():               
-        return render_template('list.html')  
+   
 
     @app.get('/hello')
     def hello():
@@ -50,5 +52,25 @@ def create_app(test_config=None):
 
     from . import  guests
     app.register_blueprint(guests.bp)
+
+
+    '''
+     @app.get('/list')
+    def list():               
+        return render_template('list.html')  
+    '''
+
+    @app.get('/list')
+    def list():
+            
+        # Connect to the SQLite3 datatabase and 
+        # SELECT  Rows from the guest table.
+        db = get_db()
+        guest_dao = GuestDAO(db)
+        rows = guest_dao.find_many()
+
+        
+        # Send the results of the SELECT to the list.html page
+        return render_template("list.html", rows=rows)   
 
     return app
