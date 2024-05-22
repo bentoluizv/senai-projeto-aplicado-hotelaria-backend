@@ -15,7 +15,7 @@
             <a href="/cadastroReservas">Cadastro Reservas</a> 
             <a href="/list">Lista hospedes</a> 
         </div>
-        
+        {% if rows %}
         <table border="1px">
             <thead>
                 <td><strong>Document</strong></td>
@@ -38,4 +38,7 @@
             {% endfor %}
         </table>
         </table>
+        {% else %}
+        <p>Nenhum hóspede encontrado no banco de dados.</p> (Translated message)
+      {% endif %}
 {% endblock %}
