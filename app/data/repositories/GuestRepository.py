@@ -7,6 +7,9 @@ class GuestRepository:
     def __init__(self, dao: GuestDAO):
         self.dao  = dao
 
+    def count(self) -> int:
+        return self.dao.count()
+
     def insert(self, guest: Guest) -> None:
         exists  = self.dao.find(guest.document)
 
