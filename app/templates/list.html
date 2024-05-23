@@ -2,6 +2,8 @@
 
 {% block conteudo %}
 
+
+
 <body style="font-family:Verdana;color:#aaaaaa;">
 
     <div style="overflow:auto">
@@ -35,8 +37,7 @@
                 <td>{{ row["country"] }}</td>
                 <td>{{ row["phone"] }}</td>
               
-            <td><form onsubmit="return confirm('Are you sure you want to DELETE this Student from the Database?');" action="{{url_for('guests.deletar_hospede', document=row['document']) }}" method="POST"><input type="hidden" name="id"><input type="submit" value="Delete"></form> </td>
-      
+            <td><form onsubmit="return confirm('Você tem certeza que quer eliminar esse hóspede?');" action="{{ url_for('deletar') }}" method="post"><input type="hidden" name="document" value="{{ row['document'] }}"><input type="submit" value="Deletar"></form> </td>               
             {% endfor %}
         </tr> 
         </table>

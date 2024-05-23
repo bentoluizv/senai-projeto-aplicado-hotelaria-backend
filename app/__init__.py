@@ -72,5 +72,22 @@ def create_app(test_config=None):
         
         # Send the results of the SELECT to the list.html page
         return render_template("list.html", rows=rows)   
+    
+        
+    @app.post('/deletar')
+    def deletar():       
+        db = get_db()
+             
+      
+        rowid = request.form['document']
+        cur = db.cursor()
+        cur.execute('DELETE FROM guest WHERE document= "' + rowid +'"')
+        db.commit()
+        msg = "Record successfully deleted from the database"
+        return list() 
+     
+    
+             
+
 
     return app
