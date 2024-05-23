@@ -1,8 +1,7 @@
 from pytest import fixture
-import pytest
 from app.data.dao.GuestDAO import GuestDAO
 from app.data.database.db import get_db
-from app.entity.Guests import Guest, GuestDTO
+from app.entity.Guests import GuestDTO, UpdatableGuest
 
 @fixture
 def guest_dao(app):
@@ -41,16 +40,13 @@ def test_guest_dao_update(guest_dao):
     exists = guest_dao.find('00157624242')
     assert exists is not None
 
-    guest_dto: GuestDTO = {
-        'document': "00157624242",
+    guest_dto: UpdatableGuest = {
         'name': 'Bento Luiz',
         'surname': 'V M da S Neto',
         'country': 'Brazil',
-        'phone':' 4832395853',
-        'created_at': exists['created_at']
+        'phone':' 4832395853'
     }
-
-    guest_dao.update(guest_dto)
+    guest_dao.update("00157624242", guest_dto)
     result = guest_dao.find("00157624242")
     assert result['surname'] == 'V M da S Neto'
 

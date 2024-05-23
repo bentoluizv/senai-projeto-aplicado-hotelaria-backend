@@ -42,7 +42,14 @@ class GuestRepository:
         if not exists:
             raise ValueError(f'Guest with document {guest.document} not exists')
 
-        self.dao.update(guest.to_dict())
+        self.dao.update(
+            guest.document,
+            {
+                'name': guest.name,
+                'surname': guest.surname,
+                'country': guest.country,
+                'phone':   guest.phone
+            })
 
 
     def delete(self, document: str):

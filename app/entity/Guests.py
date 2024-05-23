@@ -1,6 +1,5 @@
-from dataclasses import dataclass
 from datetime import datetime
-from typing import List, TypedDict, Union
+from typing import TypedDict
 
 #TODO: Implementar a validação dos dados de entrada da classe.
 
@@ -11,6 +10,12 @@ class GuestDTO(TypedDict):
     country: str
     phone: str
     created_at: str | None
+
+class UpdatableGuest(TypedDict):
+    name: str
+    surname: str
+    country: str
+    phone: str
 
 class Guest:
     def __init__(

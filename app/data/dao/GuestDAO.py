@@ -1,7 +1,7 @@
 from sqlite3 import Connection
 from typing import List
 
-from app.entity.Guests import GuestDTO
+from app.entity.Guests import GuestDTO, UpdatableGuest
 
 
 class GuestDAO:
@@ -62,10 +62,10 @@ class GuestDAO:
         return guests
 
 
-    def update(self, guest: GuestDTO) -> None:
-        statement = 'UPDATE guest SET name = :name, surname = :surname, country = :country, phone = :phone WHERE document = :document;'
+    def update(self, document: str, guest: UpdatableGuest) -> None:
+        statement = 'UPDATE guest SET name = ?, surname = ?, country = ?, phone = ? WHERE document = ?;'
         cursor = self.db.cursor()
-        cursor.execute(statement, guest)
+        cursor.execute(statement, (guest['name'], guest['surname'],  guest['country'],  guest['phone'],  document))
 
     def delete(self, document: str):
         statement = 'DELETE FROM guest WHERE document = ?'
