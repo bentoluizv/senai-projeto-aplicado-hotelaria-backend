@@ -40,7 +40,7 @@ def cria_hospede():
     repository = GuestRepository(dao)
     repository.insert(guest)
 
-    return 'CREATED', 201
+    return list()
 
 
 @bp.get('/<document>')
