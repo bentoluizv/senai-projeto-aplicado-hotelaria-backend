@@ -1,0 +1,294 @@
+  * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+  }
+
+  body {
+      font-family: Verdana, sans-serif;
+      color: #666666;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+  }
+
+  header {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 50px;
+  }
+
+  a {
+      text-decoration: none;
+      color: inherit;
+      cursor: pointer;
+  }
+
+  main {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-around;
+
+  }
+
+  footer {
+      width: 100%;
+      background-color: #666666;
+      color: #d8d8d7;
+      padding: 10px;
+      align-self: center;
+      text-align: center;
+  }
+
+  #cover {
+      object-fit: cover;
+      height: 290px;
+      width: 100%;
+  }
+
+  #nav_container {
+      padding: 12px;
+      display: flex;
+      justify-content: space-between;
+      gap: 30px;
+      align-items: center;
+  }
+
+  #nav_container h1 {
+      font-family: "Macondo", cursive;
+      font-weight: 400;
+      font-style: normal;
+  }
+
+  #nav_container nav {
+      display: flex;
+      gap: 40px;
+      margin-right: 70px;
+  }
+
+  #submit_btn {
+      background-color: #4CAF50;
+      /* Green background */
+      color: white;
+      /* White text */
+      padding: 15px 30px;
+      /* Padding */
+      font-size: 16px;
+      /* Font size */
+      border: none;
+      /* No border */
+      border-radius: 5px;
+      /* Rounded corners */
+      cursor: pointer;
+      /* Pointer cursor on hover */
+      transition: background-color 0.3s, transform 0.3s;
+      /* Smooth transitions */
+      width: 220px;
+  }
+
+  #submit_btn:hover {
+      background-color: #45a049;
+      /* Darker green */
+      transform: translateY(-2px);
+      /* Slight lift effect */
+  }
+
+  /* Active state */
+  #submit_btn:active {
+      background-color: #3e8e41;
+      /* Even darker green */
+      transform: translateY(0);
+      /* No lift effect */
+  }
+
+  /* Focus state */
+  #submit_btn:focus {
+      outline: none;
+      /* Remove default outline */
+      box-shadow: 0 0 5px #4CAF50;
+      /* Custom box shadow */
+  }
+
+  /* Disabled state */
+  #submit_btn:disabled {
+      background-color: #cccccc;
+      /* Gray background */
+      color: #666666;
+      /* Dark gray text */
+      cursor: not-allowed;
+      /* Not allowed cursor */
+  }
+
+  table {
+      width: 100%;
+      padding: 16px;
+      margin-bottom: 30px;
+  }
+
+  table thead {
+      background-color: #666666;
+      color: #d8d8d7;
+      height: 40px;
+  }
+
+  .row {
+      padding: 6px;
+  }
+
+  .edit-button {
+      /* Size and Positioning */
+      width: 16px;
+      height: 16px;
+      padding: 0;
+      margin: 0 5px;
+      /* Adjust margin for spacing */
+      position: relative;
+      top: -2px;
+      /* Slight vertical adjustment */
+
+      /* Style */
+      background-color: #ddd;
+      border: none;
+      cursor: pointer;
+
+      /* Optional: Add an icon */
+      /* Replace 'content' with your desired icon code (e.g., FontAwesome) */
+      /* content: "\f044";  */
+      /* font-family: FontAwesome;  */
+
+      /* Hover effect */
+      &:hover {
+          background-color: #ccc;
+      }
+  }
+
+  #edit_btn {
+      background-color: #268ff1;
+      /* Green background */
+      color: white;
+      /* White text */
+      padding: 15px 30px;
+      /* Padding */
+      font-size: 16px;
+      /* Font size */
+      border: none;
+      /* No border */
+      border-radius: 5px;
+      /* Rounded corners */
+      cursor: pointer;
+      /* Pointer cursor on hover */
+      transition: background-color 0.3s, transform 0.3s;
+      /* Smooth transitions */
+      width: 220px;
+  }
+
+  #edit_btn:hover {
+      background-color: #5856bd;
+      /* Darker green */
+      transform: translateY(-2px);
+      /* Slight lift effect */
+  }
+
+  /* Active state */
+  #edit_btn:active {
+      background-color: #3e578e;
+      /* Even darker green */
+      transform: translateY(0);
+      /* No lift effect */
+  }
+
+  /* Focus state */
+  #edit_btn:focus {
+      outline: none;
+      /* Remove default outline */
+      box-shadow: 0 0 5px #4c77af;
+      /* Custom box shadow */
+  }
+
+  /* Disabled state */
+  #edit_btn:disabled {
+      background-color: #cccccc;
+      /* Gray background */
+      color: #666666;
+      /* Dark gray text */
+      cursor: not-allowed;
+      /* Not allowed cursor */
+  }
+
+  #delete_btn {
+      background-color: rgb(255, 5, 5);
+      /* Green background */
+      color: white;
+      /* White text */
+      padding: 15px 30px;
+      /* Padding */
+      font-size: 16px;
+      /* Font size */
+      border: none;
+      /* No border */
+      border-radius: 5px;
+      /* Rounded corners */
+      cursor: pointer;
+      /* Pointer cursor on hover */
+      transition: background-color 0.3s, transform 0.3s;
+      /* Smooth transitions */
+      width: 220px;
+  }
+
+  #cancel_btn:hover {
+      background-color: #bd5656;
+      /* Darker green */
+      transform: translateY(-2px);
+      /* Slight lift effect */
+  }
+
+  /* Active state */
+  #cancel_btn:active {
+      background-color: #8e3e3e;
+      /* Even darker green */
+      transform: translateY(0);
+      /* No lift effect */
+  }
+
+  /* Focus state */
+  #cancel_btn:focus {
+      outline: none;
+      /* Remove default outline */
+      box-shadow: 0 0 5px #af4c4c;
+      /* Custom box shadow */
+  }
+
+  /* Disabled state */
+  #cancel_btn:disabled {
+      background-color: #cccccc;
+      /* Gray background */
+      color: #666666;
+      /* Dark gray text */
+      cursor: not-allowed;
+      /* Not allowed cursor */
+  }
+
+  #edit-form,
+  #register_form {
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: center;
+  }
+
+  .form_row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+  }
+
+  .form_row input {
+      padding: 6px;
+  }
+
+  #submit_btn_wrapper {
+      margin: 30px;
+  }
