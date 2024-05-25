@@ -66,8 +66,10 @@ class GuestDAO:
         statement = 'UPDATE guest SET name = ?, surname = ?, country = ?, phone = ? WHERE document = ?;'
         cursor = self.db.cursor()
         cursor.execute(statement, (guest['name'], guest['surname'],  guest['country'],  guest['phone'],  document))
+        self.db.commit()
 
     def delete(self, document: str):
         statement = 'DELETE FROM guest WHERE document = ?'
         cursor = self.db.cursor()
         cursor.execute(statement, (document,))
+        self.db.commit()
