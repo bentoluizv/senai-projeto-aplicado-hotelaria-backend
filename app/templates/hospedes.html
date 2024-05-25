@@ -4,6 +4,7 @@
 {% if rows %}
 <table>
     <thead>
+        <td>Documento</td>
         <td>Nome</td>
         <td>Sobrenome</td>
         <td>País</td>
@@ -13,6 +14,7 @@
     <tbody id="table_content">
         {% for row in rows %}
         <tr>
+            <td class="row">{{ row["document"] }}</td>
             <td class="row">{{ row["name"] }}</td>
             <td class="row"> {{ row["surname"]}}</td>
             <td class="row">{{ row["country"] }}</td>
