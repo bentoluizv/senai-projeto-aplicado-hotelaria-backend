@@ -48,7 +48,11 @@ def cria_hospede():
 
     except ValueError as e:
         click.echo(e)
-        abort(409)
+        mensagem = f"Já Existe um Hospede cadastrado com este documento."
+        botao_html = "<a href='/hospedes'> >>Clique para voltar a lista de Hóspedes<<</a>"
+        return mensagem + botao_html
+      
+
 
 
 @bp.get('/<document>/')
