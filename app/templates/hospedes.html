@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block conteudo %}
+{% if rows %}
+<table>
+    <thead>
+        <td>Nome</td>
+        <td>Sobrenome</td>
+        <td>País</td>
+        <td>Telefone</td>
+        <td></td>
+    </thead>
+    <tbody id="table_content">
+        {% for row in rows %}
+        <tr>
+            <td class="row">{{ row["name"] }}</td>
+            <td class="row"> {{ row["surname"]}}</td>
+            <td class="row">{{ row["country"] }}</td>
+            <td class="row">{{ row["phone"] }}</td>
+            <td class="row"><a class="edit-button" href="/hospedes/{{row['document']}}/">Editar</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+
+</table>
+{% else %}
+<p>Nenhum hóspede encontrado no banco de dados. (Translated message)</p>
+{% endif %}
+<button id="submit_btn">Cadastrar</button>
+
+<script src="{{url_for('static', filename='hospedes.js')}}"></script>
+
+</script>
+
+{% endblock %}

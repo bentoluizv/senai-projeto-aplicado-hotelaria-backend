@@ -1,108 +1,33 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pousada Quinta do Ypuã</title>
-
-    <style>
-        * {
-            box-sizing: border-box;
-        }
-
-        .menu {
-            float: left;
-            width: 20%;
-            text-align: left;
-        }
-
-        .menu a {
-            background-color: #e5e5e5;
-            padding: 8px;
-            margin-top: 7px;
-            display: block;
-            width: 100%;
-            color: rgb(50, 50, 50);
-            text-decoration: none;
-            font-size: small;
-        }
-
-        .main {
-            float: left;
-            width: 80%;
-            padding-top: 7px;
-            padding-left: 30px;
-            color: rgb(50, 50, 50);
-            font-size: small;
-        }
-
-        .right {
-            background-color: #e5e5e5;
-            float: left;
-            width: 20%;
-            padding: 15px;
-            margin-top: 7px;
-            text-align: center;
-            font-size: small;
-        }
-
-        @media only screen and (max-width: 620px) {
-
-            .menu,
-            .main,
-            .right {
-                width: 100%;
-            }
-        }
-
-        .button {
-            border: none;
-            color: white;
-            padding: 10px 20px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-            margin: 14px 2px;
-            cursor: pointer;
-        }
-
-        .button1 {
-            background-color: #04AA6D;
-        }
-
-        .button2 {
-            background-color: #008CBA;
-        }
-
-        .button3 {
-            background-color: #ff5353;
-        }
-
-        .ol {
-            background: #e5e5e5;
-            padding: 15px;
-            width: 390px;
-        }
-
-        .ol li {
-            background: #e5e5e5;
-            padding: 5px;
-            margin-left: 15px;
-        }
-    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Macondo&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
-<body style="font-family:Verdana;color:#aaaaaa;">
-
-    <div style="background-color:#0477BF;padding:15px;text-align:center; color: #ffffff;">
-        <h1>Pousada Quinta do Ypuã</h1>
-    </div>
-
+<body>
+    <header>
+        <img id="cover" src="{{ url_for('static', filename='1.jpg')}}" alt="Pousada Quinta do Ypuã">
+        <div id="nav_container">
+            <h1><a href="/">Quinta do Ypuã</a></h1>
+            <nav>
+                <a href="/hospedes">Hóspedes</a>
+                <a href="/">Acomodações</a>
+                <a href="/">Reservas</a>
+            </nav>
+        </div>
+    </header>
+    <main>
+        {% block conteudo %}
+        {% endblock %}
+    </main>
+    <footer>&copy; Quinta do Ypuã - todos os direitos reservados</footer>
 </body>
-
-{% block conteudo %}
-{% endblock %}
 
 </html>

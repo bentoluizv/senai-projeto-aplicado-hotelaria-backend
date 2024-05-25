@@ -1,28 +1,6 @@
 {% extends 'base.html' %}
 
 {% block conteudo %}
-
-<body style="font-family:Verdana;color:#aaaaaa;">
-
-    <div style="overflow:auto">
-        <div class="menu">
-            <a href="/index">Pagina Inicial</a> 
-            <a href="/cadastroHospedes">Cadastro Hóspedes</a> 
-            <a href="/alteraHospedes">Alteração Hóspedes</a> 
-            <a href="/cadastroAcomodacoes">Cadastro Acomodações</a> 
-            <a href="/alteraAcomodacoes">Alteração Acomodações</a> 
-            <a href="/cadastroComodidades">Cadastro Comodidades</a> 
-            <a href="/cadastroReservas">Cadastro Reservas</a> 
-            <a href="/list">Lista hospedes</a> 
-        </div>
-
-        <div class="main">
-            <img src="{{ url_for('static', filename='1.jpg')}}" alt="Pousada Quinta do Ypuã" style="width:100%;">
-        </div>
-    </div>
-
-    <div style="background-color:#e5e5e5;text-align:center;padding:10px;margin-top:7px;">© Pousada Quinta do Ypuã</div>
-
-</body>
-
+<p style="margin-top: 20px; padding: 10px; text-align: center;">Seja Bem Vindo a pousada Quinta do Ypuã</p>
+<button disabled id="submit_btn">Faça uma reserva!</button>
 {% endblock %}

@@ -1,48 +1,39 @@
 {% extends 'base.html' %}
 
 {% block conteudo %}
-
-<body style="font-family:Verdana;color:#aaaaaa;">
-
-    <div style="overflow:auto">
-        <div class="menu">
-            <a href="/index">Pagina Inicial</a> 
-            <a href="/cadastroHospedes">Cadastro Hóspedes</a> 
-            <a href="/alteraHospedes">Alteração Hóspedes</a> 
-            <a href="/cadastroAcomodacoes">Cadastro Acomodações</a> 
-            <a href="/alteraAcomodacoes">Alteração Acomodações</a> 
-            <a href="/cadastroComodidades">Cadastro Comodidades</a> 
-            <a href="/cadastroReservas">Cadastro Reservas</a> 
-        </div>
-
-        <div class="main">
-            <h1>Alteração Hóspedes</h1>
-            <form method="get" action="alteraHospedes">
-                <p>
-                    <label for="name">Nome</label><br>
-                    <input type="text" id="name" name="name" size="30" required>
-                </p>
-                <p>
-                    <label for="surname">Sobrenome</label><br>
-                    <input type="text" id="surname" name="surname" size="30" required>
-                </p>
-                <p>
-                    <label for="country">País</label><br>
-                    <input type="text" id="country" name="country" size="30" required>
-                </p>
-                <p>
-                    <label for="phone">Telefone</label><br>
-                    <input type="text" id="phone" name="phone" size="30" required>
-                </p>
-                <p><input type="submit" value="Buscar" class="button button2">
-                    <input type="submit" value="Alterar" class="button button1">
-                    <input type="submit" value="Excluir" class="button button3">
-                </p>
-            </form>
-        </div>
+<form id="edit-form">
+    <div class="form_row">
+        <label for="created_at">Criado em:</label>
+        <input disabled type="text" id="created_at" name="created_at" size="30" value="{{guest['created_at']}}">
+    </div>
+    <div class="form_row">
+        <label for="document">Documento</label>
+        <input disabled type="text" id="document" name="document" size="30" value="{{guest['document']}}" required>
+    </div>
+    <div class="form_row">
+        <label for="name">Nome</label>
+        <input type="text" id="name" name="name" size="30" value="{{guest['name']}}" required>
     </div>
 
-</body>
+    <div class="form_row">
+        <label for="surname">Sobrenome</label>
+        <input type="text" id="surname" name="surname" size="30" value="{{guest['surname']}}" required>
+    </div>
 
+    <div class="form_row">
+        <label for="country">País</label>
+        <input type="text" id="country" name="country" size="30" value="{{guest['country']}}" required>
+    </div>
 
+    <div class="form_row">
+        <label for="phone">Telefone</label>
+        <input type="text" id="phone" name="phone" size="30" value="{{guest['phone']}}" required>
+    </div>
+    <div>
+        <button id="edit_btn" type="button" value="Alterar">Alterar</button>
+        <button id="delete_btn" type="button" value="Excluir">Excluir</button>
+    </div>
+</form>
+
+<script src="{{url_for('static', filename='alteraHospede.js')}}"></script>
 {% endblock %}
