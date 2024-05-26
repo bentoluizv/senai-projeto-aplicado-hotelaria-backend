@@ -64,109 +64,6 @@ Para inicializar um servidor de desenvolvimento flask rode:
 
 ## Documentação
 
-### Abrindo uma conexão com o banco de dados
-
-```bash
-  db = get_db() # SQLite3 Database Connection
-  result = db.cursor().execute(SELECT * FROM guests;) # Lista
-
-```
-
-### Data Access Objects
-
-Guest DAO
-
-```bash
-  from app.data.dao.guest_dao import GuestDAO
-  from app.data.database.db import get_db
-
-
-  db = get_db()
-  guest_dao = GuestDAO(db)
-
-  guest_dao.count()
-  # Retorna a quantidade de registros
-
-  guest_dao.select(document)
-  # Retorna um Dict com o resultado
-
-  guest_dao.select_many()
-  # Retorna uma List com os resultados.
-
-  guest_dao.insert(guest)
-  # Insere um registro
-
-  guest_dao.update(guest)
-  # Atualiza um registro já existente ou Error.
-
-  guest_dao.delete(document)
-  # Deleta um registro passando o numero do documto de identificação
-
-
-```
-
-Accommodation DAO
-
-```bash
-  from app.data.dao.accommodation_dao import AccommodationDAO
-  from app.data.database.db import get_db
-
-
-  db = get_db()
-  accommodation_dao = AccommodationDAO(db)
-
-  accommodation_dao.count()
-  # Retorna a quantidade de registros
-
-  accommodation_dao.select(uuid)
-  # Retorna um Dict com o resultado
-
-  accommodation_dao.select_many()
-  # Retorna uma List com os resultados.
-
-  accommodation_dao.insert(accommodation)
-  # Insere um registro
-
-  accommodation_dao.update(accommodation)
-  # Atualiza um registro já existente ou Error.
-
-  accommodation_dao.delete(uuid)
-  # Deleta um registro passando o numero do documto de identificação
-
-
-```
-
-Booking DAO
-
-```bash
-  from app.data.dao.booking_dao import BookingDAO
-  from app.data.database.db import get_db
-
-
-  db = get_db()
-  booking_dao = BookingDAO(db)
-
-  booking_dao.count()
-  # Retorna a quantidade de registros
-
-  booking_dao.select(uuid)
-  # Retorna um Dict com o resultado
-
-  booking_dao.select_many()
-  # Retorna uma List com os resultados.
-
-  booking_dao.insert(booking)
-  # Insere um registro
-
-  booking_dao.update(booking)
-  # Atualiza um registro já existente ou Error.
-
-  booking_dao.delete(uuid)
-  # Deleta um registro passando o numero do documto de identificação
-
-
-```
-
 ### Tipos
 
 ```bash
@@ -206,52 +103,90 @@ Booking DAO
 
 ```
 
+### Abrindo uma conexão com o banco de dados
+
+```bash
+  db = get_db() # SQLite3 Database Connection
+  result = db.cursor().execute(SELECT * FROM guests;) # Lista
+
+```
+
+## Camada de Dados
+
+Camada responsável pelo acesso ao banco de dados (através do módulo database.py), organização da queries de consulta e mutações utilizando DAOs (Data Access Objects) para cada entidade e Repositórios para centralizar a criação das classes especificas de cada entidade.
+
+```bash
+# Como instanciar o repositório.
+db = get_db() # Importada do modulo database.py
+dao = GuestDAO(db) #  DAO referente a tabela de Hóspedes
+repository = GuestRepository(dao)
+
+# O repositório expõe as seguintes operações:
+
+count(): int # Retorna a quantidade de registros em uma tabela
+insert(Entidade): None # Cria um novo registro
+find(id): <Entidade>   # Procura um registro de acordo com uma identificação
+find_many(): List[Entidade]  # Lista todos os registros
+update(Entidade): None  # Atualiza um registro já existente
+delete(document): None  # Deleta um registro a partir da uma identificação
+
+
+```
+
 ## Documentação da API (Em construção)
 
 #### > Retorna todos os hóspedes
 
 ```http
-  GET /api/guests
+  GET /api/hospedes/
 ```
 
 #### > Retorna um hóspede
 
 ```http
-  GET /api/guests/${document}
+  GET /api/hospedes/${document}/
 ```
 
 | Parâmetro  | Tipo     | Descrição                                                |
 | :--------- | :------- | :------------------------------------------------------- |
 | `document` | `string` | **Obrigatório**. O documento de identificação do hóspede |
 
-#### > Retorna todas as acomodações
+#### > Cadastra um novo hóspedee
 
 ```http
-  GET /api/accommodations
+  POST /api/hospedes/cadastro/
 ```
 
-#### > Retorna uma acomodação
+#### body da requisição
+
+| Parâmetro  | Tipo     | Descrição                            |
+| :--------- | :------- | :----------------------------------- |
+| `document` | `string` | Documento de Identificação. Ex.: CPF |
+| `name`     | `string` |                                      |
+| `surname`  | `string` |                                      |
+| `country`  | `string` |                                      |
+| `phone`    | `string` |                                      |
+
+#### > Deleta um hóspede
 
 ```http
-  GET /api/accommodations/${uuid}
+  DELETE /api/hospedes/${document}/
 ```
 
-| Parâmetro | Tipo     | Descrição                             |
-| :-------- | :------- | :------------------------------------ |
-| `uuid`    | `string` | **Obrigatório**. O uuid da acomodação |
+| Parâmetro  | Tipo     | Descrição                                                |
+| :--------- | :------- | :------------------------------------------------------- |
+| `document` | `string` | **Obrigatório**. O documento de identificação do hóspede |
 
-#### > Retorna todas as reservas
+#### > Atualiza um hóspede
 
 ```http
-  GET /api/bookings
+  PUT /api/hospedes/
 ```
 
-#### > Retorna uma reserva
-
-```http
-  GET /api/bookings/${uuid}
-```
-
-| Parâmetro | Tipo     | Descrição                          |
-| :-------- | :------- | :--------------------------------- |
-| `uuid`    | `string` | **Obrigatório**. O uuid da reserva |
+| Parâmetro  | Tipo     | Descrição                            |
+| :--------- | :------- | :----------------------------------- |
+| `document` | `string` | Documento de Identificação. Ex.: CPF |
+| `name`     | `string` |                                      |
+| `surname`  | `string` |                                      |
+| `country`  | `string` |                                      |
+| `phone`    | `string` |                                      |
