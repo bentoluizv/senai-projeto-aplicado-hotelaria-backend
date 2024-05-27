@@ -13,7 +13,7 @@ from app.entity.Guests import Guest, GuestDTO
 bp = Blueprint('api', __name__, url_prefix='/api/hospedes')
 
 
-@bp.get('/')
+@bp.get('')
 def hospedes_api():
     db = get_db()
     dao = GuestDAO(db)
@@ -22,7 +22,7 @@ def hospedes_api():
     return jsonify(guests)
 
 
-@bp.post('/cadastro/')
+@bp.post('/cadastro')
 def cria_hospede():
     if request.form is None:
         abort(400)
@@ -44,18 +44,14 @@ def cria_hospede():
 
     try:
         repository.insert(guest)
-        return redirect('/hospedes')
+        return 'CREATED', 201
 
     except ValueError as e:
         click.echo(e)
-        mensagem = f"Já Existe um Hospede cadastrado com este documento."
-        botao_html = "<a href='/hospedes'> >>Clique para voltar a lista de Hóspedes<<</a>"
-        return mensagem + botao_html
-      
+        abort(400)
 
 
-
-@bp.get('/<document>/')
+@bp.get('/<document>')
 def hospede(document):
     db = get_db()
     dao = GuestDAO(db)
@@ -70,7 +66,7 @@ def hospede(document):
         abort(404)
 
 
-@bp.delete('/<document>/')
+@bp.delete('/<document>')
 def deletar_hospede(document):
     db = get_db()
     dao = GuestDAO(db)
@@ -84,7 +80,7 @@ def deletar_hospede(document):
     except ValueError:
         abort(404)
 
-@bp.put('/')
+@bp.put('')
 def atualizar_hospede():
     db = get_db()
     dao = GuestDAO(db)
