@@ -11,7 +11,7 @@ if (editButton instanceof HTMLButtonElement) {
       phone: form.elements.phone.value,
       created_at: form.elements.created_at.value,
     };
-    fetch("http://127.0.0.1:5000/api/hospedes/", {
+    fetch("http://127.0.0.1:5000/api/hospedes", {
       method: "PUT",
       body: JSON.stringify(data),
       headers: {
@@ -19,7 +19,7 @@ if (editButton instanceof HTMLButtonElement) {
       },
     })
       .then(() => {
-        window.location.href = "http://127.0.0.1:5000/hospedes/";
+        window.location.href = "http://127.0.0.1:5000/hospedes";
       })
       .catch((e) => {
         console.log(e);
@@ -39,7 +39,7 @@ if (deleteButton instanceof HTMLButtonElement) {
       }
     )
       .then(() => {
-        window.location.href = "http://127.0.0.1:5000/hospedes/";
+        window.location.href = "http://127.0.0.1:5000/hospedes";
       })
       .catch((e) => {
         console.log(e);
