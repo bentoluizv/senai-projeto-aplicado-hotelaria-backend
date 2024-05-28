@@ -4,13 +4,13 @@
 {% if rows %}
 <table>
     <thead>
-        <td>uuid</td>
+        <td>Numero do Quarto</td>
         <td>Nome</td>
         <td>status</td>
         <td>Total Hóspedes</td>
-        <td>Cama Soleiro</td>
+        <td>Cama Solteiro</td>
         <td>Cama Casal</td>
-        <td>min_nights</td>
+        <td>Mínimo de Noites</td>
         <td>Preço</td>
         <td></td>
     </thead>
@@ -23,7 +23,7 @@
             <td class="row">{{ row["total_guests"] }}</td>
             <td class="row">{{ row["single_beds"] }}</td>
             <td class="row">{{ row["double_beds"] }}</td>
-            <td class="row">{{ row["Mínimo de Noites"] }}</td>
+            <td class="row">{{ row["min_nights"] }}</td>
             <td class="row">{{ row["price"] }}</td>
             
             <td class="row"><a class="edit-button" href="/acomodacoes/{{row['document']}}">Editar</a></td>

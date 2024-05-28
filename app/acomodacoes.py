@@ -8,7 +8,7 @@ from app.data.repositories.AccommodationRepository import AccommodationtReposito
 bp = Blueprint('accommodation', __name__, url_prefix='/acomodacoes')
 
 @bp.get('/')
-def hospedes():
+def acomodacoes():
     db = get_db()
     dao = AccommodationDAO(db)
     repository = AccommodationtRepository(dao)
@@ -18,7 +18,7 @@ def hospedes():
 
 @bp.get('/cadastro/')
 def cadastro():
-    return render_template('cadastroHospedes.html')
+    return render_template('cadastroAcomodacoes.html')
 
 
 

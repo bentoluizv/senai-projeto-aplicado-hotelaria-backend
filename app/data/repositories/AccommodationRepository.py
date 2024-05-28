@@ -11,10 +11,10 @@ class AccommodationtRepository:
         return self.dao.count()
 
     def insert(self, accommodation: Accommodation) -> None:
-        exists  = self.dao.find(accommodation.document)
+        exists  = self.dao.find(accommodation.uuid)
 
         if exists:
-            raise ValueError(f'Accommodation with document {accommodation.document} already exists')
+            raise ValueError(f'Accommodation with document {accommodation.uuid} already exists')
 
         self.dao.insert(accommodation.to_dict())
 
@@ -53,7 +53,8 @@ class AccommodationtRepository:
                 'single_beds': accommodation.single_beds,
                 'double_beds': accommodation.double_beds,
                 'min_nights': accommodation.min_nights,
-                'price': accommodation.price,       
+                'price': accommodation.price,
+       
 
                 
             })
