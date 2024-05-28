@@ -38,5 +38,8 @@ def create_app(test_config=None):
     from . import  api_guest
     app.register_blueprint(guests.bp)
     app.register_blueprint(api_guest.bp)
+    from . import  acomodacoes
+    app.register_blueprint(acomodacoes.bp)
+
 
     return app

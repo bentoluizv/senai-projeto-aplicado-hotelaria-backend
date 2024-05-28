@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block conteudo %}
+{% if rows %}
+<table>
+    <thead>
+        <td>uuid</td>
+        <td>Nome</td>
+        <td>status</td>
+        <td>Total Hóspedes</td>
+        <td>Cama Soleiro</td>
+        <td>Cama Casal</td>
+        <td>min_nights</td>
+        <td>Preço</td>
+        <td></td>
+    </thead>
+    <tbody id="table_content">
+        {% for row in rows %}
+        <tr>
+            <td class="row">{{ row["uuid"] }}</td>
+            <td class="row">{{ row["name"] }}</td>
+            <td class="row"> {{ row["status"]}}</td>
+            <td class="row">{{ row["total_guests"] }}</td>
+            <td class="row">{{ row["single_beds"] }}</td>
+            <td class="row">{{ row["double_beds"] }}</td>
+            <td class="row">{{ row["Mínimo de Noites"] }}</td>
+            <td class="row">{{ row["price"] }}</td>
+            
+            <td class="row"><a class="edit-button" href="/acomodacoes/{{row['document']}}">Editar</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+
+
+</table>
+{% else %}
+<p>Nenhum hóspede encontrado no banco de dados. (Translated message)</p>
+{% endif %}
+<button id="submit_btn">Cadastrar</button>
+
+<script src="{{url_for('static', filename='acomodacoes.js')}}"></script>
+
+</script>
+
+{% endblock %}
