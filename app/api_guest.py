@@ -29,19 +29,13 @@ def get_guests():
 
 @bp.post('/cadastro')
 def create_guest():
-    if request.form is None:
+    guest_json = request.get_json()
+    if guest_json is None:
         abort(400)
 
-    guest_dto = {
-        'document': request.form['document'],
-        'name': request.form['name'],
-        'surname': request.form['surname'],
-        'country': request.form['country'],
-        'phone': request.form['phone']
-    }
-
     try:
-        guest =  Guest.from_dict(guest_dto)
+        click.echo(guest_json)
+        guest =  Guest.from_dict(guest_json)
 
     except ValidationError as err:
         click.echo(err)
