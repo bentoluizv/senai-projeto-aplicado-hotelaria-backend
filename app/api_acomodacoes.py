@@ -1,47 +1,48 @@
-from ast import Try
-import json
 import click
-from flask import Blueprint, abort, jsonify, redirect, request
+from flask import Blueprint, abort, jsonify, request
 from markupsafe import escape
+from pydantic import ValidationError
 
 from app.data.dao.AccommodationDAO import AccommodationDAO
 from app.data.database.db import get_db
 from app.data.repositories.AccommodationRepository import AccommodationtRepository
-from app.entity.Accommodation import Accommodation, AccommodationDTO
+from app.entity.Accommodation import Accommodation
 
 
 bp = Blueprint('apiacomodacoes', __name__, url_prefix='/api/acomodacoes')
 
 
 @bp.get('')
-def acomodacoes_api():
+def get_accommodations():
     db = get_db()
     dao = AccommodationDAO(db)
     respository = AccommodationtRepository(dao)
-    accommodation = [ accommodation.to_dict() for accommodation in respository.find_many() ]
-    return jsonify(accommodation)
+
+    try:
+        accommodations = [ accommodation.to_dict() for accommodation in respository.find_many() ]
+        return jsonify(accommodations)
+
+    except ValidationError as err:
+        click.echo(err)
+        abort(500)
 
 
 @bp.post('/cadastro')
-def cria_acomodacoes():
+def create_accommodation():
     if request.form is None:
         abort(400)
 
-    accommodationDTO_dto: AccommodationDTO = {
-        'uuid': request.form['uuid'],        
+    accommodation_dto = {
         'name': request.form['name'],
         'status': request.form['status'],
         'total_guests': request.form['total_guests'],
         'single_beds': request.form['single_beds'],
         'double_beds': request.form['double_beds'],
         'min_nights': request.form['min_nights'],
-        'price': request.form['price'],
-        'created_at': None
+        'price': request.form['price']
     }
 
-    
-
-    accommodation =  Accommodation.from_dict(accommodationDTO_dto)
+    accommodation =  Accommodation.from_dict(accommodation_dto)
 
     db = get_db()
     dao = AccommodationDAO(db)
@@ -56,27 +57,27 @@ def cria_acomodacoes():
         abort(400)
 
 
-@bp.get('/<document>')
-def hospede(document):
+@bp.get('/<uuid>')
+def get_accommodation(uuid):
     db = get_db()
     dao = AccommodationDAO(db)
     repository = AccommodationtRepository(dao)
-    url_param = escape(document)
+    url_param = escape(uuid)
 
     try:
-        guest = repository.find(str(url_param))
-        return jsonify(guest.to_dict())
+        accommodation = repository.find(str(url_param))
+        return accommodation.to_json()
 
     except ValueError:
         abort(404)
 
 
-@bp.delete('/<document>')
-def deletar_hospede(document):
+@bp.delete('/<uuid>')
+def delete_accommodation(uuid):
     db = get_db()
     dao = AccommodationDAO(db)
     repository = AccommodationtRepository(dao)
-    url_param = escape(document)
+    url_param = escape(uuid)
 
     try:
         repository.delete(str(url_param))
@@ -86,16 +87,21 @@ def deletar_hospede(document):
         abort(404)
 
 @bp.put('')
-def atualizar_hospede():
+def update_accommodation():
     db = get_db()
     dao = AccommodationDAO(db)
     repository = AccommodationtRepository(dao)
     raw  = request.get_json()
-    guest = Accommodation.from_dict(raw)
 
     try:
-        repository.update(guest)
+        accommodation = Accommodation.from_dict(raw)
+        repository.update(accommodation)
         return "UPDATED", 201
 
-    except ValueError:
+    except ValidationError as err:
+        click.echo(err)
+        abort(400)
+
+    except ValueError as err:
+        click.echo(err)
         abort(404)

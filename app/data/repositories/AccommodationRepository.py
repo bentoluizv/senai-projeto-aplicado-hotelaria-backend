@@ -7,46 +7,53 @@ class AccommodationtRepository:
     def __init__(self, dao: AccommodationDAO):
         self.dao  = dao
 
+
     def count(self) -> int:
         return self.dao.count()
 
-    def insert(self, accommodation: Accommodation) -> None:
-        exists  = self.dao.find(accommodation.uuid)
+
+    def insert(self, accommodation: Accommodation):
+        exists  = self.dao.find(str(accommodation.uuid))
 
         if exists:
             raise ValueError(f'Accommodation with document {accommodation.uuid} already exists')
 
         self.dao.insert(accommodation.to_dict())
 
-    def find(self, document: str) -> Accommodation:
-        exists = self.dao.find(document)
+
+    def find(self, uuid: str):
+        exists = self.dao.find(uuid)
 
         if not exists:
-            raise ValueError(f'Accommodation with document {document} not exists')
+            raise ValueError(f'Accommodation with document {uuid} not exists')
 
         return Accommodation.from_dict(exists)
 
-    def find_many(self) -> List[Accommodation]:
-        existing_accommodations = self.dao.find_many()
 
-        if len(existing_accommodations) == 0:
+    def find_many(self) -> List[Accommodation]:
+        existing = self.dao.find_many()
+
+        if len(existing) == 0:
             return []
 
-        accommodations = [ Accommodation.from_dict(accommodation) for accommodation in existing_accommodations]
+        accommodations: List[Accommodation] = []
+
+        for unknown in existing:
+            accommodation = Accommodation.from_dict(unknown)
+            accommodations.append(accommodation)
 
         return accommodations
 
+
     def update(self, accommodation: Accommodation):
-        exists = self.dao.find(accommodation.document)
+        exists = self.dao.find(str(accommodation.uuid))
 
         if not exists:
-            raise ValueError(f'Accommodation with document {accommodation.document} not exists')
+            raise ValueError(f'Accommodation with document {str(accommodation.uuid)} not exists')
 
         self.dao.update(
-            accommodation.document,
+            str(accommodation.uuid),
             {
-            
-                'uuid': accommodation.uuid,
                 'name': accommodation.name,
                 'status': accommodation.status,
                 'total_guests': accommodation.total_guests,
@@ -54,16 +61,13 @@ class AccommodationtRepository:
                 'double_beds': accommodation.double_beds,
                 'min_nights': accommodation.min_nights,
                 'price': accommodation.price,
-       
-
-                
             })
 
 
-    def delete(self, document: str):
-        exists = self.dao.find(document)
+    def delete(self, uuid: str):
+        exists = self.dao.find(uuid)
 
         if not exists:
-            raise ValueError(f'Accommodation with document {document} not exists')
+            raise ValueError(f'Accommodation with document {uuid} not exists')
 
-        self.dao.delete(document)
+        self.dao.delete(uuid)

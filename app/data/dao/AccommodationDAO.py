@@ -1,8 +1,6 @@
 from sqlite3 import Connection
 from typing import List
 
-from app.entity.Accommodation import AccommodationDTO, UpdatableAccommodation
-
 
 class AccommodationDAO:
     def __init__(self, db: Connection):
@@ -15,14 +13,14 @@ class AccommodationDAO:
         return count
 
 
-    def insert(self, accommodation: AccommodationDTO) -> None:
+    def insert(self, accommodation) -> None:
         statement = 'INSERT INTO accommodation (uuid, created_at, name, status, total_guests, single_beds, double_beds, min_nights, price) VALUES (:uuid, :created_at, :name, :status, :total_guests, :single_beds, :double_beds, :min_nights, :price);'
         cursor = self.db.cursor()
         cursor.execute(statement, accommodation)
         self.db.commit()
 
 
-    def find(self, uuid: str) -> AccommodationDTO | None:
+    def find(self, uuid: str):
         statement = 'SELECT uuid, created_at, name, status, total_guests, single_beds, double_beds, min_nights, price FROM accommodation WHERE accommodation.uuid = ?;'
         cursor = self.db.cursor()
         cursor.execute(statement,  (uuid,))
@@ -44,7 +42,7 @@ class AccommodationDAO:
             }
 
 
-    def find_many(self) -> List[AccommodationDTO]:
+    def find_many(self) -> List:
         statement = 'SELECT uuid, created_at, name, status, total_guests, single_beds, double_beds, min_nights, price FROM accommodation;'
         cursor = self.db.cursor()
         cursor.execute(statement)
@@ -53,7 +51,7 @@ class AccommodationDAO:
         if len(results) == 0:
             return []
 
-        accommodations: List[AccommodationDTO] = [{
+        accommodations: List = [{
             'uuid': result['uuid'],
             'name': result['name'],
             'status': result['status'],
@@ -68,10 +66,10 @@ class AccommodationDAO:
         return accommodations
 
 
-    def update(self, uuid: str, accommodation: UpdatableAccommodation) -> None:
-        statement = 'UPDATE accommodation SET name = ?, status = ?, total_guests = ?, singltotal_guestse_beds = ?, double_beds = ?, min_nights = ?, price = ? WHERE uuid = ?;'
+    def update(self, uuid: str, accommodation) -> None:
+        statement = 'UPDATE accommodation SET name = ?, status = ?, total_guests = ?, single_beds = ?, double_beds = ?, min_nights = ?, price = ? WHERE uuid = ?;'
         cursor = self.db.cursor()
-        cursor.execute(statement, (accommodation['name'], accommodation['status'],  accommodation['total_guests'],  accommodation['singltotal_guestse_beds'],accommodation['double_beds'],accommodation['min_nights'],accommodation['price'],  uuid))
+        cursor.execute(statement, (accommodation['name'], accommodation['status'],  accommodation['total_guests'],  accommodation['single_beds'],accommodation['double_beds'],accommodation['min_nights'],accommodation['price'],  uuid))
         self.db.commit()
 
     def delete(self, uuid: str):
