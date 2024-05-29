@@ -5,6 +5,7 @@ description = "Hotel booking system"
 dependencies = [
     "flask",
     "pytest",
+    "pydantic"
 ]
 
 [build-system]
