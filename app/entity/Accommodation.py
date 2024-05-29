@@ -14,7 +14,7 @@ class Accommodation(BaseModel):
     double_beds: int
     min_nights: int = Field(default=2)
     price: int
-    created_at: str = Field(default=datetime.now())
+    created_at: str = Field(default=datetime.now().isoformat())
 
 
     @classmethod

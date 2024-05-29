@@ -8,7 +8,7 @@ class Guest(BaseModel):
     surname: str
     phone: str
     country: str
-    created_at: datetime = Field(default=datetime.now())
+    created_at: str = Field(default=datetime.now().isoformat())
 
 
     @classmethod
