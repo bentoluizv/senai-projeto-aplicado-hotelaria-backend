@@ -1,7 +1,6 @@
 import json
 
-from app.entity.Guests import GuestDTO
-
+import pytest
 
 def test_api_get_guests(client):
     response = client.get('/api/hospedes')
@@ -23,7 +22,7 @@ def test_api_get_guests_id_not_found(client):
 
 
 def test_api_post_guests(client):
-    guest_dto: GuestDTO = {
+    guest_dto = {
         'document':'03093331056',
         'name':'Ana Claudia',
         'surname':'Costa',
@@ -56,13 +55,12 @@ def test_api_delete_guests_not_found(client):
 
 
 def test_api_updated_guests(client):
-    data: GuestDTO = {
+    data = {
         'document': "00157624242",
         'name': 'Bento Luiz',
         'surname': 'V M da S Neto',
         'country': 'Brazil',
         'phone': '48992054211',
-        'created_at': None
     }
 
     response = client.put(
@@ -76,13 +74,12 @@ def test_api_updated_guests(client):
 
 
 def test_api_updated_guests_not_found(client):
-    data: GuestDTO  = {
+    data  = {
         'document': "0015724242",
         'name': 'Bento Luiz',
         'surname': 'V M da S Neto',
         'country': 'Brazil',
         'phone': '48992054211',
-        'created_at': None
     }
     response = client.put(
         '/api/hospedes',

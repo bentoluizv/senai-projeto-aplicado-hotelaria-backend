@@ -3,7 +3,7 @@ import pytest
 from app.data.dao.GuestDAO import GuestDAO
 from app.data.database.db import get_db
 from app.data.repositories.GuestRepository import GuestRepository
-from app.entity.Guests import Guest, GuestDTO
+from app.entity.Guests import Guest
 
 @fixture
 def repository(app):
@@ -14,12 +14,13 @@ def repository(app):
         yield repository
 
 
+
 def test_repository_count(repository):
     assert repository.count() == 4
 
 
 def test_repository_insert(repository):
-    guest_dto: GuestDTO = {
+    guest_dto = {
         'document':'03093331056',
         'name':'Ana Claudia',
         'surname':'Costa',
@@ -27,7 +28,9 @@ def test_repository_insert(repository):
         'phone':'4832395853',
         'created_at': '2024-05-22T10:56:45.439704'
         }
+
     guest = Guest.from_dict(guest_dto)
+
     repository.insert(guest)
     assert repository.count() == 5
 
@@ -44,13 +47,12 @@ def test_repository_select_many(repository):
 
 
 def test_repository_update(repository):
-    guest_dto: GuestDTO = {
+    guest_dto = {
         'document': "00157624242",
         'name': 'Bento Luiz',
         'surname': 'V M da S Neto',
         'country': 'Brazil',
-        'phone':' 4832395853',
-        'created_at':  None
+        'phone':' 4832395853'
     }
     guest_to_update =  Guest.from_dict(guest_dto)
     repository.update(guest_to_update)
