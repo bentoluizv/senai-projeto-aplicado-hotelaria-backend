@@ -1,9 +1,6 @@
 from sqlite3 import Connection
 from typing import List
 
-from app.entity.Guests import GuestDTO, UpdatableGuest
-
-
 class GuestDAO:
     def __init__(self, db: Connection):
         self.db = db
@@ -15,21 +12,21 @@ class GuestDAO:
         return count
 
 
-    def insert(self, guest: GuestDTO) -> None:
+    def insert(self, guest) -> None:
         statement = 'INSERT INTO guest (document, created_at, name, surname, country, phone) VALUES (:document, :created_at, :name, :surname, :country, :phone);'
         cursor = self.db.cursor()
         cursor.execute(statement, guest)
         self.db.commit()
 
 
-    def find(self, document: str) -> GuestDTO | None:
+    def find(self, document: str):
         statement = 'SELECT document, created_at, name, surname, country, phone FROM guest WHERE guest.document = ?;'
         cursor = self.db.cursor()
         cursor.execute(statement,  (document,))
         result = cursor.fetchone()
 
         if result is None:
-            return
+            return result
 
         return {
             'document': result['document'],
@@ -41,7 +38,7 @@ class GuestDAO:
             }
 
 
-    def find_many(self) -> List[GuestDTO]:
+    def find_many(self) -> List:
         statement = 'SELECT document, created_at, name, surname, country, phone FROM guest;'
         cursor = self.db.cursor()
         cursor.execute(statement)
@@ -50,7 +47,7 @@ class GuestDAO:
         if len(results) == 0:
             return []
 
-        guests: List[GuestDTO] = [{
+        guests = [{
             'document': result['document'],
             'name': result['name'],
             'surname': result['surname'],
@@ -62,7 +59,7 @@ class GuestDAO:
         return guests
 
 
-    def update(self, document: str, guest: UpdatableGuest) -> None:
+    def update(self, document: str, guest) -> None:
         statement = 'UPDATE guest SET name = ?, surname = ?, country = ?, phone = ? WHERE document = ?;'
         cursor = self.db.cursor()
         cursor.execute(statement, (guest['name'], guest['surname'],  guest['country'],  guest['phone'],  document))

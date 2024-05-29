@@ -7,34 +7,47 @@ class GuestRepository:
     def __init__(self, dao: GuestDAO):
         self.dao  = dao
 
+
     def count(self) -> int:
         return self.dao.count()
 
-    def insert(self, guest: Guest) -> None:
+
+    def insert(self, guest: Guest):
         exists  = self.dao.find(guest.document)
 
         if exists:
             raise ValueError(f'Guest with document {guest.document} already exists')
 
-        self.dao.insert(guest.to_dict())
+        guest_dto = guest.to_dict()
 
-    def find(self, document: str) -> Guest:
+        self.dao.insert(guest_dto)
+
+
+    def find(self, document: str):
         exists = self.dao.find(document)
 
         if not exists:
             raise ValueError(f'Guest with document {document} not exists')
 
-        return Guest.from_dict(exists)
+        guest = Guest.from_dict(exists)
+
+        return guest
+
 
     def find_many(self) -> List[Guest]:
-        existing_guests = self.dao.find_many()
+        existing = self.dao.find_many()
 
-        if len(existing_guests) == 0:
+        if len(existing) == 0:
             return []
 
-        guests = [ Guest.from_dict(guest) for guest in existing_guests]
+        guests: List[Guest] = []
+
+        for unknown in existing:
+            guest = Guest.from_dict(unknown)
+            guests.append(guest)
 
         return guests
+
 
     def update(self, guest: Guest):
         exists = self.dao.find(guest.document)

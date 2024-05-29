@@ -1,42 +1,51 @@
-from ast import Try
-import json
 import click
-from flask import Blueprint, abort, jsonify, redirect, request
+from flask import Blueprint, abort, jsonify, request
 from markupsafe import escape
+from pydantic import ValidationError
 
 from app.data.dao.GuestDAO import GuestDAO
 from app.data.database.db import get_db
 from app.data.repositories.GuestRepository import GuestRepository
-from app.entity.Guests import Guest, GuestDTO
+from app.entity.Guests import Guest
 
 
 bp = Blueprint('api', __name__, url_prefix='/api/hospedes')
 
 
 @bp.get('')
-def hospedes_api():
+def get_guests():
     db = get_db()
     dao = GuestDAO(db)
     respository = GuestRepository(dao)
-    guests = [ guest.to_dict() for guest in respository.find_many() ]
-    return jsonify(guests)
+
+    try:
+        guests = [ guest.to_dict() for guest in respository.find_many() ]
+        return jsonify(guests)
+
+    except ValidationError as err:
+        click.echo(err)
+        abort(500)
 
 
 @bp.post('/cadastro')
-def cria_hospede():
+def create_guest():
     if request.form is None:
         abort(400)
 
-    guest_dto: GuestDTO = {
+    guest_dto = {
         'document': request.form['document'],
         'name': request.form['name'],
         'surname': request.form['surname'],
         'country': request.form['country'],
-        'phone': request.form['phone'],
-        'created_at': None
+        'phone': request.form['phone']
     }
 
-    guest =  Guest.from_dict(guest_dto)
+    try:
+        guest =  Guest.from_dict(guest_dto)
+
+    except ValidationError as err:
+        click.echo(err)
+        abort(400)
 
     db = get_db()
     dao = GuestDAO(db)
@@ -46,13 +55,13 @@ def cria_hospede():
         repository.insert(guest)
         return 'CREATED', 201
 
-    except ValueError as e:
-        click.echo(e)
+    except ValueError as err:
+        click.echo(err)
         abort(400)
 
 
 @bp.get('/<document>')
-def hospede(document):
+def get_guest(document):
     db = get_db()
     dao = GuestDAO(db)
     repository = GuestRepository(dao)
@@ -60,14 +69,14 @@ def hospede(document):
 
     try:
         guest = repository.find(str(url_param))
-        return jsonify(guest.to_dict())
+        return guest.to_json()
 
     except ValueError:
         abort(404)
 
 
 @bp.delete('/<document>')
-def deletar_hospede(document):
+def delete_guest(document):
     db = get_db()
     dao = GuestDAO(db)
     repository = GuestRepository(dao)
@@ -81,16 +90,21 @@ def deletar_hospede(document):
         abort(404)
 
 @bp.put('')
-def atualizar_hospede():
+def update_guest():
     db = get_db()
     dao = GuestDAO(db)
     repository = GuestRepository(dao)
     raw  = request.get_json()
-    guest = Guest.from_dict(raw)
 
     try:
+        guest = Guest.from_dict(raw)
         repository.update(guest)
         return "UPDATED", 201
 
-    except ValueError:
+    except ValidationError as err:
+        click.echo(err)
+        abort(400)
+
+    except ValueError as err:
+        click.echo(err)
         abort(404)
