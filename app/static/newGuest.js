@@ -18,13 +18,22 @@ form.addEventListener("submit", (event) => {
     headers: {
       "Content-Type": "application/json",
     },
-  })
-    .then((res) => {
-      if (res.status == 201) {
-        window.location.href = "http://127.0.0.1:5000/hospedes";
-      }
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+  }).then((res) => {
+    if (res.status == 201) {
+      window.location.href = "http://127.0.0.1:5000/hospedes";
+    }
+
+    if (res.status == 409) {
+      errElement = document.querySelector(".err_msg");
+
+      res.json().then((json) => {
+        errElement.textContent = json.description;
+
+        errElement.classList.remove("hidden");
+        setTimeout(() => {
+          errElement.classList.add("hidden");
+        }, 3000);
+      });
+    }
+  });
 });
