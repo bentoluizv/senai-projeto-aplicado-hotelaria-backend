@@ -13,7 +13,7 @@ class AccommodationtRepository:
 
 
     def insert(self, accommodation: Accommodation):
-        exists  = self.dao.find(str(accommodation.uuid))
+        exists  = self.dao.find('uuid', accommodation.uuid)
 
         if exists:
             raise ValueError(f'Accommodation with document {accommodation.uuid} already exists')
@@ -21,11 +21,11 @@ class AccommodationtRepository:
         self.dao.insert(accommodation.to_dict())
 
 
-    def find(self, uuid: str):
-        exists = self.dao.find(uuid)
+    def findBy(self, property: str, value: str):
+        exists = self.dao.find(property, value)
 
         if not exists:
-            raise ValueError(f'Accommodation with document {uuid} not exists')
+            raise ValueError(f'Accommodation with {property} {value} not exists')
 
         return Accommodation.from_dict(exists)
 
@@ -46,10 +46,10 @@ class AccommodationtRepository:
 
 
     def update(self, accommodation: Accommodation):
-        exists = self.dao.find(str(accommodation.uuid))
+        exists = self.dao.find('uuid', accommodation.uuid)
 
         if not exists:
-            raise ValueError(f'Accommodation with document {str(accommodation.uuid)} not exists')
+            raise ValueError(f'Accommodation with document {accommodation.uuid} not exists')
 
         self.dao.update(
             str(accommodation.uuid),
@@ -65,7 +65,7 @@ class AccommodationtRepository:
 
 
     def delete(self, uuid: str):
-        exists = self.dao.find(uuid)
+        exists = self.dao.find('uuid', uuid)
 
         if not exists:
             raise ValueError(f'Accommodation with document {uuid} not exists')

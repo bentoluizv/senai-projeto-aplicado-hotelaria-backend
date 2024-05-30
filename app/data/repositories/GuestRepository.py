@@ -13,7 +13,7 @@ class GuestRepository:
 
 
     def insert(self, guest: Guest):
-        exists  = self.dao.find(guest.document)
+        exists  = self.dao.findBy('document',guest.document)
 
         if exists:
             raise ValueError(f'Documento {guest.document} já está cadastrado')
@@ -24,7 +24,7 @@ class GuestRepository:
 
 
     def find(self, document: str):
-        exists = self.dao.find(document)
+        exists = self.dao.findBy('document',document)
 
         if not exists:
             raise ValueError(f'Documento {document} não está cadastrado')
@@ -50,7 +50,7 @@ class GuestRepository:
 
 
     def update(self, guest: Guest):
-        exists = self.dao.find(guest.document)
+        exists = self.dao.findBy('document',guest.document)
 
         if not exists:
             raise ValueError(f'Documento {guest.document} não está cadastrado')
@@ -66,7 +66,7 @@ class GuestRepository:
 
 
     def delete(self, document: str):
-        exists = self.dao.find(document)
+        exists = self.dao.findBy('document',document)
 
         if not exists:
             raise ValueError(f'Documento {document} não está cadastrado')

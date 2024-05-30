@@ -20,27 +20,16 @@ class AccommodationDAO:
         self.db.commit()
 
 
-    def find(self, uuid: str):
-        statement = 'SELECT uuid, created_at, name, status, total_guests, single_beds, double_beds, min_nights, price FROM accommodation WHERE accommodation.uuid = ?;'
+    def find(self, property: str, value: str):
+        statement = f'SELECT uuid, created_at, name, status, total_guests, single_beds, double_beds, min_nights, price FROM accommodation WHERE accommodation.{property} = ?;'
         cursor = self.db.cursor()
-        cursor.execute(statement,  (uuid,))
+        cursor.execute(statement,  (value,))
         result = cursor.fetchone()
 
         if result is None:
             return
 
-        return {
-            'uuid': result['uuid'],
-            'name': result['name'],
-            'status': result['status'],
-            'total_guests': result['total_guests'],
-            'single_beds': result['single_beds'],
-            'double_beds': result['double_beds'],
-            'min_nights': result['min_nights'],
-            'price': result['price'],
-            'created_at': result['created_at']
-            }
-
+        return result
 
     def find_many(self) -> List:
         statement = 'SELECT uuid, created_at, name, status, total_guests, single_beds, double_beds, min_nights, price FROM accommodation;'
