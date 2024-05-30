@@ -9,7 +9,7 @@ from app.data.repositories.AccommodationRepository import AccommodationtReposito
 from app.entity.Accommodation import Accommodation
 
 
-bp = Blueprint('apiacomodacoes', __name__, url_prefix='/api/acomodacoes')
+bp = Blueprint('api_accommodation', __name__, url_prefix='/api/acomodacoes')
 
 
 @bp.get('')
@@ -29,26 +29,18 @@ def get_accommodations():
 
 @bp.post('/cadastro')
 def create_accommodation():
-    if request.form is None:
+    accommodation_json = request.get_json()
+
+    if accommodation_json is None:
         abort(400)
-
-    accommodation_dto = {
-        'name': request.form['name'],
-        'status': request.form['status'],
-        'total_guests': request.form['total_guests'],
-        'single_beds': request.form['single_beds'],
-        'double_beds': request.form['double_beds'],
-        'min_nights': request.form['min_nights'],
-        'price': request.form['price']
-    }
-
-    accommodation =  Accommodation.from_dict(accommodation_dto)
+    click.echo(accommodation_json)
 
     db = get_db()
     dao = AccommodationDAO(db)
     repository = AccommodationtRepository(dao)
 
     try:
+        accommodation =  Accommodation.from_dict(accommodation_json)
         repository.insert(accommodation)
         return 'CREATED', 201
 
@@ -65,7 +57,7 @@ def get_accommodation(uuid):
     url_param = escape(uuid)
 
     try:
-        accommodation = repository.find(str(url_param))
+        accommodation = repository.findBy("uuid",  str(url_param))
         return accommodation.to_json()
 
     except ValueError:

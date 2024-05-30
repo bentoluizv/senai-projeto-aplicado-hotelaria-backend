@@ -9,7 +9,7 @@ from app.data.repositories.GuestRepository import GuestRepository
 from app.entity.Guests import Guest
 
 
-bp = Blueprint('api', __name__, url_prefix='/api/hospedes')
+bp = Blueprint('api_guest', __name__, url_prefix='/api/hospedes')
 
 
 
@@ -30,11 +30,11 @@ def get_guests():
 
 @bp.post('/cadastro')
 def create_guest():
-    guest_json = request.get_json()
-    if guest_json is None:
+    guests = request.get_json()
+    if guests is None:
         abort(400)
     try:
-        guest =  Guest.from_dict(guest_json)
+        guest =  Guest.from_dict(guests)
 
     except ValidationError as err:
         click.echo(err)
@@ -102,4 +102,4 @@ def update_guest():
 
     except ValueError as err:
         click.echo(err)
-        abort(409)
+        abort(404)

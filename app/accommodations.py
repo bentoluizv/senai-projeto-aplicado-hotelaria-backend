@@ -18,7 +18,7 @@ def acomodacoes():
 
 @bp.get('/cadastro/')
 def cadastro():
-    return render_template('updateAccommodation.html')
+    return render_template('newAccommodation.html')
 
 
 
