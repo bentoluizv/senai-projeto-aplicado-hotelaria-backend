@@ -12,6 +12,7 @@ from app.entity.Guests import Guest
 bp = Blueprint('api', __name__, url_prefix='/api/hospedes')
 
 
+
 @bp.get('')
 def get_guests():
     db = get_db()
@@ -32,9 +33,7 @@ def create_guest():
     guest_json = request.get_json()
     if guest_json is None:
         abort(400)
-
     try:
-        click.echo(guest_json)
         guest =  Guest.from_dict(guest_json)
 
     except ValidationError as err:
@@ -51,7 +50,7 @@ def create_guest():
 
     except ValueError as err:
         click.echo(err)
-        abort(400)
+        abort(409, str(err))
 
 
 @bp.get('/<document>')
@@ -65,7 +64,8 @@ def get_guest(document):
         guest = repository.find(str(url_param))
         return guest.to_json()
 
-    except ValueError:
+    except ValueError as err:
+        click.echo(err)
         abort(404)
 
 
@@ -80,7 +80,8 @@ def delete_guest(document):
         repository.delete(str(url_param))
         return 'DELETED', 200
 
-    except ValueError:
+    except ValueError as err:
+        click.echo(err)
         abort(404)
 
 @bp.put('')
@@ -101,4 +102,4 @@ def update_guest():
 
     except ValueError as err:
         click.echo(err)
-        abort(404)
+        abort(409)
