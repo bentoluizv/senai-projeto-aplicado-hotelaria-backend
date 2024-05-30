@@ -38,10 +38,10 @@ def create_app(test_config=None):
     from . import  api_guest
     app.register_blueprint(guests.bp)
     app.register_blueprint(api_guest.bp)
-    from . import  acomodacoes
-    from . import api_acomodacoes
-    app.register_blueprint(acomodacoes.bp)
-    app.register_blueprint(api_acomodacoes.bp)
+    from . import  accommodations
+    from . import api_accommodations
+    app.register_blueprint(accommodations.bp)
+    app.register_blueprint(api_accommodations.bp)
 
 
     return app

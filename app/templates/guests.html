@@ -5,27 +5,29 @@
 <div class="table_wrapper">
     <table>
         <thead>
-            <td class="hidden">uuid</td>
+            <td>Documento</td>
             <td>Nome</td>
-            <td>Status</td>
+            <td>Sobrenome</td>
+            <td>País</td>
+            <td>Telefone</td>
         </thead>
         <tbody id="table_content">
             {% for cell in rows %}
             <tr class="table_row">
-                <td id="uuid" class="cell hidden">{{ cell["uuid"] }}</td>
+                <td id="document" class="cell">{{ cell["document"] }}</td>
                 <td class="cell">{{ cell["name"] }}</td>
-                <td class="cell"> {{ cell["status"]}}</td>
+                <td class="cell"> {{ cell["surname"]}}</td>
+                <td class="cell">{{ cell["country"] }}</td>
+                <td class="cell">{{ cell["phone"] }}</td>
             </tr>
             {% endfor %}
         </tbody>
 
-
     </table>
     {% else %}
     <div class="wrapper">
-        <p>Nenhum hóspede encontrado no banco de dados.</p>
+        <p>Nenhum hóspede encontrado no banco de dados</p>
     </div>
-
     {% endif %}
     <div class="btn_wrapper">
         <button class="submit_btn">Cadastrar</button>
@@ -33,7 +35,7 @@
 
 </div>
 
-<script src="{{url_for('static', filename='acomodacoes.js')}}"></script>
+<script src="{{url_for('static', filename='guests.js')}}"></script>
 
 </script>
 

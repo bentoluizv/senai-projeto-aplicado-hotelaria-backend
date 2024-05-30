@@ -13,12 +13,12 @@ def acomodacoes():
     dao = AccommodationDAO(db)
     repository = AccommodationtRepository(dao)
     accommodation = [ accommodation.to_dict() for accommodation in repository.find_many() ]
-    return render_template('acomodacoes.html', rows=accommodation)
+    return render_template('accommodations.html', rows=accommodation)
 
 
 @bp.get('/cadastro/')
 def cadastro():
-    return render_template('cadastroAcomodacoes.html')
+    return render_template('updateAccommodation.html')
 
 
 

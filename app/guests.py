@@ -13,12 +13,12 @@ def hospedes():
     dao = GuestDAO(db)
     repository = GuestRepository(dao)
     guests = [ guest.to_dict() for guest in repository.find_many() ]
-    return render_template('hospedes.html', rows=guests)
+    return render_template('guests.html', rows=guests)
 
 
 @bp.get('/cadastro/')
 def cadastro():
-    return render_template('cadastroHospedes.html')
+    return render_template('newGuest.html')
 
 
 @bp.get('/<document>/')
@@ -27,4 +27,4 @@ def editar(document):
     dao = GuestDAO(db)
     repository = GuestRepository(dao)
     guest = repository.find(document)
-    return render_template('alteraHospedes.html', guest=guest.to_dict())
+    return render_template('updateGuest.html', guest=guest.to_dict())

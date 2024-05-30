@@ -1,5 +1,5 @@
-form = document.getElementById("register_form");
-submiter = document.getElementById("submit_btn");
+const form = document.querySelector(".form");
+const submiter = document.querySelector(".submit_btn");
 
 if (!form instanceof HTMLFormElement) throw new Error("Element not found");
 
