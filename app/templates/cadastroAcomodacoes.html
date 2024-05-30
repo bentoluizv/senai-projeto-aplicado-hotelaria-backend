@@ -2,47 +2,49 @@
 
 {% block conteudo %}
 
-<h1>Cadastro Acomodações</h1>
-<form id="register_form" method="POST" action="http://127.0.0.1:5000/api/acomodacoes/cadastro">
-    <div class="form_row">
-        <label for="uuid">Numero do Quarto</label>
-        <input type="text" id="uuid" name="uuid" size="30" required>
-    </div>
-    <div class="form_row">
-        <label for="name">Nome</label>
-        <input type="text" id="name" name="name" size="30" required>
-    </div>
-    <div class="form_row">
-        <label for="status">status</label>
-        <input type="text" id="status" name="status" size="30" required>
-    </div>
-    <div class="form_row">
-        <label for="total_guests">Total Hóspedes</label>
-        <input type="text" id="total_guests" name="total_guests" size="30" required>
-    </div>
-    <div class="form_row">
-        <label for="single_beds">Cama Soleiro</label>
-        <input type="text" id="single_beds" name="single_beds" size="30" required>
-    </div>
-    <div class="form_row">
-        <label for="single_beds">Cama Soleiro</label>
-        <input type="text" id="single_beds" name="single_beds" size="30" required>
-    </div>
-    <div class="form_row">
-        <label for="double_beds">Cama Casal</label>
-        <input type="text" id="double_beds" name="double_beds" size="30" required>
-    </div>
-    <div class="form_row">
-        <label for="min_nights">Mínimo de Noites</label>
-        <input type="text" id="min_nights" name="min_nights" size="30" required>
-    </div>
-    <div class="form_row">
-        <label for="price">Preço</label>
-        <input type="text" id="price" name="price" size="30" required>
-    </div>
-    <div id="submit_btn_wrapper">
-        <button id="submit_btn" type="submit">Cadastrar</button>
-    </div>
-</form>
+<div class="form_wrapper">
+    <form method="POST" action="http://127.0.0.1:5000/api/acomodacoes/cadastro">
+        <div class="row_group">
+            <div class="row">
+                <label for="name">Nome</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div class="row">
+                <label for="status">Status</label>
+                <input type="text" id="status" name="status" required>
+            </div>
+        </div>
+
+        <div class="row_group">
+            <div class="row">
+                <label for="total_guests">Total Hóspedes</label>
+                <input type="number" id="total_guests" name="total_guests" required>
+            </div>
+            <div class="row">
+                <label for="single_beds">Cama Soleiro</label>
+                <input type="number" id="single_beds" name="single_beds" required>
+            </div>
+            <div class="row">
+                <label for="double_beds">Cama Casal</label>
+                <input type="number" id="double_beds" name="double_beds" required>
+            </div>
+        </div>
+        <div class="row_group">
+            <div class="row">
+                <label for="min_nights">Mínimo de Noites</label>
+                <input type="number" id="min_nights" name="min_nights" required>
+            </div>
+            <div class="row">
+                <label for="price">Preço</label>
+                <input type="number" id="price" name="price" required>
+            </div>
+        </div>
+
+        <div class="btn_wrapper">
+            <button class="submit_btn" type="submit">Cadastrar</button>
+        </div>
+    </form>
+</div>
+
 
 {% endblock %}

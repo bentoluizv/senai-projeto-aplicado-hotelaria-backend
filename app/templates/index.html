@@ -1,6 +1,17 @@
 {% extends 'base.html' %}
 
 {% block conteudo %}
-<p style="margin-top: 20px; padding: 10px; text-align: center;">Seja Bem Vindo a pousada Quinta do Ypuã</p>
-<button disabled id="submit_btn">Faça uma reserva!</button>
+<div class="search_wrapper">
+    <select class="resource_menu" name="resource" id="resource">
+        <option>Reserva</option>
+        <option>Hóspede</option>
+    </select>
+    <input class="search_field" name="search" id="search" placeholder="Faça sua busca..."></textarea>
+    <button disabled class="search_btn">Procurar</button>
+</div>
+<div class="booking_btn_wrapper">
+    <button disabled class="booking_btn">Faça uma reserva!</button>
+</div>
+
+
 {% endblock %}

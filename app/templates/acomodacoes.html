@@ -2,41 +2,36 @@
 
 {% block conteudo %}
 {% if rows %}
-<table>
-    <thead>
-        <td>Numero do Quarto</td>
-        <td>Nome</td>
-        <td>status</td>
-        <td>Total Hóspedes</td>
-        <td>Cama Solteiro</td>
-        <td>Cama Casal</td>
-        <td>Mínimo de Noites</td>
-        <td>Preço</td>
-        <td></td>
-    </thead>
-    <tbody id="table_content">
-        {% for row in rows %}
-        <tr>
-            <td class="row">{{ row["uuid"] }}</td>
-            <td class="row">{{ row["name"] }}</td>
-            <td class="row"> {{ row["status"]}}</td>
-            <td class="row">{{ row["total_guests"] }}</td>
-            <td class="row">{{ row["single_beds"] }}</td>
-            <td class="row">{{ row["double_beds"] }}</td>
-            <td class="row">{{ row["min_nights"] }}</td>
-            <td class="row">{{ row["price"] }}</td>
-            
-            <td class="row"><a class="edit-button" href="/acomodacoes/{{row['document']}}">Editar</a></td>
-        </tr>
-        {% endfor %}
-    </tbody>
+<div class="table_wrapper">
+    <table>
+        <thead>
+            <td class="hidden">uuid</td>
+            <td>Nome</td>
+            <td>Status</td>
+        </thead>
+        <tbody id="table_content">
+            {% for cell in rows %}
+            <tr class="table_row">
+                <td id="uuid" class="cell hidden">{{ cell["uuid"] }}</td>
+                <td class="cell">{{ cell["name"] }}</td>
+                <td class="cell"> {{ cell["status"]}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
 
 
-</table>
-{% else %}
-<p>Nenhum hóspede encontrado no banco de dados. (Translated message)</p>
-{% endif %}
-<button id="submit_btn">Cadastrar</button>
+    </table>
+    {% else %}
+    <div class="wrapper">
+        <p>Nenhum hóspede encontrado no banco de dados.</p>
+    </div>
+
+    {% endif %}
+    <div class="btn_wrapper">
+        <button class="submit_btn">Cadastrar</button>
+    </div>
+
+</div>
 
 <script src="{{url_for('static', filename='acomodacoes.js')}}"></script>
 

@@ -2,32 +2,36 @@
 
 {% block conteudo %}
 
-<h1>Cadastro Hóspedes</h1>
-<form id="register_form">
-    <div class="form_row">
-        <label for="document">Documento</label>
-        <input type="text" id="document" name="document" size="30" required>
-    </div>
-    <div class="form_row">
-        <label for="name">Nome</label>
-        <input type="text" id="name" name="name" size="30" required>
-    </div>
-    <div class="form_row">
-        <label for="surname">Sobrenome</label>
-        <input type="text" id="surname" name="surname" size="30" required>
-    </div>
-    <div class="form_row">
-        <label for="country">País</label>
-        <input type="text" id="country" name="country" size="30" required>
-    </div>
-    <div class="form_row">
-        <label for="phone">Telefone</label>
-        <input type="text" id="phone" name="phone" size="30" required>
-    </div>
-    <div id="submit_btn_wrapper">
-        <button id="submit_btn" type="submit">Cadastrar</button>
-    </div>
-</form>
+<div class="form_wrapper">
+    <form class="form">
+        <div class="row">
+            <label for="document">Documento</label>
+            <input type="text" id="document" name="document" size="30" required>
+        </div>
+        <div class="row">
+            <label for="name">Nome</label>
+            <input type="text" id="name" name="name" size="30" required>
+        </div>
+        <div class="row">
+            <label for="surname">Sobrenome</label>
+            <input type="text" id="surname" name="surname" size="30" required>
+        </div>
+        <div class="row_group">
+            <div class="row">
+                <label for="country">País</label>
+                <input type="text" id="country" name="country" size="30" required>
+            </div>
+            <div class="row">
+                <label for="phone">Telefone</label>
+                <input type="text" id="phone" name="phone" size="30" required>
+            </div>
+        </div>
+        <div class="btn_wrapper">
+            <button class="submit_btn" type="submit">Cadastrar</button>
+        </div>
+    </form>
+</div>
+
 <script src="{{url_for('static', filename='newGuest.js')}}"></script>
 
 </script>

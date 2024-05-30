@@ -9,25 +9,22 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Macondo&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
 
 <body>
-    <header>
-        <img id="cover" src="{{ url_for('static', filename='1.jpg')}}" alt="Pousada Quinta do Ypuã">
-        <div id="nav_container">
-            <h1><a href="/">Quinta do Ypuã</a></h1>
-            <nav>
-                <a href="/hospedes">Hóspedes</a>
-                <a href="/acomodacoes">Acomodações</a>
-                <a href="/">Reservas</a>
+    <div class="container_large">
+        <header class="header">
+            <nav class="nav_bar">
+                <a class="nav_link" href="/hospedes">Hóspedes</a>
+                <a class="nav_link" href="/acomodacoes">Acomodações</a>
+                <a class="nav_link" href="/">Reservas</a>
             </nav>
-        </div>
-    </header>
-    <main>
-        {% block conteudo %}
-        {% endblock %}
-    </main>
-    <footer>&copy; Quinta do Ypuã - todos os direitos reservados</footer>
+        </header>
+        <main>
+            {% block conteudo %}
+            {% endblock %}
+        </main>
+        <footer>&copy; Quinta do Ypuã - todos os direitos reservados</footer>
+    </div>
 </body>
 
 </html>
