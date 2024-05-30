@@ -368,3 +368,14 @@ form {
 .hidden {
     display: none;
 }
+
+.err_msg {
+    margin-top: 1rem;
+    background-color: #df151541;
+    color: #df1515;
+    padding: 0.2rem;
+    border: solid 1px #df1515;
+    border-radius: 4px;
+    width: 640px;
+    text-align: center;
+}
