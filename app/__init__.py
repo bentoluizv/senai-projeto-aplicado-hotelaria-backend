@@ -1,7 +1,8 @@
 """Flask Application Factory"""
 
+from http.client import HTTPException
 import os
-from flask import Flask
+from flask import Flask, json, jsonify
 from flask import render_template
 from .data.database import db
 
@@ -24,9 +25,43 @@ def create_app(test_config=None):
     except OSError:
         pass
 
+    @app.errorhandler(404)
+    def resource_not_found(e):
+        response = e.get_response()
+        response.data = json.dumps({
+        "code": e.code,
+        "name": e.name,
+        "description": e.description,
+    })
+        response.content_type = "application/json"
+        return response
+
+    @app.errorhandler(409)
+    def resource_already_exists(e):
+        response = e.get_response()
+        response.data = json.dumps({
+        "code": e.code,
+        "name": e.name,
+        "description": e.description,
+    })
+        response.content_type = "application/json"
+        return response
+
+    @app.errorhandler(400)
+    def bad_request(e):
+        response = e.get_response()
+        response.data = json.dumps({
+        "code": e.code,
+        "name": e.name,
+        "description": e.description,
+    })
+        response.content_type = "application/json"
+        return response
+
     @app.get('/')
     def index():
         return render_template('index.html')
+
 
     @app.get('/hello')
     def hello():
