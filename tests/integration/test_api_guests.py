@@ -28,17 +28,23 @@ def test_api_post_guests(client):
         'surname':'Costa',
         'country':'Brazil',
         'phone':'4832395853',
-        'created_at': None
         }
 
-    response = client.post('/api/hospedes/cadastro', data=guest_dto)
+    response = client.post(
+        '/api/hospedes/cadastro',
+        data=json.dumps(guest_dto),
+        headers={'content-type': 'application/json'})
 
     assert response.status_code == 201
     assert response.text == 'CREATED'
 
 
 def test_api_post_guests_bad_request(client):
-    response = client.post('/api/hospedes/cadastro', data=None)
+    response = client.post(
+        '/api/hospedes/cadastro',
+        data=json.dumps({}),
+        headers={'content-type': 'application/json'}
+        )
     assert response.status_code == 400
 
 

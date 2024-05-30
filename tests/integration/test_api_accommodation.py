@@ -45,7 +45,8 @@ def test_api_should_create_an_accommodation(client):
 
 
 def test_api_should_return_status_code_400(client):
-    response = client.post('/api/hospedes/cadastro', data=None)
+    response = client.post('/api/hospedes/cadastro', data=json.dumps({}),
+        headers={'content-type': 'application/json'})
     assert response.status_code == 400
 
 
