@@ -38,9 +38,9 @@ def test_should_create_a_accommodation(repository):
     assert repository.count() == 7
 
 
-def test_should_return_one_accommodation_by_its_uuid(repository):
-    guest = repository.find("bcadaaf8-a036-42d5-870c-de7b24792abf")
-    assert guest.name == 'Domo'
+def test_should_return_one_accommodation_by_its_name(repository):
+    guest = repository.findBy("name", "Domo")
+    assert guest.uuid == 'bcadaaf8-a036-42d5-870c-de7b24792abf'
 
 
 def test_should_return_all_accommodations(repository):
@@ -62,11 +62,11 @@ def test_repository_update(repository):
         }
     accommodation_to_update =  Accommodation.from_dict(accommodation_dto)
     repository.update(accommodation_to_update)
-    accommodation = repository.find("bcadaaf8-a036-42d5-870c-de7b24792abf")
+    accommodation = repository.findBy("uuid","bcadaaf8-a036-42d5-870c-de7b24792abf")
     assert accommodation.name == 'Quarto Individual'
 
 
 def test_should_delete_one_accommodation_by_its_uuid(repository):
     repository.delete("bcadaaf8-a036-42d5-870c-de7b24792abf")
     with pytest.raises(ValueError):
-        repository.find("bcadaaf8-a036-42d5-870c-de7b24792abf")
+        repository.findBy("uuid", "bcadaaf8-a036-42d5-870c-de7b24792abf")

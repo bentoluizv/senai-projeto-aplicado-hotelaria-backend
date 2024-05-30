@@ -34,7 +34,7 @@ def test_should_create_a_accommodation(accommodation_dao):
 
 
 def test_should_return_one_accommodation_by_its_uuid(accommodation_dao):
-    accommodation = accommodation_dao.find("bcadaaf8-a036-42d5-870c-de7b24792abf")
+    accommodation = accommodation_dao.find("uuid", "bcadaaf8-a036-42d5-870c-de7b24792abf")
     assert accommodation['name'] == 'Domo'
 
 
@@ -55,11 +55,11 @@ def test_should_update_one_accommodation(accommodation_dao):
         }
 
     accommodation_dao.update("bcadaaf8-a036-42d5-870c-de7b24792abf", accommodation_dto)
-    result = accommodation_dao.find("bcadaaf8-a036-42d5-870c-de7b24792abf")
+    result = accommodation_dao.find("uuid", "bcadaaf8-a036-42d5-870c-de7b24792abf")
     assert result['name'] == 'Quarto Individual'
 
 
 def test_should_delete_one_accommodation_by_its_uuid(accommodation_dao):
     accommodation_dao.delete("bcadaaf8-a036-42d5-870c-de7b24792abf")
-    res = accommodation_dao.find("bcadaaf8-a036-42d5-870c-de7b24792abf")
+    res = accommodation_dao.find("uuid", "bcadaaf8-a036-42d5-870c-de7b24792abf")
     assert res is None

@@ -31,7 +31,7 @@ def test_guest_dao_insert(guest_dao):
 
 
 def test_guest_dao_select(guest_dao):
-    guest = guest_dao.find("00157624242")
+    guest = guest_dao.findBy("document", "00157624242")
     assert guest['name'] == 'Bento Luiz'
 
 
@@ -41,7 +41,7 @@ def test_guest_dao_select_many(guest_dao):
 
 
 def test_guest_dao_update(guest_dao):
-    exists = guest_dao.find('00157624242')
+    exists = guest_dao.findBy("document",'00157624242')
     assert exists is not None
 
     guest_dto = {
@@ -51,11 +51,11 @@ def test_guest_dao_update(guest_dao):
         'phone':' 4832395853'
     }
     guest_dao.update("00157624242", guest_dto)
-    result = guest_dao.find("00157624242")
+    result = guest_dao.findBy("document","00157624242")
     assert result['surname'] == 'V M da S Neto'
 
 
 def test_guest_dao_delete(guest_dao):
     guest_dao.delete("00157624242")
-    res = guest_dao.find("00157624242")
+    res = guest_dao.findBy("document","00157624242")
     assert res is None

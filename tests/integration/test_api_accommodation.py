@@ -35,10 +35,16 @@ def test_api_should_create_an_accommodation(client):
         'double_beds': '0',
         'min_nights': '2',
         'price':'180',
-        'created_at': '2024-05-22T10:56:45.439704'
+        'created_at': '2024-05-22T10:56:45.439704',
+        'amenities': []
         }
 
-    response = client.post('/api/acomodacoes/cadastro', data=accommodation_dto)
+
+    response = client.post(
+        '/api/acomodacoes/cadastro',
+        data=json.dumps(accommodation_dto),
+        headers={'content-type': 'application/json'}
+        )
 
     assert response.status_code == 201
     assert response.text == 'CREATED'
