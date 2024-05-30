@@ -10,7 +10,7 @@ html * {
 }
 
 body {
-    font-family: Verdana, sans-serif;
+    font-family: "Poppins", sans-serif;
     background-color: #FCF7F0;
     color: #666666;
     display: flex;
@@ -52,13 +52,14 @@ footer {
 .header {
     min-width: 100%;
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
 }
 
-.cover {
-    object-fit: cover;
-    height: 30vh;
-    width: 100%;
+.macondo_regular {
+    font-family: "Macondo", cursive;
+    font-weight: 500;
+    font-style: normal;
 }
 
 .nav_bar {
@@ -110,9 +111,10 @@ footer {
 
 .search_wrapper {
     margin-top: 6rem;
+    margin-left: 3rem;
+    margin-right: 3rem;
     display: flex;
     height: 10vh;
-    width: 100%;
     padding: 1rem;
     justify-content: center;
     gap: 0.8rem;
@@ -168,7 +170,7 @@ footer {
 
 .search_btn:focus {
     outline: none;
-    box-shadow: 0 0 5px #ec9511;
+    box-shadow: 0 0 5px #a16305;
 }
 
 .booking_btn_wrapper {
@@ -204,7 +206,7 @@ footer {
 
 .booking_btn:focus {
     outline: none;
-    box-shadow: 0 0 5px #f1a026;
+    box-shadow: 0 0 5px #a86a0c;
 }
 
 .table_wrapper {
@@ -266,6 +268,8 @@ thead td {
     cursor: pointer;
     transition: background-color 0.3s, transform 0.3s;
     width: 320px;
+    margin: 0 auto;
+
 }
 
 .submit_btn:hover {
@@ -280,7 +284,7 @@ thead td {
 
 .submit_btn:focus {
     outline: none;
-    box-shadow: 0 0 5px #4CAF50;
+    box-shadow: 0 0 5px #2c702e;
 }
 
 
@@ -294,6 +298,7 @@ thead td {
     cursor: pointer;
     transition: background-color 0.3s, transform 0.3s;
     width: 320px;
+    margin: 0 auto;
 }
 
 .delete_btn:hover {
@@ -308,7 +313,7 @@ thead td {
 
 .delete_btn:focus {
     outline: none;
-    box-shadow: 0 0 5px #ac0606;
+    box-shadow: 0 0 5px #530808;
 }
 
 .wrapper {
