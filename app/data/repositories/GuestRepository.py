@@ -16,7 +16,7 @@ class GuestRepository:
         exists  = self.dao.find(guest.document)
 
         if exists:
-            raise ValueError(f'Guest with document {guest.document} already exists')
+            raise ValueError(f'Documento {guest.document} já está cadastrado')
 
         guest_dto = guest.to_dict()
 
@@ -27,7 +27,7 @@ class GuestRepository:
         exists = self.dao.find(document)
 
         if not exists:
-            raise ValueError(f'Guest with document {document} not exists')
+            raise ValueError(f'Documento {document} não está cadastrado')
 
         guest = Guest.from_dict(exists)
 
@@ -53,7 +53,7 @@ class GuestRepository:
         exists = self.dao.find(guest.document)
 
         if not exists:
-            raise ValueError(f'Guest with document {guest.document} not exists')
+            raise ValueError(f'Documento {guest.document} não está cadastrado')
 
         self.dao.update(
             guest.document,
@@ -69,6 +69,6 @@ class GuestRepository:
         exists = self.dao.find(document)
 
         if not exists:
-            raise ValueError(f'Guest with document {document} not exists')
+            raise ValueError(f'Documento {document} não está cadastrado')
 
         self.dao.delete(document)
