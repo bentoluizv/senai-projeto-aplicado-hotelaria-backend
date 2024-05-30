@@ -250,9 +250,10 @@ thead td {
 
 .btn_wrapper {
     display: flex;
-    width: 100%;
+    flex-direction: column;
     justify-content: center;
-    margin-top: 1.5rem;
+    margin-top: 2.5rem;
+    gap: 1rem;
 }
 
 .submit_btn {
@@ -282,6 +283,34 @@ thead td {
     box-shadow: 0 0 5px #4CAF50;
 }
 
+
+.delete_btn {
+    background-color: #df1515;
+    color: white;
+    padding: 15px 30px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
+    width: 320px;
+}
+
+.delete_btn:hover {
+    background-color: #ac0606;
+    transform: translateY(-2px);
+}
+
+.delete_btn:active {
+    background-color: #ac0606;
+    transform: translateY(0);
+}
+
+.delete_btn:focus {
+    outline: none;
+    box-shadow: 0 0 5px #ac0606;
+}
+
 .wrapper {
     display: flex;
     justify-content: center;
@@ -293,6 +322,7 @@ thead td {
 }
 
 .form_wrapper {
+    margin-top: 2.5rem;
     display: flex;
     flex-direction: column;
     align-items: center;
