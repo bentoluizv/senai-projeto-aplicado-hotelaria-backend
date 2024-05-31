@@ -28,7 +28,7 @@ class AccommodationDAO:
 
 
     def find(self, property: str, value: str):
-        statement = f'SELECT a.uuid, a.created_at, a.name, a.status, a.total_guests, a.single_beds, a.double_beds, a.min_nights, a.price, GROUP_CONCAT(am.amenitie) AS amenities FROM accommodation AS a JOIN amenities_per_accommodation AS apa ON a.uuid = apa.accommodation_uuid JOIN amenities AS am ON apa.amenitie_id = am.id WHERE a.{property} = ? GROUP BY a.uuid;'
+        statement = f'SELECT a.uuid, a.created_at, a.name, a.status, a.total_guests, a.single_beds, a.double_beds, a.min_nights, a.price, GROUP_CONCAT(am.amenitie) AS amenities FROM accommodation AS a LEFT JOIN amenities_per_accommodation AS apa ON a.uuid = apa.accommodation_uuid LEFT JOIN amenities AS am ON apa.amenitie_id = am.id WHERE a.{property} = ? GROUP BY a.uuid;'
         cursor = self.db.cursor()
         cursor.execute(statement,  (value,))
         result = cursor.fetchone()
@@ -39,14 +39,13 @@ class AccommodationDAO:
         return result
 
     def find_many(self) -> List:
-        statement = 'SELECT a.uuid, a.created_at, a.name, a.status, a.total_guests, a.single_beds, a.double_beds, a.min_nights, a.price, GROUP_CONCAT(am.amenitie) AS amenities FROM accommodation AS a JOIN amenities_per_accommodation AS apa ON a.uuid = apa.accommodation_uuid JOIN amenities AS am ON apa.amenitie_id = am.id GROUP BY a.uuid;'
+        statement = 'SELECT a.uuid, a.created_at, a.name, a.status, a.total_guests, a.single_beds, a.double_beds, a.min_nights, a.price, GROUP_CONCAT(am.amenitie) AS amenities FROM accommodation AS a LEFT JOIN amenities_per_accommodation AS apa ON a.uuid = apa.accommodation_uuid LEFT JOIN amenities AS am ON apa.amenitie_id = am.id GROUP BY a.uuid;'
         cursor = self.db.cursor()
         cursor.execute(statement)
         rows = cursor.fetchall()
 
         if len(rows) == 0:
             return []
-        click.echo(rows)
         return rows
 
 
