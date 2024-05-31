@@ -17,7 +17,6 @@ def get_accommodations():
     db = get_db()
     dao = AccommodationDAO(db)
     respository = AccommodationtRepository(dao)
-
     try:
         accommodations = [ accommodation.to_dict() for accommodation in respository.find_many() ]
         return jsonify(accommodations)
@@ -82,9 +81,19 @@ def update_accommodation():
     dao = AccommodationDAO(db)
     repository = AccommodationtRepository(dao)
     raw  = request.get_json()
-
+    data = {
+        'uuid': raw['uuid'],
+        'created_at': raw['createdAt'],
+        'name': raw['name'],
+        'total_guests': raw['totalGuests'],
+        'single_beds': raw['singleBeds'],
+        'double_beds': raw['doubleBeds'],
+        'min_nights': raw['minNights'],
+        'price': raw['price'],
+        'amenities': raw['amenities'],
+    }
     try:
-        accommodation = Accommodation.from_dict(raw)
+        accommodation = Accommodation.from_dict(data)
         repository.update(accommodation)
         return "UPDATED", 201
 
