@@ -2,7 +2,7 @@
 
 from http.client import HTTPException
 import os
-from flask import Flask, json, jsonify
+from flask import Flask, json
 from flask import render_template
 from .data.database import db
 

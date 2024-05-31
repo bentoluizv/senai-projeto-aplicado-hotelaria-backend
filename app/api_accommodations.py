@@ -23,7 +23,6 @@ def get_accommodations():
         return jsonify(accommodations)
 
     except ValidationError as err:
-        click.echo(err)
         abort(500)
 
 
@@ -33,7 +32,6 @@ def create_accommodation():
 
     if accommodation_json is None:
         abort(400)
-    click.echo(accommodation_json)
 
     db = get_db()
     dao = AccommodationDAO(db)
@@ -45,7 +43,6 @@ def create_accommodation():
         return 'CREATED', 201
 
     except ValueError as e:
-        click.echo(e)
         abort(400)
 
 
@@ -77,6 +74,7 @@ def delete_accommodation(uuid):
 
     except ValueError:
         abort(404)
+
 
 @bp.put('')
 def update_accommodation():
