@@ -1,5 +1,6 @@
 from flask import render_template
 from flask import Blueprint
+from markupsafe import escape
 
 from app.data.dao.GuestDAO import GuestDAO
 from app.data.database.db import get_db
@@ -23,8 +24,9 @@ def cadastro():
 
 @bp.get('/<document>/')
 def editar(document):
+    url_param = escape(document)
     db = get_db()
     dao = GuestDAO(db)
     repository = GuestRepository(dao)
-    guest = repository.find(document)
+    guest = repository.find(str(url_param))
     return render_template('updateGuest.html', guest=guest.to_dict())
