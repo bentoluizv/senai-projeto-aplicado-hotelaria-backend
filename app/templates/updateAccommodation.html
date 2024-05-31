@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block conteudo %}
+<div class="form_wrapper">
+    <form class="form">
+        <div class="row_group">
+            <div class="row">
+                <label for="name">Nome</label>
+                <input type="text" id="name" name="name" minlength="5" value="{{accommodation['name']}}" required>
+            </div>
+            <div class="row">
+                <label for="total_guests">Total Hóspedes</label>
+                <input type="number" id="total_guests" name="total_guests" value="{{accommodation['total_guests']}}"
+                    required>
+            </div>
+        </div>
+        <div class="row_group">
+            <div class="row">
+                <label for="single_beds">Cama Soleiro</label>
+                <input type="number" id="single_beds" name="single_beds" value="{{accommodation['single_beds']}}"
+                    required>
+            </div>
+            <div class="row">
+                <label for="double_beds">Cama Casal</label>
+                <input type="number" id="double_beds" name="double_beds" value="{{accommodation['double_beds']}}">
+            </div>
+        </div>
+        <div class="row_group">
+            <div class="row">
+                <label for="min_nights">Mínimo de Noites</label>
+                <input type="number" id="min_nights" name="min_nights" value="{{accommodation['min_nights']}}" required>
+            </div>
+            <div class="row">
+                <label for="price">Preço</label>
+                <input type="number" id="price" name="price" value="{{accommodation['price']}}" required>
+            </div>
+        </div>
+        <div class="amenitie_list">
+
+        </div>
+
+        <div class="btn_wrapper">
+            <button class="submit_btn" type="submit">Cadastrar</button>
+        </div>
+    </form>
+    <p class="err_msg hidden"></p>
+</div>
+
+<!-- <script src="{{url_for('static', filename='updateAccommodation.js')}}"></script> -->
+{% endblock %}
