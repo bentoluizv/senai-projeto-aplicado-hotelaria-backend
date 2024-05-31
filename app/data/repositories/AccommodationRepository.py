@@ -29,24 +29,31 @@ class AccommodationtRepository:
         if not exists:
             raise ValueError(f'Accommodation with {property} {value} not exists')
 
-        amenities = exists['amenities']
-        exists['amenities'] = amenities.split(',')
+        if (exists['amenities'] is not None):
+            amenities = exists['amenities']
+            exists['amenities'] = amenities.split(',')
+        else:
+            exists['amenities'] = []
+
         accommodation = Accommodation.from_dict(exists)
         return accommodation
 
 
-    def find_many(self) -> List[Accommodation]:
-        existing = self.dao.find_many()
-
-        if len(existing) == 0:
+    def find_many(self) :
+        rawAccommodations = self.dao.find_many()
+        if len(rawAccommodations) == 0:
             return []
 
         accommodations: List[Accommodation] = []
 
-        for unknown in existing:
-            amenities = unknown['amenities']
-            unknown['amenities'] = amenities.split(',')
-            accommodation = Accommodation.from_dict(unknown)
+        for raw in rawAccommodations:
+            if(raw['amenities'] is not None):
+                amenities = raw['amenities']
+                raw['amenities'] = amenities.split(',')
+            else:
+                raw['amenities'] = []
+
+            accommodation = Accommodation.from_dict(raw)
             accommodations.append(accommodation)
 
         return accommodations
@@ -59,7 +66,7 @@ class AccommodationtRepository:
             raise ValueError(f'Accommodation with document {accommodation.uuid} not exists')
 
         self.dao.update(
-            str(accommodation.uuid),
+            accommodation.uuid,
             {
                 'name': accommodation.name,
                 'status': accommodation.status,
