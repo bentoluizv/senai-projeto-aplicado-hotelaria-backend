@@ -67,13 +67,15 @@ def test_api_should_return_status_code_404_on_delete(client):
 def test_api_should_update_an_accommodation(client):
     data = {
         'uuid': 'bcadaaf8-a036-42d5-870c-de7b24792abf',
+        'createdAt': '',
         'name':'Quarto Individual',
         'status':'Disponivel',
-        'total_guests': '1',
-        'single_beds': '1',
-        'double_beds': '0',
-        'min_nights': '2',
+        'totalGuests': '1',
+        'singleBeds': '1',
+        'doubleBeds': '0',
+        'minNights': '2',
         'price':'180',
+        'amenities': ['wifi']
         }
 
     response = client.put(
@@ -89,13 +91,15 @@ def test_api_should_update_an_accommodation(client):
 def test_api_should_return_status_code_404_on_update(client):
     data = {
         'uuid': 'ff90f824-5938-4c1a-8ad1-d558dc776470',
+        'createdAt': '',
         'name':'Quarto Individual',
         'status':'Disponivel',
-        'total_guests': 1,
-        'single_beds': 1,
-        'double_beds': 0,
-        'min_nights': 2,
+        'totalGuests': 1,
+        'singleBeds': 1,
+        'doubleBeds': 0,
+        'minNights': 2,
         'price':  180,
+        'amenities': ['wifi']
         }
     response = client.put(
         '/api/acomodacoes',
