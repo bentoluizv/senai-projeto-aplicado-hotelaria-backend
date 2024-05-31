@@ -1,6 +1,8 @@
 from sqlite3 import Connection
 from typing import List
 
+import click
+
 
 class AccommodationDAO:
     def __init__(self, db: Connection):
@@ -14,14 +16,19 @@ class AccommodationDAO:
 
 
     def insert(self, accommodation) -> None:
-        statement = 'INSERT INTO accommodation (uuid, created_at, name, status, total_guests, single_beds, double_beds, min_nights, price) VALUES (:uuid, :created_at, :name, :status, :total_guests, :single_beds, :double_beds, :min_nights, :price);'
         cursor = self.db.cursor()
-        cursor.execute(statement, accommodation)
+        cursor.execute('INSERT INTO accommodation (uuid, created_at, name, status, total_guests, single_beds, double_beds, min_nights, price) VALUES (:uuid, :created_at, :name, :status, :total_guests, :single_beds, :double_beds, :min_nights, :price);', accommodation)
+
+        for amenitie in accommodation['amenities']:
+            cursor.execute('SELECT id FROM amenities WHERE amenitie = ?',  (amenitie, ))
+            amenitie_id = cursor.fetchone()['id']
+            cursor.execute('INSERT INTO amenities_per_accommodation (accommodation_uuid, amenitie_id) VALUES (?, ?)', (accommodation['uuid'], amenitie_id))
+
         self.db.commit()
 
 
     def find(self, property: str, value: str):
-        statement = f'SELECT uuid, created_at, name, status, total_guests, single_beds, double_beds, min_nights, price FROM accommodation WHERE accommodation.{property} = ?;'
+        statement = f'SELECT a.uuid, a.created_at, a.name, a.status, a.total_guests, a.single_beds, a.double_beds, a.min_nights, a.price, GROUP_CONCAT(am.amenitie) AS amenities FROM accommodation AS a JOIN amenities_per_accommodation AS apa ON a.uuid = apa.accommodation_uuid JOIN amenities AS am ON apa.amenitie_id = am.id WHERE a.{property} = ? GROUP BY a.uuid;'
         cursor = self.db.cursor()
         cursor.execute(statement,  (value,))
         result = cursor.fetchone()
@@ -32,34 +39,32 @@ class AccommodationDAO:
         return result
 
     def find_many(self) -> List:
-        statement = 'SELECT uuid, created_at, name, status, total_guests, single_beds, double_beds, min_nights, price FROM accommodation;'
+        statement = 'SELECT a.uuid, a.created_at, a.name, a.status, a.total_guests, a.single_beds, a.double_beds, a.min_nights, a.price, GROUP_CONCAT(am.amenitie) AS amenities FROM accommodation AS a JOIN amenities_per_accommodation AS apa ON a.uuid = apa.accommodation_uuid JOIN amenities AS am ON apa.amenitie_id = am.id GROUP BY a.uuid;'
         cursor = self.db.cursor()
         cursor.execute(statement)
-        results = cursor.fetchall()
+        rows = cursor.fetchall()
 
-        if len(results) == 0:
+        if len(rows) == 0:
             return []
-
-        accommodations: List = [{
-            'uuid': result['uuid'],
-            'name': result['name'],
-            'status': result['status'],
-            'total_guests': result['total_guests'],
-            'single_beds': result['single_beds'],
-            'double_beds': result['double_beds'],
-            'min_nights': result['min_nights'],
-            'price': result['price'],
-            'created_at': result['created_at']
-            } for result in results]
-
-        return accommodations
+        click.echo(rows)
+        return rows
 
 
     def update(self, uuid: str, accommodation) -> None:
         statement = 'UPDATE accommodation SET name = ?, status = ?, total_guests = ?, single_beds = ?, double_beds = ?, min_nights = ?, price = ? WHERE uuid = ?;'
         cursor = self.db.cursor()
+
         cursor.execute(statement, (accommodation['name'], accommodation['status'],  accommodation['total_guests'],  accommodation['single_beds'],accommodation['double_beds'],accommodation['min_nights'],accommodation['price'],  uuid))
+
+        cursor.execute(f'DELETE FROM amenities_per_accommodation WHERE accommodation_uuid = ?', (uuid,))
+
+        for amenitie in accommodation['amenities']:
+            cursor.execute('SELECT id FROM amenities WHERE amenitie = ?',  (amenitie, ))
+            amenitie_id = cursor.fetchone()['id']
+            cursor.execute('INSERT INTO amenities_per_accommodation (accommodation_uuid, amenitie_id) VALUES (?, ?)', (uuid, str(amenitie_id)))
+
         self.db.commit()
+
 
     def delete(self, uuid: str):
         statement = 'DELETE FROM accommodation WHERE uuid = ?'

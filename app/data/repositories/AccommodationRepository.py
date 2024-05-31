@@ -1,4 +1,6 @@
 from typing import List
+
+import click
 from app.data.dao.AccommodationDAO import AccommodationDAO
 from app.entity.Accommodation import Accommodation
 
@@ -27,7 +29,10 @@ class AccommodationtRepository:
         if not exists:
             raise ValueError(f'Accommodation with {property} {value} not exists')
 
-        return Accommodation.from_dict(exists)
+        amenities = exists['amenities']
+        exists['amenities'] = amenities.split(',')
+        accommodation = Accommodation.from_dict(exists)
+        return accommodation
 
 
     def find_many(self) -> List[Accommodation]:
@@ -39,6 +44,8 @@ class AccommodationtRepository:
         accommodations: List[Accommodation] = []
 
         for unknown in existing:
+            amenities = unknown['amenities']
+            unknown['amenities'] = amenities.split(',')
             accommodation = Accommodation.from_dict(unknown)
             accommodations.append(accommodation)
 
@@ -61,6 +68,7 @@ class AccommodationtRepository:
                 'double_beds': accommodation.double_beds,
                 'min_nights': accommodation.min_nights,
                 'price': accommodation.price,
+                'amenities': accommodation.amenities
             })
 
 
