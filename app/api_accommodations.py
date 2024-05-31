@@ -42,6 +42,7 @@ def create_accommodation():
         return 'CREATED', 201
 
     except ValueError as e:
+        click.echo(e)
         abort(400)
 
 
