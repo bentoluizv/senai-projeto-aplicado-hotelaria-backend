@@ -1,7 +1,5 @@
 import json
 
-import pytest
-
 def test_api_get_guests(client):
     response = client.get('/api/hospedes')
     guests = json.loads(response.data)

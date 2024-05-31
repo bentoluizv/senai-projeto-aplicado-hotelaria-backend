@@ -1,8 +1,5 @@
 import json
 
-import pytest
-
-
 def test_api_should_get_all_accommodations(client):
     response = client.get('/api/acomodacoes')
     accommodations = json.loads(response.data)

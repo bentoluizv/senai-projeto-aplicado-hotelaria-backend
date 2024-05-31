@@ -1,5 +1,4 @@
 from pytest import fixture
-import pytest
 from app.data.dao.GuestDAO import GuestDAO
 from app.data.database.db import get_db
 

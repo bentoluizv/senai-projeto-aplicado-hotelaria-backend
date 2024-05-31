@@ -59,6 +59,7 @@ def test_repository_update(repository):
         'double_beds': '0',
         'min_nights': '2',
         'price':'180',
+        'amenities': ['ducha']
         }
     accommodation_to_update =  Accommodation.from_dict(accommodation_dto)
     repository.update(accommodation_to_update)
