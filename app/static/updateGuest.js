@@ -18,8 +18,10 @@ saveBtn.addEventListener("click", () => {
       "Content-Type": "application/json",
     },
   })
-    .then(() => {
-      window.location.href = "http://127.0.0.1:5000/hospedes";
+    .then((res) => {
+      if (res.status == 201) {
+        window.location.href = "http://127.0.0.1:5000/hospedes";
+      }
     })
     .catch((e) => {
       console.log(e);
@@ -34,8 +36,10 @@ deleteBtn.addEventListener("click", () => {
   fetch(`http://127.0.0.1:5000/api/hospedes/${form.elements.document.value}`, {
     method: "DELETE",
   })
-    .then(() => {
-      window.location.href = "http://127.0.0.1:5000/hospedes";
+    .then((res) => {
+      if (res.status == 200) {
+        window.location.href = "http://127.0.0.1:5000/hospedes";
+      }
     })
     .catch((e) => {
       console.log(e);
