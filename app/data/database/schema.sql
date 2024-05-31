@@ -35,9 +35,9 @@ CREATE TABLE IF NOT EXISTS amenities (
 CREATE TABLE IF NOT EXISTS amenities_per_accommodation (
     id                      INTEGER PRIMARY KEY AUTOINCREMENT,
     accommodation_uuid      TEXT NOT NULL,
-    amenitie_name            INTEGER NOT NULL,
-    FOREIGN KEY(accommodation_uuid) REFERENCES accommodation(uuid),
-    FOREIGN KEY(amenitie_name) REFERENCES amenities(amenitie)
+    amenitie_id             INTEGER NOT NULL,
+    FOREIGN KEY(accommodation_uuid) REFERENCES accommodation(uuid) ON DELETE CASCADE,
+    FOREIGN KEY(amenitie_id) REFERENCES amenities(id) ON DELETE CASCADE
 );
 
 
