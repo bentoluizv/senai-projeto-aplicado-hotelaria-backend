@@ -79,6 +79,8 @@ def create_app(test_config=None):
     app.register_blueprint(api_accommodations.bp)
     from . import api_amenities
     app.register_blueprint(api_amenities.bp)
+    from . import api_booking
+    app.register_blueprint(api_booking.bp)
 
 
     return app
