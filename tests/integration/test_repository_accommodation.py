@@ -39,8 +39,8 @@ def test_should_create_a_accommodation(repository):
 
 
 def test_should_return_one_accommodation_by_its_name(repository):
-    guest = repository.findBy("name", "Domo")
-    assert guest.uuid == 'bcadaaf8-a036-42d5-870c-de7b24792abf'
+    accommodation = repository.findBy("name", "Domo")
+    assert accommodation.uuid == 'bcadaaf8-a036-42d5-870c-de7b24792abf'
 
 
 def test_should_return_all_accommodations(repository):
