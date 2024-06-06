@@ -32,7 +32,9 @@ def test_should_serialize_correctly_to_an_equivalent_dict(guest_data):
 def test_should_serialize_correctly_to_a_json_equivalent(guest_data):
     guest = Guest.from_dict(guest_data)
     guest_json = guest.to_json()
-    assert guest_json == json.dumps(guest_data).replace(" ", "")
+    assert guest_json == json.dumps(
+        guest_data, separators=(",", ":"), ensure_ascii=False
+    )
 
 
 def test_should_raise_an_error_when_passing_created_at_with_a_string_not_in_iso_format(
