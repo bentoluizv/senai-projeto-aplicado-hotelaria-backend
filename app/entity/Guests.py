@@ -1,9 +1,9 @@
 from datetime import datetime
 
-from pydantic import Field, field_serializer, model_validator
+from pydantic import Field, model_validator
 
 from app.utils.is_valid_cpf import is_valid_cpf
-from app.utils.strict_model import StrictModel
+from app.utils.StrictModel import StrictModel
 
 
 class Guest(StrictModel):
@@ -23,12 +23,6 @@ class Guest(StrictModel):
 
     def to_json(self):
         return self.model_dump_json()
-
-    @model_validator(mode="before")
-    def transform_created_at_isoformat_string_to_datetime(cls, data):
-        data["created_at"] = datetime.fromisoformat(data["created_at"])
-
-        return data
 
     @model_validator(mode="before")
     def validate_document_if_cpf(cls, data):
@@ -51,7 +45,3 @@ class Guest(StrictModel):
             )
 
         return self
-
-    @field_serializer("created_at")
-    def serialize_created_at(self, created_at: datetime):
-        return created_at.isoformat()

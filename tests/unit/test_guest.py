@@ -1,4 +1,5 @@
 import json
+from datetime import datetime
 
 import pytest
 
@@ -13,8 +14,9 @@ def guest_data():
         "surname": "Doe",
         "phone": "4832395853",
         "country": "Brazil",
-        "created_at": "2024-05-22T10:56:45.439704",
+        "created_at": datetime.fromisoformat("2024-05-22T10:56:45.439704"),
     }
+
     yield data
 
 
@@ -31,10 +33,10 @@ def test_should_serialize_correctly_to_an_equivalent_dict(guest_data):
 
 def test_should_serialize_correctly_to_a_json_equivalent(guest_data):
     guest = Guest.from_dict(guest_data)
+    guest_data["created_at"] = guest_data["created_at"].isoformat()
+    data_json = json.dumps(guest_data, separators=(",", ":"))
     guest_json = guest.to_json()
-    assert guest_json == json.dumps(
-        guest_data, separators=(",", ":"), ensure_ascii=False
-    )
+    assert guest_json == data_json
 
 
 def test_should_raise_an_error_when_passing_created_at_with_a_string_not_in_iso_format(
@@ -52,7 +54,7 @@ def test_should_raise_an_error_when_passing_document_with_an_invalid_cpf(guest_d
 
 
 def test_should_raise_an_error_when_passing_any_property_as_an_empty_string(guest_data):
-    guest_data["document"] = ""
+    guest_data["name"] = ""
     with pytest.raises(ValueError):
         Guest.from_dict(guest_data)
 
