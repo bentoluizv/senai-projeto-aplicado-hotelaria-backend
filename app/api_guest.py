@@ -8,19 +8,17 @@ from app.data.database.db import get_db
 from app.data.repositories.GuestRepository import GuestRepository
 from app.entity.Guests import Guest
 
-
-bp = Blueprint('api_guest', __name__, url_prefix='/api/hospedes')
-
+bp = Blueprint("api_guest", __name__, url_prefix="/api/hospedes")
 
 
-@bp.get('')
+@bp.get("")
 def get_guests():
     db = get_db()
     dao = GuestDAO(db)
     respository = GuestRepository(dao)
 
     try:
-        guests = [ guest.to_dict() for guest in respository.find_many() ]
+        guests = [guest.to_dict() for guest in respository.find_many()]
         return jsonify(guests)
 
     except ValidationError as err:
@@ -28,13 +26,13 @@ def get_guests():
         abort(500)
 
 
-@bp.post('/cadastro')
+@bp.post("/cadastro")
 def create_guest():
     guests = request.get_json()
-    if guests is None:
+    if guests is None or guests == {}:
         abort(400)
     try:
-        guest =  Guest.from_dict(guests)
+        guest = Guest.from_dict(guests)
 
     except ValidationError as err:
         click.echo(err)
@@ -46,14 +44,14 @@ def create_guest():
 
     try:
         repository.insert(guest)
-        return 'CREATED', 201
+        return "CREATED", 201
 
     except ValueError as err:
         click.echo(err)
         abort(409, str(err))
 
 
-@bp.get('/<document>')
+@bp.get("/<document>")
 def get_guest(document):
     db = get_db()
     dao = GuestDAO(db)
@@ -61,7 +59,7 @@ def get_guest(document):
     url_param = escape(document)
 
     try:
-        guest = repository.find(str(url_param))
+        guest = repository.findBy("document", str(url_param))
         return guest.to_json()
 
     except ValueError as err:
@@ -69,7 +67,7 @@ def get_guest(document):
         abort(404)
 
 
-@bp.delete('/<document>')
+@bp.delete("/<document>")
 def delete_guest(document):
     db = get_db()
     dao = GuestDAO(db)
@@ -78,18 +76,19 @@ def delete_guest(document):
 
     try:
         repository.delete(str(url_param))
-        return 'DELETED', 200
+        return "DELETED", 200
 
     except ValueError as err:
         click.echo(err)
         abort(404)
 
-@bp.put('')
+
+@bp.put("")
 def update_guest():
     db = get_db()
     dao = GuestDAO(db)
     repository = GuestRepository(dao)
-    raw  = request.get_json()
+    raw = request.get_json()
 
     try:
         guest = Guest.from_dict(raw)
