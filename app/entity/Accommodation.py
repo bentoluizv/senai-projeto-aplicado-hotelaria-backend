@@ -4,12 +4,11 @@ from uuid import UUID, uuid4
 
 from pydantic import (
     Field,
-    field_serializer,
     field_validator,
     model_validator,
 )
 
-from app.utils.strict_model import StrictModel
+from app.utils.StrictModel import StrictModel
 
 
 class Accommodation(StrictModel):
@@ -33,22 +32,6 @@ class Accommodation(StrictModel):
 
     def to_json(self):
         return self.model_dump_json()
-
-    @model_validator(mode="before")
-    def validate_input_data_params(cls, data):
-        parsed_data = {
-            "uuid": UUID(data["uuid"]),
-            "name": data["name"],
-            "status": data["status"],
-            "total_guests": int(data["total_guests"]),
-            "single_beds": int(data["single_beds"]),
-            "double_beds": int(data["double_beds"]),
-            "min_nights": int(data["min_nights"]),
-            "price": int(data["price"]),
-            "created_at": datetime.fromisoformat(data["created_at"]),
-            "amenities": data["amenities"],
-        }
-        return parsed_data
 
     @model_validator(mode="after")
     def validade_name_is_not_an_empty_strings(self):
@@ -88,17 +71,3 @@ class Accommodation(StrictModel):
                 "Accommodation must have at least one type of bed available"
             )
         return self
-
-    @field_serializer("created_at")
-    def serialize_created_at(self, created_at: datetime):
-        return created_at.isoformat()
-
-    @field_serializer("uuid")
-    def serialize_uuid(self, uuid):
-        return str(uuid)
-
-    @field_serializer(
-        "total_guests", "single_beds", "double_beds", "min_nights", "price"
-    )
-    def serialize_interger_properties_to_str(self, value):
-        return str(value)
