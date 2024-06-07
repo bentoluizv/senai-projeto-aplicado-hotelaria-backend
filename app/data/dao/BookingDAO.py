@@ -61,7 +61,7 @@ class BookingDAO:
         guest = cursor.fetchone()
 
         cursor.execute(
-            "SELECT uuid, created_at, name, status, total_guests, single_beds, double_beds, min_nights, price FROM accommodation WHERE accommodation.uuid = ?",
+            "SELECT a.uuid, a.created_at, a.name, a.status, a.total_guests, a.single_beds, a.double_beds, a.min_nights, a.price, GROUP_CONCAT(am.amenitie) AS amenities FROM accommodation AS a LEFT JOIN amenities_per_accommodation AS apa ON a.uuid = apa.accommodation_uuid LEFT JOIN amenities AS am ON apa.amenitie_id = am.id WHERE a.uuid = ? GROUP BY a.uuid;",
             (accommodation_uuid,),
         )
         accommodation = cursor.fetchone()
@@ -90,6 +90,7 @@ class BookingDAO:
                 "double_beds": accommodation["double_beds"],
                 "min_nights": accommodation["min_nights"],
                 "price": accommodation["price"],
+                "amenities": accommodation["amenities"],
             },
         }
 
@@ -117,7 +118,7 @@ class BookingDAO:
             guest = cursor.fetchone()
 
             cursor.execute(
-                "SELECT uuid, created_at, name, status, total_guests, single_beds, double_beds, min_nights, price FROM accommodation WHERE accommodation.uuid = ?",
+                "SELECT a.uuid, a.created_at, a.name, a.status, a.total_guests, a.single_beds, a.double_beds, a.min_nights, a.price, GROUP_CONCAT(am.amenitie) AS amenities FROM accommodation AS a LEFT JOIN amenities_per_accommodation AS apa ON a.uuid = apa.accommodation_uuid LEFT JOIN amenities AS am ON apa.amenitie_id = am.id WHERE a.uuid = ? GROUP BY a.uuid;",
                 (accommodation_uuid,),
             )
             accommodation = cursor.fetchone()
@@ -145,6 +146,7 @@ class BookingDAO:
                     "double_beds": accommodation["double_beds"],
                     "min_nights": accommodation["min_nights"],
                     "price": accommodation["price"],
+                    "amenities": accommodation["amenities"],
                 },
             }
             bookings.append(data)
