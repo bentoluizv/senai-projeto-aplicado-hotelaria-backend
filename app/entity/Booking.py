@@ -36,7 +36,7 @@ class Booking(StrictModel):
     def validate_status(cls, value):
         expected_statuses = [
             "Aguardando Check-In",
-            "Reserva Ativa",
+            "Ativa",
             "Aguardando Check-Out",
             "Finalizada",
         ]
