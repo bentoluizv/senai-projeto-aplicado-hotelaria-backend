@@ -5,11 +5,38 @@
     <select class="resource_menu" name="resource" id="resource">
         <option>Reserva</option>
         <option>Hóspede</option>
-    </select>
+    </select> 
     <input class="search_field" name="search" id="search" placeholder="Faça sua busca..."></textarea>
     <button disabled class="search_btn">Procurar</button>
 </div>
+{% if rows %}
+<div class="table_wrapper">
+<table>
+    <thead>
+        <td>uuid</td>
+        <td>acomadação id</td>
+ 
+    </thead>
+    <tbody id="table_content">
+    {% for cell in rows %}
+    <tr class="table_row">
+        <td id="uuid" class="cell hidden">{{ cell["uuid"] }}</td>
+        <td class="cell">{{ cell["accommodation_uuid"] }}</td>        
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% else %}
+    <div class="wrapper">
+        <p>Nenhuma reserva encontrado no banco de dados</p>
+   
+</div>
+{% endif %}
 <div class="booking_btn_wrapper">
     <button disabled class="booking_btn">Faça uma reserva!</button>
 </div>
+
+<script src="{{url_for('static', filename='booking.js')}}"></script>
+
+</script>
 {% endblock %}

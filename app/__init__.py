@@ -80,6 +80,8 @@ def create_app(test_config=None):
     from . import api_amenities
     app.register_blueprint(api_amenities.bp)
     from . import api_booking
+    from . import booking
+    app.register_blueprint(booking.bp)
     app.register_blueprint(api_booking.bp)
 
 
