@@ -66,7 +66,11 @@ class Accommodation(StrictModel):
 
     @model_validator(mode="after")
     def validate_amount_of_beds(self):
-        if self.double_beds <= 0 and self.single_beds <= 0:
+        if (
+            self.name != "Estacionamento para overlanders"
+            and self.double_beds <= 0
+            and self.single_beds <= 0
+        ):
             raise ValueError(
                 "Accommodation must have at least one type of bed available"
             )
