@@ -38,6 +38,7 @@ def test_should_select_a_booking(booking_dao):
     assert booking["check_in"] == "2024-06-15T08:30:00"
     assert booking["guest"]["name"] == "Bento Luiz"
     assert booking["accommodation"]["name"] == "Estacionamento para overlanders"
+    assert booking["accommodation"]["amenities"]
 
 
 def test_should_select_all_bookings(booking_dao):
