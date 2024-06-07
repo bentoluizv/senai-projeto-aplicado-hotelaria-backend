@@ -7,26 +7,26 @@ from app.data.dao.BookingDAO import BookingDAO
 from app.data.database.db import get_db
 from app.data.repositories.BookingRepository import BookingRepository
 from app.entity.Booking import Booking
+from app.utils.transform import transform
+
+bp = Blueprint("api_booking", __name__, url_prefix="/api/reservas")
 
 
-bp = Blueprint('api_booking', __name__, url_prefix='/api/reservas')
-
-
-@bp.get('')
+@bp.get("")
 def get_bookings():
     db = get_db()
     dao = BookingDAO(db)
     respository = BookingRepository(dao)
 
     try:
-        bookings = [ booking.to_dict() for booking in respository.find_many() ]
+        bookings = [booking.to_dict() for booking in respository.find_many()]
         return jsonify(bookings)
 
-    except ValidationError as err:
+    except ValidationError:
         abort(500)
 
 
-@bp.post('/cadastro')
+@bp.post("/cadastro")
 def create_booking():
     booking_json = request.get_json()
 
@@ -38,16 +38,16 @@ def create_booking():
     repository = BookingRepository(dao)
 
     try:
-        booking =  Booking.from_dict(booking_json)
+        booking = Booking.from_dict(transform(booking_json))
         repository.insert(booking)
-        return 'CREATED', 201
+        return "CREATED", 201
 
     except ValueError as e:
         click.echo(e)
         abort(400)
 
 
-@bp.get('/<uuid>')
+@bp.get("/<uuid>")
 def get_accommodation(uuid):
     db = get_db()
     dao = BookingDAO(db)
@@ -62,7 +62,7 @@ def get_accommodation(uuid):
         abort(404)
 
 
-@bp.delete('/<uuid>')
+@bp.delete("/<uuid>")
 def delete_accommodation(uuid):
     db = get_db()
     dao = BookingDAO(db)
@@ -71,21 +71,21 @@ def delete_accommodation(uuid):
 
     try:
         repository.delete(str(url_param))
-        return 'DELETED', 200
+        return "DELETED", 200
 
     except ValueError:
         abort(404)
 
 
-@bp.put('')
+@bp.put("")
 def update_accommodation():
     db = get_db()
     dao = BookingDAO(db)
     repository = BookingRepository(dao)
-    booking_json  = request.get_json()
+    booking_json = request.get_json()
 
     try:
-        booking = Booking.from_dict(booking_json)
+        booking = Booking.from_dict(transform(booking_json))
         repository.update(booking)
         return "UPDATED", 201
 
