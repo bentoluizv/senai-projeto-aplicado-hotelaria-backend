@@ -23,7 +23,7 @@ class AccommodationtRepository:
 
         accommodation_dict = accommodation.to_dict()
         accommodation_dict["uuid"] = str(accommodation_dict["uuid"])
-        accommodation_dict["created_at"] = accommodation_dict["created_at"].isoformat()
+        accommodation_dict["created_at"] = accommodation.formatted_created_at()
 
         self.dao.insert(accommodation_dict)
 

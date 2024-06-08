@@ -7,7 +7,7 @@ from app.data.dao.GuestDAO import GuestDAO
 from app.data.database.db import get_db
 from app.data.repositories.GuestRepository import GuestRepository
 from app.entity.Guests import Guest
-
+from app.utils.transform import transform
 bp = Blueprint("api_guest", __name__, url_prefix="/api/hospedes")
 
 
@@ -89,9 +89,17 @@ def update_guest():
     dao = GuestDAO(db)
     repository = GuestRepository(dao)
     raw = request.get_json()
+    data = {   
+        'document': raw['document'],
+        'name': raw['name'],
+        'surname': raw['surname'],
+        'phone': raw['phone'],
+        'country': raw['country'],
+        'created_at': raw['created_at']
+    }
 
     try:
-        guest = Guest.from_dict(raw)
+        guest = Guest.from_dict(transform(data))
         repository.update(guest)
         return "UPDATED", 201
 

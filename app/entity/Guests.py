@@ -24,6 +24,9 @@ class Guest(StrictModel):
     def to_json(self):
         return self.model_dump_json()
 
+    def formatted_created_at(self):
+        return self.created_at.strftime('%Y-%m-%d %H:%M:%S')       
+
     @model_validator(mode="before")
     def validate_document_if_cpf(cls, data):
         if not is_valid_cpf(data["document"]):
