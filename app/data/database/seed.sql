@@ -1,9 +1,9 @@
 INSERT INTO guest (document, created_at, name, surname, country, phone)
        VALUES
-            ("00157624242", "2024-03-15T10:30:00", "Bento Luiz", "Machado da Silva Neto", "Brazil", "48992054211"),
-            ("17323163927", "2024-03-16T10:30:00", "Fernando", "Oda", "Brazil", "48999766022"),
-            ("71807137910", "2024-03-16T10:50:00", "Guilherme", "Oda", "Brazil", "48991696813"),
-            ("65922869973", "2024-01-12T10:00:00", "Valério", "Piana", "Brazil", "48932395808");
+            ("00157624242", "2024-03-15T10:30:00", "Bento", "Rocha", "Brazil", "48xxxxxxxxx"),
+            ("17323163927", "2024-03-16T10:30:00", "Fernando", "Salim", "Brazil", "48xxxxxxxxx"),
+            ("71807137910", "2024-03-16T10:50:00", "Julio", "Silva", "Brazil", "48xxxxxxxxx"),
+            ("65922869973", "2024-01-12T10:00:00", "Valério", "Pena", "Brazil", "48xxxxxxxxx");
 
 INSERT INTO accommodation (uuid, created_at, status, name, total_guests, single_beds, double_beds, min_nights, price)
        VALUES
