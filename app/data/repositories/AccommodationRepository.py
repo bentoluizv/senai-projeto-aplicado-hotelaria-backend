@@ -21,6 +21,13 @@ class AccommodationtRepository:
                 f"Accommodation with document {accommodation.uuid} already exists"
             )
 
+        exists = self.dao.find("name", str(accommodation.name))
+
+        if exists:
+            raise ValueError(
+                f"Accommodation with document {accommodation.name} already exists"
+            )        
+
         accommodation_dict = accommodation.to_dict()
         accommodation_dict["uuid"] = str(accommodation_dict["uuid"])
         accommodation_dict["created_at"] = accommodation.formatted_created_at()

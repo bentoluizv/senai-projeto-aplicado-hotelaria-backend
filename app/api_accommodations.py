@@ -44,8 +44,10 @@ def create_accommodation():
         return "CREATED", 201
 
     except ValueError as e:
-        click.echo(e)
-        abort(400)
+        click.echo(e)   
+        if "Accommodation with document" in str(e):
+            abort(409, "Já existe uma acomdação com este nome!")
+        abort(400)    
 
 
 @bp.get("/<uuid>")

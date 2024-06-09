@@ -13,25 +13,31 @@
 <div class="table_wrapper">
 <table>
     <thead>
-        <td>uuid</td>
-        <td>acomadação id</td>
- 
+        <td>Hóspede</td>
+        <td>Sobrenome</td>
+        <td>Telefone</td>
+        <td>Acomadação</td>
+        <td>Status</td>
+        <td>Check-in</td>
+        <td>Check-out</td>
     </thead>
     <tbody id="table_content">
     {% for cell in rows %}
     <tr class="table_row">
-        <td id="uuid" class="cell hidden">{{ cell["uuid"] }}</td>
-        <td class="cell">{{ cell["accommodation_uuid"] }}</td>        
+        <td class="cell" >{{ cell["guest"]["name"] }}</td>
+        <td class="cell" >{{ cell["guest"]["surname"] }}</td>
+        <td class="cell" >{{ cell["guest"]["phone"] }}</td>
+        <td class="cell">{{ cell["accommodation"]["name"] }}</td>     
+        <td class="cell">{{ cell["status"]}}</td>     
+        <td class="cell">{{ cell["check_in"]}}</td>  
+        <td class="cell">{{ cell["check_out"]}}</td>  
     </tr>
     {% endfor %}
     </tbody>
 </table>
-{% else %}
-    <div class="wrapper">
-        <p>Nenhuma reserva encontrado no banco de dados</p>
-   
 </div>
 {% endif %}
+
 <div class="booking_btn_wrapper">
     <button disabled class="booking_btn">Faça uma reserva!</button>
 </div>
