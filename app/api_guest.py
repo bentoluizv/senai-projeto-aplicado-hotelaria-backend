@@ -36,6 +36,8 @@ def create_guest():
 
     except ValidationError as err:
         click.echo(err)
+        if "The CPF used as a document is invalid" in str(err):
+            abort(409, "Digite um CPF válido!")
         abort(400)
 
     db = get_db()
