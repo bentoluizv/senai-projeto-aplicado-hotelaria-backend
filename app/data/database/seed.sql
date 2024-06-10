@@ -25,7 +25,7 @@ INSERT INTO amenities (amenitie)
             ("toalhas"),
             ("banheira");
 
-INSERT INTO amenities_per_accommodation (accommodation_uuid, amenitie_id)
+INSERT INTO amenities_per_accommodation (accommodation_id, amenitie_id)
        VALUES
             (1, 1),
             (1, 2),
@@ -59,7 +59,7 @@ INSERT INTO amenities_per_accommodation (accommodation_uuid, amenitie_id)
             (5, 7),
             (6, 5);
 
-INSERT INTO booking (uuid, created_at, status, check_in, check_out, document, accommodation_uuid)
+INSERT INTO booking (uuid, created_at, status, check_in, check_out, document, accommodation_id)
         VALUES
             ("e08f76e8-0e71-4a48-a85a-bf7e8f61479e", "2024-06-02T12:30:12", "Aguardando Check-In",  "2024-06-15T08:30:00", "2024-06-18T17:30:00", "00157624242", 6),
             ("92f2f5bb-6cac-4485-a43e-6927213f662f", "2024-06-05T12:30:12", "Aguardando Check-In", "2024-06-15T08:30:00", "2024-06-18T17:30:00", "17323163927", 3),
