@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS guest (
 );
 
 CREATE TABLE IF NOT EXISTS accommodation (
-    uuid                    TEXT PRIMARY KEY,
+    id                      INTEGER PRIMARY KEY AUTOINCREMENT,
     created_at              TEXT NOT NULL,
     name                    TEXT NOT NULL,
     status                  TEXT NOT NULL,
