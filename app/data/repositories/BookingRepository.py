@@ -32,12 +32,34 @@ class BookingRepository:
 
         self.dao.insert(booking_dto)
 
+
+    def findBy(self, property: str, value: str):
+        existing = self.dao.findBy(property, value)
+
+        bookings: List[Booking] = []
+        print("findby", existing)
+        for unknown in existing:
+            if unknown["accommodation"]["amenities"] is not None:
+                amenities = unknown["accommodation"]["amenities"]
+                unknown["accommodation"]["amenities"] = amenities.split(",")
+            else:
+                unknown["accommodation"]["amenities"] = []
+
+        booking = Booking.from_dict(transform(unknown))
+
+
+        bookings.append(booking)
+            
+        return bookings
+
+    '''
     def find(self, uuid: str):
         exists = self.dao.findBy("uuid", uuid)
 
         if not exists:
             raise ValueError(f"Reserva com  id {uuid} não está cadastrado")
 
+        print("print", exists)
         if exists["accommodation"]["amenities"] is not None:
             amenities = exists["accommodation"]["amenities"]
             exists["accommodation"]["amenities"] = amenities.split(",")
@@ -47,7 +69,7 @@ class BookingRepository:
         booking = Booking.from_dict(transform(exists))
 
         return booking
-
+    '''
     def find_many(self) -> List[Booking]:
         existing = self.dao.find_many()
 
@@ -65,6 +87,7 @@ class BookingRepository:
 
             booking = Booking.from_dict(transform(unknown))
             bookings.append(booking)
+            
         return bookings
 
     def update(self, booking: Booking):

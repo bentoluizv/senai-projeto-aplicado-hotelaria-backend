@@ -43,9 +43,14 @@ class BookingDAO:
     def findBy(self, property: str, value: str):
         cursor = self.db.cursor()
         cursor.execute(
-            f"SELECT uuid, status, created_at, check_in, check_out, document, accommodation_uuid FROM booking WHERE booking.{property} = ?;",
-            (value,),
+            #f"SELECT uuid, status, created_at, check_in, check_out, document, accommodation_uuid FROM booking WHERE booking.{property} = ?;",
+            #(value,),
+            f"SELECT uuid, status, created_at, check_in, check_out, document, accommodation_uuid FROM booking WHERE booking.{property} LIKE ?;",
+            (f"{value}%",),
+            
         )
+
+        
         booking = cursor.fetchone()
 
         if booking is None:
@@ -66,6 +71,8 @@ class BookingDAO:
         )
         accommodation = cursor.fetchone()
 
+        bookings = []
+        
         data = {
             "uuid": booking["uuid"],
             "status": booking["status"],
@@ -93,8 +100,11 @@ class BookingDAO:
                 "amenities": accommodation["amenities"],
             },
         }
-
-        return data
+        bookings.append(data)
+       
+        
+        print("teste de execução")
+        return bookings
 
     def find_many(self) -> List:
         statement = "SELECT uuid, status, created_at, check_in, check_out, document, accommodation_uuid FROM booking"
@@ -150,6 +160,7 @@ class BookingDAO:
                 },
             }
             bookings.append(data)
+        print("teste de execução")
         return bookings
 
     def update(self, uuid: str, booking) -> None:
