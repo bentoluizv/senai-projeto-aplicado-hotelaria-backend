@@ -52,7 +52,7 @@ class BookingRepository:
             
         return bookings
 
-    '''
+    
     def find(self, uuid: str):
         exists = self.dao.findBy("uuid", uuid)
 
@@ -69,7 +69,7 @@ class BookingRepository:
         booking = Booking.from_dict(transform(exists))
 
         return booking
-    '''
+    
     def find_many(self) -> List[Booking]:
         existing = self.dao.find_many()
 
