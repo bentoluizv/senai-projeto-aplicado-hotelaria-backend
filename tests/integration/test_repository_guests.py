@@ -1,15 +1,13 @@
-from datetime import datetime
-
 import pytest
-from pytest import fixture
 
 from app.data.dao.GuestDAO import GuestDAO
 from app.data.database.db import get_db
 from app.data.repositories.GuestRepository import GuestRepository
 from app.entity.Guests import Guest
+from app.errors.NotFoundError import NotFoundError
 
 
-@fixture
+@pytest.fixture
 def repository(app):
     with app.app_context():
         db = get_db()
@@ -29,7 +27,7 @@ def test_repository_insert(repository):
         "surname": "Costa",
         "country": "Brazil",
         "phone": "4832395853",
-        "created_at": datetime.fromisoformat("2024-05-22T10:56:45.439704"),
+        "created_at": "2024-05-22T10:56:45.439704",
     }
 
     guest = Guest.from_dict(guest_dto)
@@ -40,7 +38,7 @@ def test_repository_insert(repository):
 
 def test_repository_select(repository):
     guest = repository.findBy("document", "00157624242")
-    assert guest.name == "Bento Luiz"
+    assert guest.name == "Bento"
 
 
 def test_repository_select_many(repository):
@@ -65,5 +63,5 @@ def test_repository_update(repository):
 
 def test_repository_delete(repository):
     repository.delete("00157624242")
-    with pytest.raises(ValueError):
+    with pytest.raises(NotFoundError):
         repository.findBy("document", "00157624242")

@@ -1,10 +1,10 @@
-from pytest import fixture
+import pytest
 
 from app.data.dao.GuestDAO import GuestDAO
 from app.data.database.db import get_db
 
 
-@fixture
+@pytest.fixture
 def guest_dao(app):
     with app.app_context():
         db = get_db()
@@ -19,10 +19,10 @@ def test_guest_dao_count(guest_dao):
 def test_guest_dao_insert(guest_dao):
     guest_dto = {
         "document": "03093331056",
-        "name": "Ana Claudia",
+        "name": "Ana",
         "surname": "Costa",
         "country": "Brazil",
-        "phone": "4832395853",
+        "phone": "48xxxxxxxx",
         "created_at": "2024-05-22T10:56:45.439704",
     }
 
@@ -33,7 +33,7 @@ def test_guest_dao_insert(guest_dao):
 
 def test_guest_dao_select(guest_dao):
     guest = guest_dao.findBy("document", "00157624242")
-    assert guest["name"] == "Bento Luiz"
+    assert guest["name"] == "Bento"
 
 
 def test_guest_dao_select_many(guest_dao):

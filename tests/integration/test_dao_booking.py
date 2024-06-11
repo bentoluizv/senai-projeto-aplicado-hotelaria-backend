@@ -1,10 +1,10 @@
-from pytest import fixture
+import pytest
 
 from app.data.dao.BookingDAO import BookingDAO
 from app.data.database.db import get_db
 
 
-@fixture
+@pytest.fixture
 def booking_dao(app):
     with app.app_context():
         db = get_db()
@@ -25,7 +25,7 @@ def test_should_create_a_new_booking(booking_dao):
         "uuid": "2a4d265b-2836-414a-9927-f0e1ca45fa84",
         "check_out": "2024-03-3T10:30:00.156342",
         "guest_document": "00157624242",
-        "accommodation_uuid": "bcadaaf8-a036-42d5-870c-de7b24792abf",
+        "accommodation_id": 1,
     }
 
     booking_dao.insert(data)
@@ -36,7 +36,7 @@ def test_should_create_a_new_booking(booking_dao):
 def test_should_select_a_booking(booking_dao):
     booking = booking_dao.findBy("document", "00157624242")
     assert booking["check_in"] == "2024-06-15T08:30:00"
-    assert booking["guest"]["name"] == "Bento Luiz"
+    assert booking["guest"]["name"] == "Bento"
     assert booking["accommodation"]["name"] == "Estacionamento para overlanders"
     assert booking["accommodation"]["amenities"]
 
@@ -44,7 +44,7 @@ def test_should_select_a_booking(booking_dao):
 def test_should_select_all_bookings(booking_dao):
     bookings = booking_dao.find_many()
     assert len(bookings) == 4
-    assert bookings[0]["guest"]["name"] == "Bento Luiz"
+    assert bookings[0]["guest"]["name"] == "Bento"
     assert bookings[0]["accommodation"]["name"] == "Estacionamento para overlanders"
 
 
@@ -54,7 +54,7 @@ def test_should_update_an_existing_booking(booking_dao):
         "check_in": "2024-06-15T08:30:00",
         "check_out": "2024-06-18T17:30:00",
         "guest_document": "00157624242",
-        "accommodation_uuid": "242d5665-aa90-429a-95d5-767515ff8ccc",
+        "accommodation_id": 3,
     }
     booking_dao.update("e08f76e8-0e71-4a48-a85a-bf7e8f61479e", data)
 
@@ -63,7 +63,7 @@ def test_should_update_an_existing_booking(booking_dao):
     assert booking["status"] == "Finalizada"
 
 
-def test_should_delet_an_existing_booking(booking_dao):
+def test_should_delete_an_existing_booking(booking_dao):
     booking_dao.delete("e08f76e8-0e71-4a48-a85a-bf7e8f61479e")
     booking = booking_dao.findBy("uuid", "e08f76e8-0e71-4a48-a85a-bf7e8f61479e")
     assert booking is None

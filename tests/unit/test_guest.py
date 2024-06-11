@@ -1,5 +1,4 @@
 import json
-from datetime import datetime
 
 import pytest
 
@@ -14,7 +13,7 @@ def guest_data():
         "surname": "Doe",
         "phone": "4832395853",
         "country": "Brazil",
-        "created_at": datetime.fromisoformat("2024-05-22T10:56:45.439704"),
+        "created_at": "2024-05-22T10:56:45.439704",
     }
 
     yield data
@@ -33,7 +32,7 @@ def test_should_serialize_correctly_to_an_equivalent_dict(guest_data):
 
 def test_should_serialize_correctly_to_a_json_equivalent(guest_data):
     guest = Guest.from_dict(guest_data)
-    guest_data["created_at"] = guest_data["created_at"].isoformat()
+    guest_data["created_at"] = guest_data["created_at"]
     data_json = json.dumps(guest_data, separators=(",", ":"))
     guest_json = guest.to_json()
     assert guest_json == data_json

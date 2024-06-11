@@ -41,9 +41,9 @@ def test_should_return_one_accommodation_by_its_uuid(accommodation_dao):
 
 
 def test_should_return_all_accommodations(accommodation_dao):
-    res = accommodation_dao.find_many()
-    assert len(res) == 6
-    assert isinstance(res[0]["amenities"], list)
+    data = accommodation_dao.find_many()
+    assert len(data) == 6
+    assert data[0]["amenities"]
 
 
 def test_should_update_one_accommodation(accommodation_dao):
