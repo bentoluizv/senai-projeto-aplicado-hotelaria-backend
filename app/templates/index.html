@@ -2,56 +2,20 @@
 
 {% block conteudo %}
 <div class="search_wrapper">
-    <select class="resource_menu" name="resource" id="resource">       
+    <select class="resource_menu" name="resource" id="resource">
         <option value="hospede">Hóspede</option>
         <option value="reserva">Reserva</option>
-    </select> 
-    <input class="search_field" name="search" id="search" list="documentList" placeholder="Faça sua busca...">
-    <datalist id="documentList"></datalist>
+    </select>
+    <input class="search_field" name="search" id="search" type="text" placeholder="Faça sua busca...">
     <button type="button" class="search_btn" id="search_btn">Procurar</button>
 </div>
-{% if rows %}
-<div class="table_wrapper">
-<table>
-    <thead>
-        <td>Nº Reserva</td>
-        <td>Documento</td>
-        <td>Hóspede</td>
-        <td>Sobrenome</td>
-        <td>Telefone</td>        
-        <td>Acomadação</td>
-        <td>Status</td>
-        <td>Check-in</td>
-        <td>Check-out</td>
-    </thead>
-    <tbody id="table_content">
-    {% for cell in rows %}
-    <tr class="table_row">
-        <td class="cell">{{ cell["uuid"]}}</td> 
-        <td class="cell" >{{ cell["guest"]["document"] }}</td>
-        <td class="cell" >{{ cell["guest"]["name"] }}</td>
-        <td class="cell" >{{ cell["guest"]["surname"] }}</td>
-        <td class="cell" >{{ cell["guest"]["phone"] }}</td>        
-        <td class="cell">{{ cell["accommodation"]["name"] }}</td>     
-        <td class="cell">{{ cell["status"]}}</td>     
-        <td class="cell">{{ cell["check_in"]}}</td>  
-        <td class="cell">{{ cell["check_out"]}}</td>  
-    </tr>
-    {% endfor %}
-    </tbody>
-</table>
-</div>
-{% else %}
-    <div class="wrapper">
-        <p>Nenhuma reserva encontrada no banco de dados</p>
-    </div>
-{% endif %}
+
 
 <div class="booking_btn_wrapper">
     <button class="booking_btn">Faça uma reserva!</button>
 </div>
 
-<script src="{{url_for('static', filename='booking.js')}}"></script>
+<script src="{{url_for('static', filename='index.js')}}"></script>
 
 </script>
 {% endblock %}
