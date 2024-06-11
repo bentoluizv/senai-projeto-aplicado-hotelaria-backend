@@ -1,5 +1,5 @@
 import click
-from flask import Blueprint, abort, jsonify, request
+from flask import Blueprint, Response, abort, jsonify, request
 from markupsafe import escape
 from pydantic import ValidationError
 
@@ -7,6 +7,7 @@ from app.data.dao.AccommodationDAO import AccommodationDAO
 from app.data.database.db import get_db
 from app.data.repositories.AccommodationRepository import AccommodationtRepository
 from app.entity.Accommodation import Accommodation
+from app.errors.NotFoundError import NotFoundError
 from app.utils.transform import transform
 
 bp = Blueprint("api_accommodation", __name__, url_prefix="/api/acomodacoes")
@@ -37,32 +38,36 @@ def create_accommodation():
     db = get_db()
     dao = AccommodationDAO(db)
     repository = AccommodationtRepository(dao)
-    click.echo(transform(accommodation_json))
+
     try:
         accommodation = Accommodation.from_dict(transform(accommodation_json))
         repository.insert(accommodation)
         return "CREATED", 201
 
     except ValueError as e:
-        click.echo(e)   
+        click.echo(e)
         if "Accommodation with document" in str(e):
             abort(409, "Já existe uma acomdação com este nome!")
-        abort(400)    
+
+        abort(400)
 
 
-@bp.get("/<uuid>")
-def get_accommodation(uuid):
+@bp.get("/<id>")
+def get_accommodation(id):
     db = get_db()
     dao = AccommodationDAO(db)
     repository = AccommodationtRepository(dao)
-    url_param = escape(uuid)
+    url_param = escape(id)
 
     try:
-        accommodation = repository.findBy("uuid", str(url_param))
+        accommodation = repository.findBy("id", str(url_param))
         return accommodation.to_json()
 
-    except ValueError:
-        abort(404)
+    except NotFoundError as err:
+        response = Response()
+        response.status_code = err.status
+        response.data = err.message
+        return response
 
 
 @bp.delete("/<uuid>")

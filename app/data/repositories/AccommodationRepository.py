@@ -1,9 +1,7 @@
-from datetime import datetime
-from typing import List
-from uuid import UUID
-
 from app.data.dao.AccommodationDAO import AccommodationDAO
 from app.entity.Accommodation import Accommodation
+from app.errors.AlreadyExists import AlreadyExistsError
+from app.errors.NotFoundError import NotFoundError
 
 
 class AccommodationtRepository:
@@ -14,75 +12,48 @@ class AccommodationtRepository:
         return self.dao.count()
 
     def insert(self, accommodation: Accommodation):
-        exists = self.dao.find("uuid", str(accommodation.uuid))
+        exists = self.dao.findBy("name", accommodation.name)
 
         if exists:
-            raise ValueError(
-                f"Accommodation with document {accommodation.uuid} already exists"
-            )
-
-        exists = self.dao.find("name", str(accommodation.name))
-
-        if exists:
-            raise ValueError(
-                f"Accommodation with document {accommodation.name} already exists"
-            )        
+            raise AlreadyExistsError()
 
         accommodation_dict = accommodation.to_dict()
-        accommodation_dict["uuid"] = str(accommodation_dict["uuid"])
-        accommodation_dict["created_at"] = accommodation.formatted_created_at()
-
         self.dao.insert(accommodation_dict)
 
     def findBy(self, property: str, value: str):
-        exists = self.dao.find(property, value)
+        exists = self.dao.findBy(property, value)
 
         if not exists:
-            raise ValueError(f"Accommodation with {property} {value} not exists")
+            raise NotFoundError()
 
-        if exists["amenities"] is not None:
-            amenities = exists["amenities"]
-            exists["amenities"] = amenities.split(",")
-        else:
-            exists["amenities"] = []
-
-        exists["uuid"] = UUID(exists["uuid"])
-        exists["created_at"] = datetime.fromisoformat(exists["created_at"])
         accommodation = Accommodation.from_dict(exists)
         return accommodation
 
     def find_many(self):
         rawAccommodations = self.dao.find_many()
-        if len(rawAccommodations) == 0:
-            return []
+        accommodations = []
 
-        accommodations: List[Accommodation] = []
+        if len(rawAccommodations) == 0:
+            return accommodations
 
         for raw in rawAccommodations:
-            if raw["amenities"] is not None:
-                amenities = raw["amenities"]
-                raw["amenities"] = amenities.split(",")
-            else:
-                raw["amenities"] = []
-
-            raw["uuid"] = UUID(raw["uuid"])
-            raw["created_at"] = datetime.fromisoformat(raw["created_at"])
-
             accommodation = Accommodation.from_dict(raw)
             accommodations.append(accommodation)
 
         return accommodations
 
     def update(self, accommodation: Accommodation):
-        exists = self.dao.find("uuid", str(accommodation.uuid))
+        if not accommodation.id:
+            raise ValueError()
+        exists = self.dao.findBy("id", str(accommodation.id))
 
         if not exists:
             raise ValueError(
-                f"Accommodation with document {accommodation.uuid} not exists"
+                f"Accommodation with document {accommodation.id} not exists"
             )
 
         self.dao.update(
-            str(accommodation.uuid),
+            str(accommodation.id),
             {
                 "name": accommodation.name,
                 "status": accommodation.status,
@@ -95,10 +66,10 @@ class AccommodationtRepository:
             },
         )
 
-    def delete(self, uuid: str):
-        exists = self.dao.find("uuid", uuid)
+    def delete(self, id: str):
+        exists = self.dao.findBy("id", id)
 
         if not exists:
-            raise ValueError(f"Accommodation with document {uuid} not exists")
+            raise NotFoundError()
 
-        self.dao.delete(uuid)
+        self.dao.delete(id)

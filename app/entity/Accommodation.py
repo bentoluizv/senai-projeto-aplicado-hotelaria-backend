@@ -1,6 +1,5 @@
 from datetime import datetime
 from typing import List
-from uuid import UUID, uuid4
 
 from pydantic import (
     Field,
@@ -12,7 +11,7 @@ from app.utils.StrictModel import StrictModel
 
 
 class Accommodation(StrictModel):
-    uuid: UUID = Field(default=uuid4())
+    id: int | None
     name: str
     status: str = Field(default="Disponível")
     total_guests: int
@@ -20,7 +19,7 @@ class Accommodation(StrictModel):
     double_beds: int
     min_nights: int = Field(default=2)
     price: int
-    created_at: datetime = Field(default=datetime.now())
+    created_at: str = Field(default=datetime.now().isoformat())
     amenities: List[str]
 
     @classmethod
@@ -33,8 +32,8 @@ class Accommodation(StrictModel):
     def to_json(self):
         return self.model_dump_json()
 
-    def formatted_created_at(self):
-        return self.created_at.strftime('%Y-%m-%d %H:%M:%S')    
+    # def formatted_created_at(self):
+    #     return self.created_at.strftime("%Y-%m-%d %H:%M:%S")
 
     @model_validator(mode="after")
     def validade_name_is_not_an_empty_strings(self):
