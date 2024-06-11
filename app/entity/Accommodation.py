@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import List
 
 from pydantic import (
     Field,
@@ -20,7 +19,7 @@ class Accommodation(StrictModel):
     min_nights: int = Field(default=2)
     price: int
     created_at: str = Field(default=datetime.now().isoformat())
-    amenities: List[str]
+    amenities: list[str]
 
     @classmethod
     def from_dict(cls, data):

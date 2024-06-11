@@ -1,5 +1,5 @@
 from datetime import datetime
-from uuid import UUID, uuid4
+from uuid import uuid4
 
 from pydantic import (
     Field,
@@ -13,7 +13,7 @@ from app.utils.StrictModel import StrictModel
 
 
 class Booking(StrictModel):
-    uuid: UUID = Field(default=(uuid4()))
+    uuid: str = Field(default=(str(uuid4())))
     created_at: str = Field(default=datetime.now().isoformat())
     status: str = Field(default="Aguardando Check-in")
     check_in: str
