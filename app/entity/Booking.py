@@ -14,10 +14,10 @@ from app.utils.StrictModel import StrictModel
 
 class Booking(StrictModel):
     uuid: UUID = Field(default=(uuid4()))
-    created_at: datetime = Field(default=datetime.now())
+    created_at: str = Field(default=datetime.now().isoformat())
     status: str = Field(default="Aguardando Check-in")
-    check_in: datetime
-    check_out: datetime
+    check_in: str
+    check_out: str
     guest: Guest
     accommodation: Accommodation
 

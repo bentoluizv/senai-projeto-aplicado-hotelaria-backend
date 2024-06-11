@@ -32,9 +32,6 @@ class Accommodation(StrictModel):
     def to_json(self):
         return self.model_dump_json()
 
-    # def formatted_created_at(self):
-    #     return self.created_at.strftime("%Y-%m-%d %H:%M:%S")
-
     @model_validator(mode="after")
     def validade_name_is_not_an_empty_strings(self):
         if not self.name:
