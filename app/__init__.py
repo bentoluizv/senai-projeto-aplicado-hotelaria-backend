@@ -75,17 +75,21 @@ def create_app(test_config=None):
     db.init_app(app)
 
     from . import api_guest, guests
+
     app.register_blueprint(guests.bp)
     app.register_blueprint(api_guest.bp)
 
     from . import accommodations, api_accommodations
+
     app.register_blueprint(accommodations.bp)
     app.register_blueprint(api_accommodations.bp)
 
     from . import api_amenities
+
     app.register_blueprint(api_amenities.bp)
 
     from . import api_booking, booking
+
     app.register_blueprint(booking.bp)
     app.register_blueprint(api_booking.bp)
 
