@@ -2,6 +2,7 @@ const saveBtn = document.querySelector(".submit_btn");
 
 saveBtn.addEventListener("click", () => {
   const form = document.querySelector(".form");
+
   const data = {
     document: form.elements.document.value,
     name: form.elements.name.value,

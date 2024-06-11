@@ -5,7 +5,6 @@ submitBtn.addEventListener("click", () => {
 });
 
 const tableBody = document.getElementById("table_content");
-
 if (tableBody) {
   tableBody.addEventListener("click", (event) => {
     doc = event.target.parentNode.cells.namedItem("document").textContent;
