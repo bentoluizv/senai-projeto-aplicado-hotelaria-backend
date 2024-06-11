@@ -15,16 +15,25 @@ class AccommodationDAO:
         )
         return count
 
-    def insert(self, accommodation) -> None:
+    def insert(self, data):
         cursor = self.db.cursor()
         cursor.execute(
-            "INSERT INTO accommodation (created_at, name, status, total_guests, single_beds, double_beds, min_nights, price) VALUES (:created_at, :name, :status, :total_guests, :single_beds, :double_beds, :min_nights, :price);",
-            accommodation,
+            "INSERT INTO accommodation (created_at, name, status, total_guests, single_beds, double_beds, min_nights, price) VALUES (?, ?, ?, ?, ?, ?, ?, ?);",
+            (
+                data["created_at"],
+                data["name"],
+                data["status"],
+                data["total_guests"],
+                data["single_beds"],
+                data["double_beds"],
+                data["min_nights"],
+                data["price"],
+            ),
         )
 
         id = cursor.lastrowid
 
-        for amenitie in accommodation["amenities"]:
+        for amenitie in data["amenities"]:
             cursor.execute("SELECT id FROM amenities WHERE amenitie = ?", (amenitie,))
             amenitie_id = cursor.fetchone()["id"]
             cursor.execute(
@@ -43,12 +52,6 @@ class AccommodationDAO:
         if not result:
             return None
 
-        if result["amenities"] is not None:
-            amenities = result["amenities"]
-            result["amenities"] = amenities.split(",")
-        else:
-            result["amenities"] = []
-
         return result
 
     def find_many(self) -> List:
@@ -59,13 +62,6 @@ class AccommodationDAO:
 
         if len(rows) == 0:
             return []
-
-        for row in rows:
-            if row["amenities"] is not None:
-                amenities = row["amenities"]
-                row["amenities"] = amenities.split(",")
-            else:
-                row["amenities"] = []
 
         return rows
 

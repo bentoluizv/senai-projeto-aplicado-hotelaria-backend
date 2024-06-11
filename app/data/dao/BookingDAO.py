@@ -1,15 +1,4 @@
 from sqlite3 import Connection
-from typing import List, TypedDict
-
-
-class BookingDTO(TypedDict):
-    status: str
-    check_in: str
-    created_at: str
-    uuid: str
-    check_out: str
-    guest_document: str
-    accommodation_uuid: str
 
 
 class BookingDAO:
@@ -23,8 +12,8 @@ class BookingDAO:
         )
         return count
 
-    def insert(self, booking: BookingDTO) -> None:
-        statement = "INSERT INTO booking (uuid, created_at, status, check_in, check_out, document, accommodation_uuid) VALUES (?, ?, ?, ?, ?, ?, ?);"
+    def insert(self, booking):
+        statement = "INSERT INTO booking (uuid, created_at, status, check_in, check_out, document, accommodation_id) VALUES (?, ?, ?, ?, ?, ?, ?);"
         cursor = self.db.cursor()
         cursor.execute(
             statement,
@@ -35,7 +24,7 @@ class BookingDAO:
                 booking["check_in"],
                 booking["check_out"],
                 booking["guest_document"],
-                booking["accommodation_uuid"],
+                booking["accommodation_id"],
             ),
         )
         self.db.commit()
@@ -43,21 +32,17 @@ class BookingDAO:
     def findBy(self, property: str, value: str):
         cursor = self.db.cursor()
         cursor.execute(
-            #f"SELECT uuid, status, created_at, check_in, check_out, document, accommodation_uuid FROM booking WHERE booking.{property} = ?;",
-            #(value,),
-            f"SELECT uuid, status, created_at, check_in, check_out, document, accommodation_uuid FROM booking WHERE booking.{property} LIKE ?;",
-            (f"{value}%",),
-            
+            f"SELECT uuid, status, created_at, check_in, check_out, document, accommodation_id FROM booking WHERE booking.{property} = ?;",
+            (value,),
         )
 
-        
         booking = cursor.fetchone()
 
         if booking is None:
             return None
 
         guest_document = booking["document"]
-        accommodation_uuid = booking["accommodation_uuid"]
+        accommodation_id = booking["accommodation_id"]
 
         cursor.execute(
             "SELECT created_at, document, name, surname, country, phone FROM guest WHERE guest.document = ?",
@@ -66,13 +51,11 @@ class BookingDAO:
         guest = cursor.fetchone()
 
         cursor.execute(
-            "SELECT a.uuid, a.created_at, a.name, a.status, a.total_guests, a.single_beds, a.double_beds, a.min_nights, a.price, GROUP_CONCAT(am.amenitie) AS amenities FROM accommodation AS a LEFT JOIN amenities_per_accommodation AS apa ON a.uuid = apa.accommodation_uuid LEFT JOIN amenities AS am ON apa.amenitie_id = am.id WHERE a.uuid = ? GROUP BY a.uuid;",
-            (accommodation_uuid,),
+            "SELECT a.id, a.created_at, a.name, a.status, a.total_guests, a.single_beds, a.double_beds, a.min_nights, a.price, GROUP_CONCAT(am.amenitie) AS amenities FROM accommodation AS a LEFT JOIN amenities_per_accommodation AS apa ON a.id = apa.accommodation_id LEFT JOIN amenities AS am ON apa.amenitie_id = am.id WHERE a.id = ? GROUP BY a.id;",
+            (accommodation_id,),
         )
         accommodation = cursor.fetchone()
 
-        bookings = []
-        
         data = {
             "uuid": booking["uuid"],
             "status": booking["status"],
@@ -88,7 +71,7 @@ class BookingDAO:
                 "phone": guest["phone"],
             },
             "accommodation": {
-                "uuid": accommodation["uuid"],
+                "id": accommodation["id"],
                 "created_at": accommodation["created_at"],
                 "name": accommodation["name"],
                 "status": accommodation["status"],
@@ -100,14 +83,10 @@ class BookingDAO:
                 "amenities": accommodation["amenities"],
             },
         }
-        bookings.append(data)
-       
-        
-        print("teste de execução")
-        return bookings
+        return data
 
-    def find_many(self) -> List:
-        statement = "SELECT uuid, status, created_at, check_in, check_out, document, accommodation_uuid FROM booking"
+    def find_many(self):
+        statement = "SELECT uuid, status, created_at, check_in, check_out, document, accommodation_id FROM booking"
         cursor = self.db.cursor()
         cursor.execute(statement)
         results = cursor.fetchall()
@@ -115,23 +94,22 @@ class BookingDAO:
         bookings = []
 
         if len(results) == 0:
-            return []
+            return results
 
         for booking in results:
             guest_document = booking["document"]
-            accommodation_uuid = booking["accommodation_uuid"]
+            accommodation_id = booking["accommodation_id"]
 
-            cursor.execute(
+            guest = cursor.execute(
                 "SELECT created_at, document, name, surname, country, phone FROM guest WHERE guest.document = ?",
                 (guest_document,),
-            )
-            guest = cursor.fetchone()
+            ).fetchone()
 
-            cursor.execute(
-                "SELECT a.uuid, a.created_at, a.name, a.status, a.total_guests, a.single_beds, a.double_beds, a.min_nights, a.price, GROUP_CONCAT(am.amenitie) AS amenities FROM accommodation AS a LEFT JOIN amenities_per_accommodation AS apa ON a.uuid = apa.accommodation_uuid LEFT JOIN amenities AS am ON apa.amenitie_id = am.id WHERE a.uuid = ? GROUP BY a.uuid;",
-                (accommodation_uuid,),
-            )
-            accommodation = cursor.fetchone()
+            accommodation = cursor.execute(
+                "SELECT a.id, a.created_at, a.name, a.status, a.total_guests, a.single_beds, a.double_beds, a.min_nights, a.price, GROUP_CONCAT(am.amenitie) AS amenities FROM accommodation AS a LEFT JOIN amenities_per_accommodation AS apa ON a.id = apa.accommodation_id LEFT JOIN amenities AS am ON apa.amenitie_id = am.id WHERE a.id = ? GROUP BY a.id;",
+                (accommodation_id,),
+            ).fetchone()
+
             data = {
                 "uuid": booking["uuid"],
                 "status": booking["status"],
@@ -147,7 +125,7 @@ class BookingDAO:
                     "phone": guest["phone"],
                 },
                 "accommodation": {
-                    "uuid": accommodation["uuid"],
+                    "id": accommodation["id"],
                     "created_at": accommodation["created_at"],
                     "name": accommodation["name"],
                     "status": accommodation["status"],
@@ -160,11 +138,10 @@ class BookingDAO:
                 },
             }
             bookings.append(data)
-        print("teste de execução")
         return bookings
 
-    def update(self, uuid: str, booking) -> None:
-        statement = "UPDATE booking SET status = ?, check_in = ?, check_out = ?, document = ?,  accommodation_uuid = ? WHERE uuid = ?;"
+    def update(self, uuid: str, booking):
+        statement = "UPDATE booking SET status = ?, check_in = ?, check_out = ?, document = ?,  accommodation_id = ? WHERE uuid = ?;"
         cursor = self.db.cursor()
         cursor.execute(
             statement,
@@ -173,7 +150,7 @@ class BookingDAO:
                 booking["check_in"],
                 booking["check_out"],
                 booking["guest_document"],
-                booking["accommodation_uuid"],
+                booking["accommodation_id"],
                 uuid,
             ),
         )

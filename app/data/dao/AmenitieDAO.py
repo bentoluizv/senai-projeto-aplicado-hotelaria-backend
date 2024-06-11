@@ -1,5 +1,4 @@
 from sqlite3 import Connection
-from typing import List
 
 
 class AmenitieDAO:
@@ -26,13 +25,11 @@ class AmenitieDAO:
         result = cursor.fetchone()
 
         if result is None:
-            return
+            return None
 
-        return {
-            "amenitie": result["amenitie"],
-        }
+        return result
 
-    def find_many(self) -> List:
+    def find_many(self):
         statement = "SELECT amenitie FROM amenities;"
         cursor = self.db.cursor()
         cursor.execute(statement)
@@ -41,14 +38,7 @@ class AmenitieDAO:
         if len(results) == 0:
             return []
 
-        amenities: List = [
-            {
-                "amenitie": result["amenitie"],
-            }
-            for result in results
-        ]
-
-        return amenities
+        return results
 
     def delete(self, amenitie: str):
         statement = "DELETE FROM amenities WHERE amenitie = ?"
