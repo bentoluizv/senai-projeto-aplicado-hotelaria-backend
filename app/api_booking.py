@@ -1,5 +1,5 @@
-import click
-from flask import Blueprint, abort, jsonify, request
+from click import echo
+from flask import Blueprint, abort, jsonify, make_response, request
 from markupsafe import escape
 from pydantic import ValidationError
 
@@ -7,7 +7,8 @@ from app.data.dao.BookingDAO import BookingDAO
 from app.data.database.db import get_db
 from app.data.repositories.BookingRepository import BookingRepository
 from app.entity.Booking import Booking
-from app.utils.transform import transform
+from app.errors.AlreadyExists import AlreadyExistsError
+from app.errors.NotFoundError import NotFoundError
 
 bp = Blueprint("api_booking", __name__, url_prefix="/api/reservas")
 
@@ -20,10 +21,11 @@ def get_bookings():
 
     try:
         bookings = [booking.to_dict() for booking in respository.find_many()]
-        return jsonify(bookings)
+        return make_response(jsonify(bookings), 200)
 
-    except ValidationError:
-        abort(500)
+    except ValidationError as err:
+        echo(err)
+        return make_response(jsonify({"message": err.title}), 500)
 
 
 @bp.post("/cadastro")
@@ -38,13 +40,17 @@ def create_booking():
     repository = BookingRepository(dao)
 
     try:
-        booking = Booking.from_dict(transform(booking_json))
+        booking = Booking.from_dict(booking_json)
         repository.insert(booking)
-        return "CREATED", 201
+        return make_response("CREATED", 201)
 
-    except ValueError as e:
-        click.echo(e)
-        abort(400)
+    except AlreadyExistsError as err:
+        echo(err)
+        return make_response(jsonify({"message": err.message}), err.status)
+
+    except ValidationError as err:
+        echo(err)
+        return make_response(jsonify({"message": err.title}), 400)
 
 
 @bp.get("/<uuid>")
@@ -55,11 +61,12 @@ def get_accommodation(uuid):
     url_param = escape(uuid)
 
     try:
-        booking = repository.find(str(url_param))
-        return booking.to_json()
+        booking = repository.findBy("uuid", str(url_param))
+        return make_response(booking.to_json(), 200)
 
-    except ValueError:
-        abort(404)
+    except NotFoundError as err:
+        echo(err)
+        return make_response(jsonify({"message": err.message}), 404)
 
 
 @bp.delete("/<uuid>")
@@ -71,10 +78,11 @@ def delete_accommodation(uuid):
 
     try:
         repository.delete(str(url_param))
-        return "DELETED", 200
+        return make_response("DELETED", 200)
 
-    except ValueError:
-        abort(404)
+    except NotFoundError as err:
+        echo(err)
+        return make_response(jsonify({"message": err.message}), err.status)
 
 
 @bp.put("")
@@ -85,14 +93,14 @@ def update_accommodation():
     booking_json = request.get_json()
 
     try:
-        booking = Booking.from_dict(transform(booking_json))
+        booking = Booking.from_dict(booking_json)
         repository.update(booking)
-        return "UPDATED", 201
+        return make_response("UPDATED", 200)
 
     except ValidationError as err:
-        click.echo(err)
-        abort(400)
+        echo(err)
+        return make_response(jsonify({"message": err.title}), 400)
 
-    except ValueError as err:
-        click.echo(err)
-        abort(404)
+    except NotFoundError as err:
+        echo(err)
+        return make_response(jsonify({"message": err.message}), err.status)

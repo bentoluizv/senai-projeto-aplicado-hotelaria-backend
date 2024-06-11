@@ -1,5 +1,4 @@
-import click
-from flask import Blueprint, abort, jsonify, request
+from flask import Blueprint, jsonify, make_response, request
 from markupsafe import escape
 from pydantic import ValidationError
 
@@ -7,7 +6,9 @@ from app.data.dao.GuestDAO import GuestDAO
 from app.data.database.db import get_db
 from app.data.repositories.GuestRepository import GuestRepository
 from app.entity.Guests import Guest
-from app.utils.transform import transform
+from app.errors.AlreadyExists import AlreadyExistsError
+from app.errors.NotFoundError import NotFoundError
+
 bp = Blueprint("api_guest", __name__, url_prefix="/api/hospedes")
 
 
@@ -19,38 +20,34 @@ def get_guests():
 
     try:
         guests = [guest.to_dict() for guest in respository.find_many()]
-        return jsonify(guests)
+        return make_response(jsonify(guests), 200)
 
     except ValidationError as err:
-        click.echo(err)
-        abort(500)
+        return make_response(jsonify(err.errors), 500)
 
 
 @bp.post("/cadastro")
 def create_guest():
-    guests = request.get_json()
-    if guests is None or guests == {}:
-        abort(400)
-    try:
-        guest = Guest.from_dict(guests)
-
-    except ValidationError as err:
-        click.echo(err)
-        if "The CPF used as a document is invalid" in str(err):
-            abort(409, "Digite um CPF válido!")
-        abort(400)
-
     db = get_db()
     dao = GuestDAO(db)
     repository = GuestRepository(dao)
+    guests = request.get_json()
 
     try:
+        guest = Guest.from_dict(guests)
         repository.insert(guest)
-        return "CREATED", 201
+        return make_response("CREATED", 201)
 
-    except ValueError as err:
-        click.echo(err)
-        abort(409, str(err))
+    except KeyError as err:
+        return make_response(
+            jsonify({"message": f"validation error: {err} is not a valid cpf"}), 400
+        )
+
+    except ValidationError as err:
+        return make_response(jsonify({"message": err.title}), 400)
+
+    except AlreadyExistsError as err:
+        return make_response(jsonify({"message": err.message}), err.status)
 
 
 @bp.get("/<document>")
@@ -62,11 +59,10 @@ def get_guest(document):
 
     try:
         guest = repository.findBy("document", str(url_param))
-        return guest.to_json()
+        return make_response(guest.to_json(), 200)
 
-    except ValueError as err:
-        click.echo(err)
-        abort(404)
+    except NotFoundError as err:
+        return make_response(jsonify({"message": err.message}), err.status)
 
 
 @bp.delete("/<document>")
@@ -78,11 +74,10 @@ def delete_guest(document):
 
     try:
         repository.delete(str(url_param))
-        return "DELETED", 200
+        return make_response("DELETED", 200)
 
-    except ValueError as err:
-        click.echo(err)
-        abort(404)
+    except NotFoundError as err:
+        return make_response(jsonify({"message": err.message}), err.status)
 
 
 @bp.put("")
@@ -91,24 +86,21 @@ def update_guest():
     dao = GuestDAO(db)
     repository = GuestRepository(dao)
     raw = request.get_json()
-    data = {   
-        'document': raw['document'],
-        'name': raw['name'],
-        'surname': raw['surname'],
-        'phone': raw['phone'],
-        'country': raw['country'],
-        'created_at': raw['created_at']
+    data = {
+        "document": raw["document"],
+        "name": raw["name"],
+        "surname": raw["surname"],
+        "phone": raw["phone"],
+        "country": raw["country"],
     }
 
     try:
-        guest = Guest.from_dict(transform(data))
+        guest = Guest.from_dict(data)
         repository.update(guest)
-        return "UPDATED", 201
+        return make_response("UPDATED", 201)
 
     except ValidationError as err:
-        click.echo(err)
-        abort(400)
+        return make_response(jsonify({"message": err.title}), 400)
 
-    except ValueError as err:
-        click.echo(err)
-        abort(404)
+    except NotFoundError as err:
+        return make_response(jsonify({"message": err.message}), err.status)

@@ -1,5 +1,5 @@
-import click
-from flask import Blueprint, Response, abort, jsonify, request
+from click import echo
+from flask import Blueprint, jsonify, make_response, request
 from markupsafe import escape
 from pydantic import ValidationError
 
@@ -7,8 +7,8 @@ from app.data.dao.AccommodationDAO import AccommodationDAO
 from app.data.database.db import get_db
 from app.data.repositories.AccommodationRepository import AccommodationtRepository
 from app.entity.Accommodation import Accommodation
+from app.errors.AlreadyExists import AlreadyExistsError
 from app.errors.NotFoundError import NotFoundError
-from app.utils.transform import transform
 
 bp = Blueprint("api_accommodation", __name__, url_prefix="/api/acomodacoes")
 
@@ -18,38 +18,38 @@ def get_accommodations():
     db = get_db()
     dao = AccommodationDAO(db)
     respository = AccommodationtRepository(dao)
+
     try:
         accommodations = [
             accommodation.to_dict() for accommodation in respository.find_many()
         ]
-        return jsonify(accommodations)
+        return make_response(jsonify(accommodations), 200)
 
-    except ValidationError:
-        abort(500)
+    except ValidationError as err:
+        echo(err)
+        return make_response({"message": err.title}, 500)
 
 
 @bp.post("/cadastro")
 def create_accommodation():
     accommodation_json = request.get_json()
 
-    if accommodation_json is None:
-        abort(400)
-
     db = get_db()
     dao = AccommodationDAO(db)
     repository = AccommodationtRepository(dao)
 
     try:
-        accommodation = Accommodation.from_dict(transform(accommodation_json))
+        accommodation = Accommodation.from_dict(accommodation_json)
         repository.insert(accommodation)
-        return "CREATED", 201
+        return make_response("CREATED", 201)
 
-    except ValueError as e:
-        click.echo(e)
-        if "Accommodation with document" in str(e):
-            abort(409, "Já existe uma acomdação com este nome!")
+    except ValidationError as err:
+        echo(err)
+        return make_response(jsonify({"message": err.title}), 400)
 
-        abort(400)
+    except AlreadyExistsError as err:
+        echo(err)
+        return make_response(jsonify({"message": err.message}), err.status)
 
 
 @bp.get("/<id>")
@@ -61,13 +61,11 @@ def get_accommodation(id):
 
     try:
         accommodation = repository.findBy("id", str(url_param))
-        return accommodation.to_json()
+        return make_response(accommodation.to_json(), 200)
 
     except NotFoundError as err:
-        response = Response()
-        response.status_code = err.status
-        response.data = err.message
-        return response
+        echo(err)
+        return make_response({"message": err.message}, err.status)
 
 
 @bp.delete("/<uuid>")
@@ -79,10 +77,11 @@ def delete_accommodation(uuid):
 
     try:
         repository.delete(str(url_param))
-        return "DELETED", 200
+        return make_response("DELETED", 200)
 
-    except ValueError:
-        abort(404)
+    except NotFoundError as err:
+        echo(err)
+        return make_response({"message": err.message}, err.status)
 
 
 @bp.put("")
@@ -90,27 +89,18 @@ def update_accommodation():
     db = get_db()
     dao = AccommodationDAO(db)
     repository = AccommodationtRepository(dao)
-    raw = request.get_json()
-    data = {
-        "uuid": raw["uuid"],
-        "created_at": raw["createdAt"],
-        "name": raw["name"],
-        "total_guests": raw["totalGuests"],
-        "single_beds": raw["singleBeds"],
-        "double_beds": raw["doubleBeds"],
-        "min_nights": raw["minNights"],
-        "price": raw["price"],
-        "amenities": raw["amenities"],
-    }
+    data = request.get_json()
+    echo(data)
+
     try:
-        accommodation = Accommodation.from_dict(transform(data))
+        accommodation = Accommodation.from_dict(data)
         repository.update(accommodation)
         return "UPDATED", 201
 
     except ValidationError as err:
-        click.echo(err)
-        abort(400)
+        echo(err)
+        return make_response(jsonify({"message": err.title}), 400)
 
-    except ValueError as err:
-        click.echo(err)
-        abort(404)
+    except NotFoundError as err:
+        echo(err)
+        return make_response({"message": err.message}, err.status)
