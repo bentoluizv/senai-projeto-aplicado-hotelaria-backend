@@ -6,7 +6,8 @@
         <option value="hospede">Hóspede</option>
         <option value="reserva">Reserva</option>
     </select> 
-    <input class="search_field" name="search" id="search" placeholder="Faça sua busca...">
+    <input class="search_field" name="search" id="search" list="documentList" placeholder="Faça sua busca...">
+    <datalist id="documentList"></datalist>
     <button type="button" class="search_btn" id="search_btn">Procurar</button>
 </div>
 {% if rows %}
@@ -47,7 +48,7 @@
 {% endif %}
 
 <div class="booking_btn_wrapper">
-    <button disabled class="booking_btn">Faça uma reserva!</button>
+    <button class="booking_btn">Faça uma reserva!</button>
 </div>
 
 <script src="{{url_for('static', filename='booking.js')}}"></script>

@@ -17,6 +17,10 @@ def booking():
     print(bookings)  # Adicione este print para verificar os dados
     return render_template("index.html", rows=bookings)
 
+@bp.get("/cadastro/")
+def cadastro():
+    return render_template("newBooking.html")    
+
 @bp.get("/<resource>/<guest_document>")
 def get_booking(resource, guest_document):
     url_param = escape(guest_document)

@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block conteudo %}
+
+<div class="form_wrapper">
+    <form class="form">      
+        <div class="row_group">
+            <div class="row">
+                <label for="document">Documento</label>
+                <input type="text" id="document" name="document" list="documentList" size="30" required>
+                <datalist id="documentList"></datalist>
+            </div>
+            <div class="row">
+                <label for="acomodacao">Acomodação</label>
+                <input type="text" id="acomodacao" name="acomodacao" list="acomodacaoList" required>
+                <datalist id="acomodacaoList"></datalist>
+                <input type="hidden" id="acomodacaoUuid" name="acomodacaoUuid">
+            </div>
+        </div>
+        
+        <div class="row_group">        
+            <div class="row">
+                <label for="check_in">Check in</label>
+                <input type="text" id="check_in" name="check_in" required>
+            </div>
+            <div class="row">
+                <label for="check_out">Check out</label>
+                <input type="text" id="check_out" name="check_out" required>
+            </div>            
+        </div>    
+        <div class="row">
+            <label for="status">Status</label>
+            <input type="text" id="status" name="status" minlength="3" required>
+        </div>      
+        <div class="btn_wrapper">
+            <button class="submit_btn" type="submit">Cadastrar</button>
+        </div>
+    </form>
+    <p class="err_msg hidden"></p>
+</div>
+
+<script src="{{url_for('static', filename='newBooking.js')}}"></script>
+{% endblock %}
