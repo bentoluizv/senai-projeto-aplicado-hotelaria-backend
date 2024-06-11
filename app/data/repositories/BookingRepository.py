@@ -1,8 +1,7 @@
-from typing import List
-
-from app.data.dao.BookingDAO import BookingDAO, BookingDTO
+from app.data.dao.BookingDAO import BookingDAO
 from app.entity.Booking import Booking
-from app.utils.transform import transform
+from app.errors.AlreadyExists import AlreadyExistsError
+from app.errors.NotFoundError import NotFoundError
 
 
 class BookingRepository:
@@ -13,97 +12,71 @@ class BookingRepository:
         return self.dao.count()
 
     def insert(self, booking: Booking):
-        exists = self.dao.findBy("uuid", str(booking.uuid))
+        exists = self.dao.findBy("uuid", booking.uuid)
 
         if exists:
-            raise ValueError(f"Reserva com id {booking.uuid} já está cadastrado")
+            raise AlreadyExistsError()
 
         booking_dict = booking.to_dict()
 
-        booking_dto: BookingDTO = {
+        booking_dto = {
             "status": booking_dict["status"],
-            "check_in": booking_dict["check_in"].isoformat(),
-            "created_at": booking_dict["created_at"].isoformat(),
-            "uuid": str(booking_dict["uuid"]),
-            "check_out": booking_dict["check_out"].isoformat(),
+            "check_in": booking_dict["check_in"],
+            "created_at": booking_dict["created_at"],
+            "uuid": booking_dict["uuid"],
+            "check_out": booking_dict["check_out"],
             "guest_document": booking_dict["guest"]["document"],
-            "accommodation_uuid": str(booking_dict["accommodation"]["uuid"]),
+            "accommodation_id": booking_dict["accommodation"]["id"],
         }
 
         self.dao.insert(booking_dto)
 
-
     def findBy(self, property: str, value: str):
-        existing = self.dao.findBy(property, value)
-
-        bookings: List[Booking] = []
-        print("findby", existing)
-        for unknown in existing:
-            if unknown["accommodation"]["amenities"] is not None:
-                amenities = unknown["accommodation"]["amenities"]
-                unknown["accommodation"]["amenities"] = amenities.split(",")
-            else:
-                unknown["accommodation"]["amenities"] = []
-
-        booking = Booking.from_dict(transform(unknown))
-
-
-        bookings.append(booking)
-            
-        return bookings
-
-    
-    def find(self, uuid: str):
-        exists = self.dao.findBy("uuid", uuid)
+        exists = self.dao.findBy(property, value)
 
         if not exists:
-            raise ValueError(f"Reserva com  id {uuid} não está cadastrado")
+            raise NotFoundError()
 
-        print("print", exists)
-        if exists["accommodation"]["amenities"] is not None:
-            amenities = exists["accommodation"]["amenities"]
-            exists["accommodation"]["amenities"] = amenities.split(",")
-        else:
-            exists["accommodation"]["amenities"] = []
+        exists["accommodation"]["amenities"] = exists["accommodation"][
+            "amenities"
+        ].split(",")
 
-        booking = Booking.from_dict(transform(exists))
+        booking = Booking.from_dict(exists)
 
         return booking
-    
-    def find_many(self) -> List[Booking]:
+
+    def find_many(self) -> list[Booking]:
         existing = self.dao.find_many()
 
         if len(existing) == 0:
             return []
 
-        bookings: List[Booking] = []
+        bookings = []
 
-        for unknown in existing:
-            if unknown["accommodation"]["amenities"] is not None:
-                amenities = unknown["accommodation"]["amenities"]
-                unknown["accommodation"]["amenities"] = amenities.split(",")
-            else:
-                unknown["accommodation"]["amenities"] = []
+        for accommodation_data in existing:
+            accommodation_data["accommodation"]["amenities"] = accommodation_data[
+                "accommodation"
+            ]["amenities"].split(",")
 
-            booking = Booking.from_dict(transform(unknown))
+            booking = Booking.from_dict(accommodation_data)
             bookings.append(booking)
-            
+
         return bookings
 
     def update(self, booking: Booking):
-        exists = self.dao.findBy("uuid", str(booking.uuid))
+        exists = self.dao.findBy("uuid", booking.uuid)
 
         if not exists:
-            raise ValueError(f"A Reserva com o id {booking.uuid} não está cadastrada")
+            raise NotFoundError()
 
         self.dao.update(
-            str(booking.uuid),
+            booking.uuid,
             {
                 "status": booking.status,
-                "check_in": booking.check_in.isoformat(),
-                "check_out": booking.check_out.isoformat(),
+                "check_in": booking.check_in,
+                "check_out": booking.check_out,
                 "guest_document": booking.guest.document,
-                "accommodation_uuid": str(booking.accommodation.uuid),
+                "accommodation_id": booking.accommodation.id,
             },
         )
 
@@ -111,6 +84,6 @@ class BookingRepository:
         exists = self.dao.findBy("uuid", uuid)
 
         if not exists:
-            raise ValueError(f"Reserva com o id {uuid} não está cadastrada")
+            raise NotFoundError()
 
         self.dao.delete(uuid)

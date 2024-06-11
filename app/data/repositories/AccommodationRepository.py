@@ -26,18 +26,28 @@ class AccommodationtRepository:
         if not exists:
             raise NotFoundError()
 
+        guest_data = exists
+
+        if guest_data["amenities"]:
+            amenities = guest_data["amenities"].split(",")
+            guest_data["amenities"] = amenities
+
         accommodation = Accommodation.from_dict(exists)
         return accommodation
 
     def find_many(self):
-        rawAccommodations = self.dao.find_many()
+        data = self.dao.find_many()
         accommodations = []
 
-        if len(rawAccommodations) == 0:
+        if len(data) == 0:
             return accommodations
 
-        for raw in rawAccommodations:
-            accommodation = Accommodation.from_dict(raw)
+        for accommodation_data in data:
+            if accommodation_data["amenities"]:
+                amenities = accommodation_data["amenities"].split(",")
+                accommodation_data["amenities"] = amenities
+
+            accommodation = Accommodation.from_dict(accommodation_data)
             accommodations.append(accommodation)
 
         return accommodations
@@ -48,9 +58,7 @@ class AccommodationtRepository:
         exists = self.dao.findBy("id", str(accommodation.id))
 
         if not exists:
-            raise ValueError(
-                f"Accommodation with document {accommodation.id} not exists"
-            )
+            raise NotFoundError()
 
         self.dao.update(
             str(accommodation.id),
