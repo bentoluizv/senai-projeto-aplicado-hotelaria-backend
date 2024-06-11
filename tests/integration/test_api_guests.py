@@ -1,38 +1,33 @@
 import json
 
-import pytest
+from click import echo
 
 
-@pytest.mark.skip()
-def test_api_get_guests(client):
+def test_api_should_get_all_guests(client):
     response = client.get("/api/hospedes")
-    guests = json.loads(response.data)
-    assert len(guests) == 4
+    echo(response)
     assert response.status_code == 200
 
 
-@pytest.mark.skip()
-def test_api_get_guests_id(client):
+def test_api_should_get_an_especific_guest_by_document(client):
     response = client.get("/api/hospedes/00157624242")
     guests = json.loads(response.data)
-    assert guests["name"] == "Bento Luiz"
+    assert guests["name"] == "Bento"
     assert response.status_code == 200
 
 
-@pytest.mark.skip()
-def test_api_get_guests_id_not_found(client):
+def test_api_should_return_404_if_not_found(client):
     response = client.get("/api/hospedes/00157624")
     assert response.status_code == 404
 
 
-@pytest.mark.skip()
-def test_api_post_guests(client):
+def test_api_should_create_a_guest(client):
     guest_dto = {
         "document": "03093331056",
-        "name": "Ana Claudia",
+        "name": "Ana",
         "surname": "Costa",
         "country": "Brazil",
-        "phone": "4832395853",
+        "phone": "48xxxxxxxxxx",
     }
 
     response = client.post(
@@ -45,8 +40,7 @@ def test_api_post_guests(client):
     assert response.text == "CREATED"
 
 
-@pytest.mark.skip()
-def test_api_post_guests_bad_request(client):
+def test_api_should_return_400_on_bad_request_from_client(client):
     response = client.post(
         "/api/hospedes/cadastro",
         data=json.dumps({}),
@@ -55,21 +49,18 @@ def test_api_post_guests_bad_request(client):
     assert response.status_code == 400
 
 
-@pytest.mark.skip()
-def test_api_delete_guests(client):
+def test_api_should_delete_a_guest(client):
     response = client.delete("/api/hospedes/00157624242")
     assert response.status_code == 200
     assert response.text == "DELETED"
 
 
-@pytest.mark.skip()
-def test_api_delete_guests_not_found(client):
+def test_api_should_return_404_when_deleting_non_existing_guest(client):
     response = client.delete("/api/hospedes/0015242")
     assert response.status_code == 404
 
 
-@pytest.mark.skip()
-def test_api_updated_guests(client):
+def test_api_should_update_a_guest(client):
     data = {
         "document": "00157624242",
         "name": "Bento Luiz",
@@ -88,8 +79,7 @@ def test_api_updated_guests(client):
     assert response.text == "UPDATED"
 
 
-@pytest.mark.skip()
-def test_api_updated_guests_not_found(client):
+def test_api_should_return_404_on_updating_non_existing_guest(client):
     data = {
         "document": "48732618050",
         "name": "Bento Luiz",

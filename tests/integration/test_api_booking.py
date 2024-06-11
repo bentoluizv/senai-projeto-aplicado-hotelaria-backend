@@ -1,9 +1,6 @@
 import json
 
-import pytest
 
-
-@pytest.mark.skip()
 def test_api_should_get_all_bookings(client):
     response = client.get("/api/reservas")
     bookings = json.loads(response.data)
@@ -11,20 +8,17 @@ def test_api_should_get_all_bookings(client):
     assert response.status_code == 200
 
 
-@pytest.mark.skip()
 def test_api_should_get_a_booking_by_uuid(client):
     response = client.get("/api/reservas/e08f76e8-0e71-4a48-a85a-bf7e8f61479e")
     booking = json.loads(response.data)
     assert booking["guest"]["document"] == "00157624242"
 
 
-@pytest.mark.skip()
 def test_api_should_return_status_code_404_for_a_inexisting_booking(client):
     response = client.get("/api/reservas/e08f76b8-0e71-4a48-a85a-bf7e8f61479e")
     assert response.status_code == 404
 
 
-@pytest.mark.skip()
 def test_api_should_create_a_new_booking(client):
     booking_dto = {
         "uuid": "dd093495-b637-4ff8-bf2c-eb99d0f88031",
@@ -41,7 +35,7 @@ def test_api_should_create_a_new_booking(client):
             "phone": "48992054211",
         },
         "accommodation": {
-            "uuid": "bcadaaf8-a036-42d5-870c-de7b24792abf",
+            "id": 1,
             "name": "Domo",
             "status": "Disponível",
             "total_guests": 2,
@@ -71,7 +65,6 @@ def test_api_should_create_a_new_booking(client):
     assert response.text == "CREATED"
 
 
-@pytest.mark.skip()
 def test_api_should_return_status_code_400(client):
     response = client.post(
         "/api/reservas/cadastro",
@@ -82,20 +75,17 @@ def test_api_should_return_status_code_400(client):
     assert response.status_code == 400
 
 
-@pytest.mark.skip()
 def test_api_should_delete_an_accommodation(client):
     response = client.delete("/api/reservas/e08f76e8-0e71-4a48-a85a-bf7e8f61479e")
     assert response.status_code == 200
     assert response.text == "DELETED"
 
 
-@pytest.mark.skip()
 def test_api_should_return_status_code_404_on_delete(client):
     response = client.delete("/api/reservas/e08f76e8-0e71-4a48-a85a-Cf7e8f61479e")
     assert response.status_code == 404
 
 
-@pytest.mark.skip()
 def test_api_should_update_an_accommodation(client):
     updated_booking_data = {
         "uuid": "e08f76e8-0e71-4a48-a85a-bf7e8f61479e",
@@ -111,7 +101,7 @@ def test_api_should_update_an_accommodation(client):
             "phone": "48992054211",
         },
         "accommodation": {
-            "uuid": "242d5665-aa90-429a-95d5-767515ff8ccc",
+            "id": 6,
             "name": "Estacionamento para overlanders",
             "status": "Disponível",
             "total_guests": 4,
@@ -129,11 +119,10 @@ def test_api_should_update_an_accommodation(client):
         headers={"content-type": "application/json"},
     )
 
-    assert response.status_code == 201
+    assert response.status_code == 200
     assert response.text == "UPDATED"
 
 
-@pytest.mark.skip()
 def test_api_should_return_status_code_404_on_update(client):
     updated_booking_data = {
         "uuid": "e08f76e8-0e72-4a48-a85a-bf7e8f61479e",
@@ -149,7 +138,7 @@ def test_api_should_return_status_code_404_on_update(client):
             "phone": "48992054211",
         },
         "accommodation": {
-            "uuid": "242d5665-aa90-429a-95d5-767515ff8ccc",
+            "id": 6,
             "name": "Estacionamento para overlanders",
             "status": "Disponível",
             "total_guests": 4,

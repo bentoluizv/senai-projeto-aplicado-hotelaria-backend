@@ -4,7 +4,6 @@ from datetime import datetime
 import pytest
 
 from app.entity.Booking import Booking
-from app.utils.serialize_for_json import serialize_for_json
 
 
 @pytest.fixture()
@@ -62,9 +61,14 @@ def test_should_serialize_correctly_to_an_equivalent_dict(booking_data):
 def test_should_serialize_correctly_to_a_json_equivalent(booking_data):
     booking = Booking.from_dict(booking_data)
     booking_json = booking.to_json()
-    serialized_data = serialize_for_json(booking_data)
-    json_data = json.dumps(serialized_data, separators=(",", ":"), ensure_ascii=False)
-    assert booking_json == json_data
+    assert booking_json == json.dumps(
+        booking_data,
+        separators=(
+            ",",
+            ":",
+        ),
+        ensure_ascii=False,
+    )
 
 
 def test_should_raise_an_error_when_status_is_not_valid(booking_data):
