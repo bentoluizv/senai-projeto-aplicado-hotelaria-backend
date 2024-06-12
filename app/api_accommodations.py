@@ -38,8 +38,18 @@ def create_accommodation():
     dao = AccommodationDAO(db)
     repository = AccommodationtRepository(dao)
 
+    parsed_dto = {
+        "name": accommodation_json["name"],
+        "status": accommodation_json["status"],
+        "total_guests": int(accommodation_json["total_guests"]),
+        "single_beds": int(accommodation_json["single_beds"]),
+        "double_beds": int(accommodation_json["double_beds"]),
+        "min_nights": int(accommodation_json["min_nights"]),
+        "price": int(accommodation_json["price"]),
+        "amenities": accommodation_json["amenities"],
+    }
     try:
-        accommodation = Accommodation.from_dict(accommodation_json)
+        accommodation = Accommodation.from_dict(parsed_dto)
         repository.insert(accommodation)
         return make_response("CREATED", 201)
 
