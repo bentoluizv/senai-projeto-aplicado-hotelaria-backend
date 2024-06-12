@@ -31,10 +31,9 @@ def create_guest():
     db = get_db()
     dao = GuestDAO(db)
     repository = GuestRepository(dao)
-    guests = request.get_json()
-
+    guest = request.get_json()
     try:
-        guest = Guest.from_dict(guests)
+        guest = Guest.from_dict(guest)
         repository.insert(guest)
         return make_response("CREATED", 201)
 
@@ -73,7 +72,7 @@ def delete_guest(document):
     url_param = escape(document)
 
     try:
-        repository.delete(str(url_param))
+        repository.delete(document=str(url_param))
         return make_response("DELETED", 200)
 
     except NotFoundError as err:
