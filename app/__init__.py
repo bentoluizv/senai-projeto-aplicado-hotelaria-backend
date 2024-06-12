@@ -3,6 +3,7 @@
 import os
 
 from flask import Flask, json, render_template
+from flask_cors import CORS
 
 from .data.database import db
 
@@ -24,6 +25,8 @@ def create_app(test_config=None):
         os.makedirs(app.instance_path)
     except OSError:
         pass
+
+    CORS(app)
 
     @app.errorhandler(404)
     def resource_not_found(e):

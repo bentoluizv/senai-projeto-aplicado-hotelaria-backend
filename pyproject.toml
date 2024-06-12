@@ -4,6 +4,8 @@ version = "1.0.0"
 description = "Hotel booking system"
 dependencies = [
     "flask",
+    "flask-cors",
+    "types-Flask-Cors",
     "pytest",
     "pydantic"
 ]
