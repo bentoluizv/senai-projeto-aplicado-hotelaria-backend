@@ -10,7 +10,7 @@ from app.utils.StrictModel import StrictModel
 
 
 class Accommodation(StrictModel):
-    id: int | None
+    id: int | None = Field(default=None)
     name: str
     status: str = Field(default="Disponível")
     total_guests: int
