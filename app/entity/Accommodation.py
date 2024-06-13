@@ -1,12 +1,11 @@
 from datetime import datetime
 
+from app.utils.StrictModel import StrictModel
 from pydantic import (
     Field,
     field_validator,
     model_validator,
 )
-
-from app.utils.StrictModel import StrictModel
 
 
 class Accommodation(StrictModel):

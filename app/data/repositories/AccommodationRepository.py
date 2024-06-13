@@ -37,7 +37,7 @@ class AccommodationtRepository:
 
     def find_many(self):
         data = self.dao.find_many()
-        accommodations = []
+        accommodations: list[Accommodation] = []
 
         if len(data) == 0:
             return accommodations
