@@ -37,10 +37,9 @@ def create_accommodation():
     db = get_db()
     dao = AccommodationDAO(db)
     repository = AccommodationtRepository(dao)
-
+    echo(accommodation_json)
     parsed_dto = {
         "name": accommodation_json["name"],
-        "status": accommodation_json["status"],
         "total_guests": int(accommodation_json["total_guests"]),
         "single_beds": int(accommodation_json["single_beds"]),
         "double_beds": int(accommodation_json["double_beds"]),
