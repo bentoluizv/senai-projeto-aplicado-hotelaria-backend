@@ -14,6 +14,7 @@ from app.entity.Booking import Booking
 from app.errors.AlreadyExists import AlreadyExistsError
 from app.errors.NotFoundError import NotFoundError
 from app.services.create_new_booking import create_new_booking
+from app.services.find_booking_by import find_booking_by
 
 bp = Blueprint("api_booking", __name__, url_prefix="/api/reservas")
 
@@ -67,16 +68,16 @@ def create_booking():
         return make_response(jsonify({"message": err.errors}), 400)
 
 
-@bp.get("/<uuid>")
-def get_accommodation(uuid):
-    db = get_db()
-    dao = BookingDAO(db)
-    repository = BookingRepository(dao)
-    url_param = escape(uuid)
-
+@bp.get("/<id>")
+def get_accommodation(id):
     try:
-        booking = repository.findBy("uuid", str(url_param))
-        return make_response(booking.to_json(), 200)
+        db = get_db()
+        dao = BookingDAO(db)
+        repository = BookingRepository(dao)
+        url_param = str(escape(id))
+
+        result = find_booking_by(repository, {"id": url_param})
+        return jsonify(result)
 
     except NotFoundError as err:
         echo(err)
