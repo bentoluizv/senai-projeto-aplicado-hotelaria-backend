@@ -1,8 +1,10 @@
 from sqlite3 import Connection
 from typing import TypedDict
 
+from app.data.database.models.BookingModel import BookingModel
 
-class CreationalInputData(TypedDict):
+
+class CrdeationalBookingData(TypedDict):
     uuid: str
     created_at: str
     status: str
@@ -18,12 +20,10 @@ class BookingDAO:
 
     def count(self):
         cursor = self.db.cursor()
-        count = (
-            cursor.execute("SELECT COUNT(*) FROM booking").fetchone().get("COUNT(*)")
-        )
-        return count
+        count = cursor.execute("SELECT COUNT(*) FROM booking").fetchone()
+        return count["COUNT(*)"]
 
-    def insert(self, data: CreationalInputData):
+    def insert(self, data: CrdeationalBookingData):
         statement = "INSERT INTO booking (uuid, created_at, status, check_in, check_out, document, accommodation_id) VALUES (?, ?, ?, ?, ?, ?, ?);"
         cursor = self.db.cursor()
         cursor.execute(
@@ -40,7 +40,7 @@ class BookingDAO:
         )
         self.db.commit()
 
-    def findBy(self, property: str, value: str):
+    def findBy(self, property: str, value: str) -> BookingModel | None:
         cursor = self.db.cursor()
         cursor.execute(
             f"SELECT uuid, status, created_at, check_in, check_out, document, accommodation_id FROM booking WHERE booking.{property} = ?;",
@@ -67,7 +67,7 @@ class BookingDAO:
         )
         accommodation = cursor.fetchone()
 
-        data = {
+        data: BookingModel = {
             "uuid": booking["uuid"],
             "status": booking["status"],
             "created_at": booking["created_at"],
@@ -96,13 +96,13 @@ class BookingDAO:
         }
         return data
 
-    def find_many(self):
+    def find_many(self) -> list[BookingModel]:
         statement = "SELECT uuid, status, created_at, check_in, check_out, document, accommodation_id FROM booking"
         cursor = self.db.cursor()
         cursor.execute(statement)
         results = cursor.fetchall()
 
-        bookings = []
+        bookings: list[BookingModel] = []
 
         if len(results) == 0:
             return results
@@ -121,7 +121,7 @@ class BookingDAO:
                 (accommodation_id,),
             ).fetchone()
 
-            data = {
+            data: BookingModel = {
                 "uuid": booking["uuid"],
                 "status": booking["status"],
                 "created_at": booking["created_at"],

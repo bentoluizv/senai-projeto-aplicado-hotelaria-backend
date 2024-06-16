@@ -1,22 +1,33 @@
 from sqlite3 import Connection
 
+from app.data.database.models.GuestModel import GuestModel
+
 
 class GuestDAO:
     def __init__(self, db: Connection):
         self.db = db
 
-    def count(self):
+    def count(self) -> int:
         cursor = self.db.cursor()
-        count = cursor.execute("SELECT COUNT(*) FROM guest").fetchone().get("COUNT(*)")
-        return count
+        row = cursor.execute("SELECT COUNT(*) FROM guest").fetchone()
+        return row["COUNT(*)"]
 
-    def insert(self, guest) -> None:
-        statement = "INSERT INTO guest (document, created_at, name, surname, country, phone) VALUES (:document, :created_at, :name, :surname, :country, :phone);"
+    def insert(self, guest: GuestModel) -> None:
         cursor = self.db.cursor()
-        cursor.execute(statement, guest)
+        cursor.execute(
+            "INSERT INTO guest (document, created_at, name, surname, country, phone) VALUES (?, ?, ?, ?, ?, ?);",
+            (
+                guest["document"],
+                guest["created_at"],
+                guest["name"],
+                guest["surname"],
+                guest["country"],
+                guest["phone"],
+            ),
+        )
         self.db.commit()
 
-    def findBy(self, property: str, value: str):
+    def findBy(self, property: str, value: str) -> GuestModel | None:
         statement = f"SELECT document, created_at, name, surname, country, phone FROM guest WHERE guest.{property} = ?;"
         cursor = self.db.cursor()
         cursor.execute(statement, (value,))
@@ -25,20 +36,26 @@ class GuestDAO:
         if result is None:
             return None
 
-        return result
+        return {
+            "document": result["document"],
+            "created_at": result["created_at"],
+            "name": result["name"],
+            "surname": result["surname"],
+            "country": result["country"],
+            "phone": result["phone"],
+        }
 
-    def find_many(self):
-        statement = (
+    def find_many(self) -> list[GuestModel]:
+        cursor = self.db.cursor()
+        cursor.execute(
             "SELECT document, created_at, name, surname, country, phone FROM guest;"
         )
-        cursor = self.db.cursor()
-        cursor.execute(statement)
         results = cursor.fetchall()
 
         if len(results) == 0:
             return []
 
-        guests = [
+        guests: list[GuestModel] = [
             {
                 "document": result["document"],
                 "name": result["name"],
@@ -53,10 +70,9 @@ class GuestDAO:
         return guests
 
     def update(self, document: str, guest) -> None:
-        statement = "UPDATE guest SET name = ?, surname = ?, country = ?, phone = ? WHERE document = ?;"
         cursor = self.db.cursor()
         cursor.execute(
-            statement,
+            "UPDATE guest SET name = ?, surname = ?, country = ?, phone = ? WHERE document = ?;",
             (
                 guest["name"],
                 guest["surname"],
@@ -68,7 +84,6 @@ class GuestDAO:
         self.db.commit()
 
     def delete(self, document: str):
-        statement = "DELETE FROM guest WHERE document = ?"
         cursor = self.db.cursor()
-        cursor.execute(statement, (document,))
+        cursor.execute("DELETE FROM guest WHERE document = ?", (document,))
         self.db.commit()

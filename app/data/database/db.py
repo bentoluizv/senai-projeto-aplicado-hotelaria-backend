@@ -6,19 +6,13 @@ import click
 from flask import Flask, current_app, g
 
 
-def dict_factory(cursor, row):
-    fields = [column[0] for column in cursor.description]
-    return {key: value for key, value in zip(fields, row)}
-
-
 def get_db():
     """Return database connection if exists or create a new one"""
     if "db" not in g:
         g.db = sqlite3.connect(
             current_app.config["DATABASE"], detect_types=sqlite3.PARSE_DECLTYPES
         )
-        g.db.row_factory = dict_factory
-
+        g.db.row_factory = sqlite3.Row
     return g.db
 
 

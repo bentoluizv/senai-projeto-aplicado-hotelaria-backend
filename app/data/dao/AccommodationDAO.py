@@ -1,21 +1,18 @@
 from sqlite3 import Connection
-from typing import List
+
+from app.data.database.models.AccommodationModel import AccommodationModel
 
 
 class AccommodationDAO:
     def __init__(self, db: Connection):
         self.db = db
 
-    def count(self):
+    def count(self) -> int:
         cursor = self.db.cursor()
-        count = (
-            cursor.execute("SELECT COUNT(*) FROM accommodation")
-            .fetchone()
-            .get("COUNT(*)")
-        )
-        return count
+        count = cursor.execute("SELECT COUNT(*) FROM accommodation").fetchone()
+        return count["COUNT(*)"]
 
-    def insert(self, data):
+    def insert(self, data: AccommodationModel):
         cursor = self.db.cursor()
         cursor.execute(
             "INSERT INTO accommodation (created_at, name, status, total_guests, single_beds, double_beds, min_nights, price) VALUES (?, ?, ?, ?, ?, ?, ?, ?);",
@@ -43,7 +40,7 @@ class AccommodationDAO:
 
         self.db.commit()
 
-    def findBy(self, property: str, value: str):
+    def findBy(self, property: str, value: str) -> AccommodationModel | None:
         statement = f"SELECT a.id, a.created_at, a.name, a.status, a.total_guests, a.single_beds, a.double_beds, a.min_nights, a.price, GROUP_CONCAT(am.amenitie) AS amenities FROM accommodation AS a LEFT JOIN amenities_per_accommodation AS apa ON a.id = apa.accommodation_id LEFT JOIN amenities AS am ON apa.amenitie_id = am.id WHERE a.{property} = ? GROUP BY a.id;"
         cursor = self.db.cursor()
         cursor.execute(statement, (value,))
@@ -52,16 +49,43 @@ class AccommodationDAO:
         if not result:
             return None
 
-        return result
+        return {
+            "id": result["id"],
+            "name": result["name"],
+            "status": result["status"],
+            "created_at": result["created_at"],
+            "total_guests": result["total_guests"],
+            "min_nights": result["min_nights"],
+            "single_beds": result["single_beds"],
+            "double_beds": result["double_beds"],
+            "price": result["price"],
+            "amenities": result["amenities"],
+        }
 
-    def find_many(self) -> List:
+    def find_many(self) -> list[AccommodationModel]:
         statement = "SELECT a.id, a.created_at, a.name, a.status, a.total_guests, a.single_beds, a.double_beds, a.min_nights, a.price, GROUP_CONCAT(am.amenitie) AS amenities FROM accommodation AS a LEFT JOIN amenities_per_accommodation AS apa ON a.id = apa.accommodation_id LEFT JOIN amenities AS am ON apa.amenitie_id = am.id GROUP BY a.id;"
         cursor = self.db.cursor()
         cursor.execute(statement)
-        rows = cursor.fetchall()
+        result = cursor.fetchall()
 
-        if len(rows) == 0:
+        if len(result) == 0:
             return []
+
+        rows: list[AccommodationModel] = [
+            {
+                "id": row["id"],
+                "name": row["name"],
+                "status": row["status"],
+                "created_at": row["created_at"],
+                "total_guests": row["total_guests"],
+                "min_nights": row["min_nights"],
+                "single_beds": row["single_beds"],
+                "double_beds": row["double_beds"],
+                "price": row["price"],
+                "amenities": row["amenities"],
+            }
+            for row in result
+        ]
 
         return rows
 
