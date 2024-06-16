@@ -23,10 +23,10 @@ def get_guests():
 
     try:
         guests = [guest.to_dict() for guest in respository.find_many()]
-        return make_response(jsonify(guests), 200)
+        return jsonify(guests)
 
     except ValidationError as err:
-        return make_response(jsonify(err.errors), 500)
+        return make_response(err.errors, 500)
 
 
 @bp.post("/cadastro/")
@@ -62,7 +62,7 @@ def get_guest(document):
 
     try:
         guest = repository.findBy("document", str(url_param))
-        return make_response(guest.to_json(), 200)
+        return jsonify(guest.to_dict())
 
     except NotFoundError as err:
         return make_response(jsonify({"message": err.message}), err.status)
