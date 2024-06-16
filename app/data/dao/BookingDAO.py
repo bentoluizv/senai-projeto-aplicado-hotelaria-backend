@@ -1,4 +1,15 @@
 from sqlite3 import Connection
+from typing import TypedDict
+
+
+class CreationalInputData(TypedDict):
+    uuid: str
+    created_at: str
+    status: str
+    check_in: str
+    check_out: str
+    guest_document: str
+    accommodation_id: str
 
 
 class BookingDAO:
@@ -12,19 +23,19 @@ class BookingDAO:
         )
         return count
 
-    def insert(self, booking):
+    def insert(self, data: CreationalInputData):
         statement = "INSERT INTO booking (uuid, created_at, status, check_in, check_out, document, accommodation_id) VALUES (?, ?, ?, ?, ?, ?, ?);"
         cursor = self.db.cursor()
         cursor.execute(
             statement,
             (
-                booking["uuid"],
-                booking["created_at"],
-                booking["status"],
-                booking["check_in"],
-                booking["check_out"],
-                booking["guest_document"],
-                booking["accommodation_id"],
+                data["uuid"],
+                data["created_at"],
+                data["status"],
+                data["check_in"],
+                data["check_out"],
+                data["guest_document"],
+                data["accommodation_id"],
             ),
         )
         self.db.commit()
