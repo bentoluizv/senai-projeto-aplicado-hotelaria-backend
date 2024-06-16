@@ -2,17 +2,20 @@ from flask import Blueprint, jsonify, make_response, request
 from markupsafe import escape
 from pydantic import ValidationError
 
+from app.data.dao.BookingDAO import BookingDAO
 from app.data.dao.GuestDAO import GuestDAO
 from app.data.database.db import get_db
+from app.data.repositories.BookingRepository import BookingRepository
 from app.data.repositories.GuestRepository import GuestRepository
 from app.entity.Guests import Guest
 from app.errors.AlreadyExists import AlreadyExistsError
 from app.errors.NotFoundError import NotFoundError
+from app.services.find_bookings_by_guest import find_bookings_by_guest
 
 bp = Blueprint("api_guest", __name__, url_prefix="/api/hospedes")
 
 
-@bp.get("")
+@bp.get("/")
 def get_guests():
     db = get_db()
     dao = GuestDAO(db)
@@ -32,6 +35,7 @@ def create_guest():
     dao = GuestDAO(db)
     repository = GuestRepository(dao)
     guest = request.get_json()
+
     try:
         guest = Guest.from_dict(guest)
         repository.insert(guest)
@@ -59,6 +63,26 @@ def get_guest(document):
     try:
         guest = repository.findBy("document", str(url_param))
         return make_response(guest.to_json(), 200)
+
+    except NotFoundError as err:
+        return make_response(jsonify({"message": err.message}), err.status)
+
+
+@bp.get("/<document>/reservas")
+def get_guests_bookings(document):
+    try:
+        db = get_db()
+        guest_dao = GuestDAO(db)
+        bookings_dao = BookingDAO(db)
+        guest_repository = GuestRepository(guest_dao)
+        booking_repository = BookingRepository(bookings_dao)
+
+        url_param = escape(document)
+
+        bookings_by_guest = find_bookings_by_guest(
+            booking_repository, guest_repository, {"guest_document": str(url_param)}
+        )["bookings"]
+        return jsonify(bookings_by_guest)
 
     except NotFoundError as err:
         return make_response(jsonify({"message": err.message}), err.status)
