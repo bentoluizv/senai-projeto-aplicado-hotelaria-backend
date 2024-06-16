@@ -52,11 +52,3 @@ CREATE TABLE IF NOT EXISTS booking (
     FOREIGN KEY(document) REFERENCES guest(uuid),
     FOREIGN KEY(accommodation_id) REFERENCES accommodation(id)
 );
-
-CREATE TABLE IF NOT EXISTS requests_per_bookings (
-    id                      INTEGER PRIMARY KEY AUTOINCREMENT,
-    booking_uuid            TEXT NOT NULL,
-    special_request         TEXT NOT NULL,
-    FOREIGN KEY(booking_uuid) REFERENCES booking(uuid)
-);
-
