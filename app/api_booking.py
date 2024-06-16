@@ -15,19 +15,19 @@ from app.errors.AlreadyExists import AlreadyExistsError
 from app.errors.NotFoundError import NotFoundError
 from app.services.create_new_booking import create_new_booking
 from app.services.find_booking_by import find_booking_by
+from app.services.list_all_bookings import list_all_bookings
 
 bp = Blueprint("api_booking", __name__, url_prefix="/api/reservas")
 
 
 @bp.get("")
 def get_bookings():
-    db = get_db()
-    dao = BookingDAO(db)
-    respository = BookingRepository(dao)
-
     try:
-        bookings = [booking.to_dict() for booking in respository.find_many()]
-        return make_response(jsonify(bookings), 200)
+        db = get_db()
+        dao = BookingDAO(db)
+        respository = BookingRepository(dao)
+        bookings = list_all_bookings(respository)["bookings"]
+        return jsonify(bookings)
 
     except ValidationError as err:
         echo(err)
