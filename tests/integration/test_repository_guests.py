@@ -20,7 +20,7 @@ def test_repository_count(repository):
 
 
 def test_repository_insert(repository):
-    guest_dto = {
+    data = {
         "document": "03093331056",
         "name": "Ana Claudia",
         "surname": "Costa",
@@ -29,7 +29,7 @@ def test_repository_insert(repository):
         "created_at": "2024-05-22T10:56:45.439704",
     }
 
-    guest = Guest.from_dict(guest_dto)
+    guest = Guest.from_dict(data)
 
     repository.insert(guest)
     assert repository.count() == 5

@@ -1,4 +1,4 @@
-from app.data.dao.BookingDAO import BookingDAO
+from app.data.dao.BookingDAO import BookingDAO, CreationalBookingData
 from app.entity.Booking import Booking
 from app.errors.AlreadyExists import AlreadyExistsError
 from app.errors.NotFoundError import NotFoundError
@@ -19,7 +19,7 @@ class BookingRepository:
 
         booking_dict = booking.to_dict()
 
-        booking_dto = {
+        data: CreationalBookingData = {
             "status": booking_dict["status"],
             "check_in": booking_dict["check_in"],
             "created_at": booking_dict["created_at"],
@@ -29,17 +29,13 @@ class BookingRepository:
             "accommodation_id": booking_dict["accommodation"]["id"],
         }
 
-        self.dao.insert(booking_dto)
+        self.dao.insert(data)
 
-    def findBy(self, property: str, value: str):
+    def findBy(self, property: str, value: str) -> Booking:
         exists = self.dao.findBy(property, value)
 
         if not exists:
             raise NotFoundError()
-
-        exists["accommodation"]["amenities"] = exists["accommodation"][
-            "amenities"
-        ].split(",")
 
         booking = Booking.from_dict(exists)
 
@@ -54,10 +50,6 @@ class BookingRepository:
         bookings = []
 
         for accommodation_data in existing:
-            accommodation_data["accommodation"]["amenities"] = accommodation_data[
-                "accommodation"
-            ]["amenities"].split(",")
-
             booking = Booking.from_dict(accommodation_data)
             bookings.append(booking)
 
@@ -76,7 +68,7 @@ class BookingRepository:
                 "check_in": booking.check_in,
                 "check_out": booking.check_out,
                 "guest_document": booking.guest.document,
-                "accommodation_id": booking.accommodation.id,
+                "accommodation_id": str(booking.accommodation.id),
             },
         )
 

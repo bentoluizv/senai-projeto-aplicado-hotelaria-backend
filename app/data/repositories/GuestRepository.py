@@ -1,4 +1,5 @@
 from app.data.dao.GuestDAO import GuestDAO
+from app.data.database.models.GuestModel import GuestModel
 from app.entity.Guests import Guest
 from app.errors.AlreadyExists import AlreadyExistsError
 from app.errors.NotFoundError import NotFoundError
@@ -17,7 +18,16 @@ class GuestRepository:
             raise AlreadyExistsError()
 
         data = guest.to_dict()
-        self.dao.insert(data)
+
+        modelData: GuestModel = {
+            "document": data["document"],
+            "created_at": data["created_at"],
+            "name": data["name"],
+            "surname": data["surname"],
+            "country": data["country"],
+            "phone": data["phone"],
+        }
+        self.dao.insert(modelData)
 
     def findBy(self, property: str, value: str):
         exists = self.dao.findBy(property, value)

@@ -4,7 +4,15 @@ from typing import TypedDict
 from app.data.database.models.BookingModel import BookingModel
 
 
-class CrdeationalBookingData(TypedDict):
+class UpdateBookingData(TypedDict):
+    status: str
+    check_in: str
+    check_out: str
+    guest_document: str
+    accommodation_id: str
+
+
+class CreationalBookingData(TypedDict):
     uuid: str
     created_at: str
     status: str
@@ -23,7 +31,7 @@ class BookingDAO:
         count = cursor.execute("SELECT COUNT(*) FROM booking").fetchone()
         return count["COUNT(*)"]
 
-    def insert(self, data: CrdeationalBookingData):
+    def insert(self, data: CreationalBookingData):
         statement = "INSERT INTO booking (uuid, created_at, status, check_in, check_out, document, accommodation_id) VALUES (?, ?, ?, ?, ?, ?, ?);"
         cursor = self.db.cursor()
         cursor.execute(
@@ -91,7 +99,7 @@ class BookingDAO:
                 "double_beds": accommodation["double_beds"],
                 "min_nights": accommodation["min_nights"],
                 "price": accommodation["price"],
-                "amenities": accommodation["amenities"],
+                "amenities": accommodation["amenities"].split(","),
             },
         }
         return data
@@ -145,23 +153,23 @@ class BookingDAO:
                     "double_beds": accommodation["double_beds"],
                     "min_nights": accommodation["min_nights"],
                     "price": accommodation["price"],
-                    "amenities": accommodation["amenities"],
+                    "amenities": accommodation["amenities"].split(","),
                 },
             }
             bookings.append(data)
         return bookings
 
-    def update(self, uuid: str, booking):
+    def update(self, uuid: str, data: UpdateBookingData):
         statement = "UPDATE booking SET status = ?, check_in = ?, check_out = ?, document = ?,  accommodation_id = ? WHERE uuid = ?;"
         cursor = self.db.cursor()
         cursor.execute(
             statement,
             (
-                booking["status"],
-                booking["check_in"],
-                booking["check_out"],
-                booking["guest_document"],
-                booking["accommodation_id"],
+                data["status"],
+                data["check_in"],
+                data["check_out"],
+                data["guest_document"],
+                data["accommodation_id"],
                 uuid,
             ),
         )

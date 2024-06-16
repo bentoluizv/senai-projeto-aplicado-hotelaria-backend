@@ -1,4 +1,5 @@
 from app.data.dao.AccommodationDAO import AccommodationDAO
+from app.data.database.models.AccommodationModel import AccommodationModel
 from app.entity.Accommodation import Accommodation
 from app.errors.AlreadyExists import AlreadyExistsError
 from app.errors.NotFoundError import NotFoundError
@@ -18,24 +19,31 @@ class AccommodationtRepository:
             raise AlreadyExistsError()
 
         accommodation_dict = accommodation.to_dict()
-        self.dao.insert(accommodation_dict)
 
-    def findBy(self, property: str, value: str):
+        modelData: AccommodationModel = {
+            "id": accommodation_dict["id"],
+            "name": accommodation_dict["name"],
+            "created_at": accommodation_dict["created_at"],
+            "status": accommodation_dict["status"],
+            "total_guests": accommodation_dict["total_guests"],
+            "single_beds": accommodation_dict["single_beds"],
+            "double_beds": accommodation_dict["double_beds"],
+            "min_nights": accommodation_dict["min_nights"],
+            "price": accommodation_dict["price"],
+            "amenities": accommodation_dict["amenities"],
+        }
+        self.dao.insert(modelData)
+
+    def findBy(self, property: str, value: str) -> Accommodation:
         exists = self.dao.findBy(property, value)
 
         if not exists:
             raise NotFoundError()
 
-        guest_data = exists
-
-        if guest_data["amenities"]:
-            amenities = guest_data["amenities"].split(",")
-            guest_data["amenities"] = amenities
-
         accommodation = Accommodation.from_dict(exists)
         return accommodation
 
-    def find_many(self):
+    def find_many(self) -> list[Accommodation]:
         data = self.dao.find_many()
         accommodations: list[Accommodation] = []
 
@@ -43,10 +51,6 @@ class AccommodationtRepository:
             return accommodations
 
         for accommodation_data in data:
-            if accommodation_data["amenities"]:
-                amenities = accommodation_data["amenities"].split(",")
-                accommodation_data["amenities"] = amenities
-
             accommodation = Accommodation.from_dict(accommodation_data)
             accommodations.append(accommodation)
 

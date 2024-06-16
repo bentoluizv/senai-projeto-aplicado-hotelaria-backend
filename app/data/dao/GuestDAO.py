@@ -1,6 +1,14 @@
 from sqlite3 import Connection
+from typing import TypedDict
 
 from app.data.database.models.GuestModel import GuestModel
+
+
+class UpdateGuestData(TypedDict):
+    name: str
+    surname: str
+    country: str
+    phone: str
 
 
 class GuestDAO:
@@ -69,7 +77,7 @@ class GuestDAO:
 
         return guests
 
-    def update(self, document: str, guest) -> None:
+    def update(self, document: str, guest: UpdateGuestData) -> None:
         cursor = self.db.cursor()
         cursor.execute(
             "UPDATE guest SET name = ?, surname = ?, country = ?, phone = ? WHERE document = ?;",

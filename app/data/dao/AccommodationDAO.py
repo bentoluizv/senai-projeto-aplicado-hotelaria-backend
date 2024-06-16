@@ -59,7 +59,7 @@ class AccommodationDAO:
             "single_beds": result["single_beds"],
             "double_beds": result["double_beds"],
             "price": result["price"],
-            "amenities": result["amenities"],
+            "amenities": result["amenities"].split(","),
         }
 
     def find_many(self) -> list[AccommodationModel]:
@@ -82,7 +82,7 @@ class AccommodationDAO:
                 "single_beds": row["single_beds"],
                 "double_beds": row["double_beds"],
                 "price": row["price"],
-                "amenities": row["amenities"],
+                "amenities": row["amenities"].split(","),
             }
             for row in result
         ]
