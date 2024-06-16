@@ -1,11 +1,8 @@
 import json
 
-from click import echo
-
 
 def test_api_should_get_all_guests(client):
-    response = client.get("/api/hospedes")
-    echo(response)
+    response = client.get("/api/hospedes/")
     assert response.status_code == 200
 
 
@@ -13,6 +10,15 @@ def test_api_should_get_an_especific_guest_by_document(client):
     response = client.get("/api/hospedes/00157624242")
     guests = json.loads(response.data)
     assert guests["name"] == "Bento"
+    assert response.status_code == 200
+
+
+def test_api_should_get_all_bookings_from_an_especific_guest_by_document(client):
+    response = client.get("/api/hospedes/00157624242/reservas")
+    data = json.loads(response.data)
+    assert isinstance(data, list)
+    assert len(data) > 0
+    assert data[0]["guest_name"] == "Bento"
     assert response.status_code == 200
 
 
