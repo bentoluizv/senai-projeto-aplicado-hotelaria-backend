@@ -1,5 +1,7 @@
 import json
 
+from flask import Response
+
 
 def test_api_should_get_all_bookings(client):
     response = client.get("/api/reservas")
@@ -21,22 +23,21 @@ def test_api_should_return_status_code_404_for_a_inexisting_booking(client):
 
 def test_api_should_create_a_new_booking(client):
     booking_dto = {
-        "uuid": "dd093495-b637-4ff8-bf2c-eb99d0f88031",
-        "created_at": "2024-06-03T18:38:35.447990",
-        "status": "Aguardando Check-In",
         "check_in": "2024-09-15T08:30:00",
         "check_out": "2024-09-18T12:30:00",
         "guest_document": "00157624242",
         "accommodation_id": 1,
     }
-    response = client.post(
+    response: Response = client.post(
         "/api/reservas/cadastro",
         data=json.dumps(booking_dto),
         headers={"content-type": "application/json"},
     )
 
     assert response.status_code == 201
-    assert response.text == "CREATED"
+    assert response.json
+    assert response.json["uuid"]
+    assert response.json["created_at"]
 
 
 def test_api_should_return_status_code_400(client):

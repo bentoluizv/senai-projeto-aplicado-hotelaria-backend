@@ -13,6 +13,7 @@ from app.data.repositories.GuestRepository import GuestRepository
 from app.entity.Booking import Booking
 from app.errors.AlreadyExists import AlreadyExistsError
 from app.errors.NotFoundError import NotFoundError
+from app.services.create_new_booking import create_new_booking
 
 bp = Blueprint("api_booking", __name__, url_prefix="/api/reservas")
 
@@ -36,6 +37,7 @@ def get_bookings():
 def create_booking():
     try:
         booking_json = request.get_json()
+
         if not booking_json:
             abort(400)
 
@@ -50,21 +52,11 @@ def create_booking():
         accommodationDAO = AccommodationDAO(db)
         accommodationRepository = AccommodationtRepository(accommodationDAO)
 
-        guest = guestRepository.findBy("document", booking_json["guest_document"])
-        accommodation = accommodationRepository.findBy(
-            "id", booking_json["accommodation_id"]
+        result = create_new_booking(
+            bookingRepository, guestRepository, accommodationRepository, booking_json
         )
 
-        booking_data = {
-            "check_in": booking_json["check_in"],
-            "check_out": booking_json["check_out"],
-            "guest": guest,
-            "accommodation": accommodation,
-        }
-
-        booking = Booking.from_dict(booking_data)
-        bookingRepository.insert(booking)
-        return make_response("CREATED", 201)
+        return make_response(jsonify(result), 201)
 
     except AlreadyExistsError as err:
         echo(err)
@@ -72,7 +64,7 @@ def create_booking():
 
     except ValidationError as err:
         echo(err)
-        return make_response(jsonify({"message": err.title}), 400)
+        return make_response(jsonify({"message": err.errors}), 400)
 
 
 @bp.get("/<uuid>")
