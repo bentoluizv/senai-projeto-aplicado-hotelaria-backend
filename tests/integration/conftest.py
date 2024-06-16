@@ -2,7 +2,7 @@ import os
 import tempfile
 
 from app import create_app
-from app.data.database.sqlite3.db import init_db, seed_db
+from app.data.database.db import init_db, seed_db
 from pytest import fixture
 
 

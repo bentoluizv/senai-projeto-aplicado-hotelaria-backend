@@ -2,7 +2,7 @@ from flask import Blueprint, render_template
 from markupsafe import escape
 
 from app.data.dao.AccommodationDAO import AccommodationDAO
-from app.data.database.sqlite3.db import get_db
+from app.data.database.db import get_db
 from app.data.repositories.AccommodationRepository import AccommodationtRepository
 
 bp = Blueprint("accommodation", __name__, url_prefix="/acomodacoes")
