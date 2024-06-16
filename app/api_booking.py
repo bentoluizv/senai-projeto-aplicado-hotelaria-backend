@@ -13,9 +13,9 @@ from app.data.repositories.GuestRepository import GuestRepository
 from app.entity.Booking import Booking
 from app.errors.AlreadyExists import AlreadyExistsError
 from app.errors.NotFoundError import NotFoundError
-from app.services.create_new_booking import create_new_booking
-from app.services.find_booking_by import find_booking_by
-from app.services.list_all_bookings import list_all_bookings
+from app.services.booking.create_new_booking import create_new_booking
+from app.services.booking.find_booking_by import find_booking_by
+from app.services.booking.list_all_bookings import list_all_bookings
 
 bp = Blueprint("api_booking", __name__, url_prefix="/api/reservas")
 

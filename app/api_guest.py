@@ -10,7 +10,7 @@ from app.data.repositories.GuestRepository import GuestRepository
 from app.entity.Guests import Guest
 from app.errors.AlreadyExists import AlreadyExistsError
 from app.errors.NotFoundError import NotFoundError
-from app.services.find_bookings_by_guest import find_bookings_by_guest
+from app.services.booking.find_bookings_by_guest import find_bookings_by_guest
 
 bp = Blueprint("api_guest", __name__, url_prefix="/api/hospedes")
 

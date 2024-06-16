@@ -1,11 +1,8 @@
 import json
-from datetime import datetime
-from uuid import UUID
 
 import pytest
-from click import echo
-
 from app.entity.Accommodation import Accommodation
+from click import echo
 
 
 @pytest.fixture()
