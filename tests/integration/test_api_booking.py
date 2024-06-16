@@ -4,20 +4,20 @@ from flask import Response
 
 
 def test_api_should_get_all_bookings(client):
-    response = client.get("/api/reservas")
+    response = client.get("/api/reservas/")
     bookings = json.loads(response.data)
     assert len(bookings) == 4
     assert response.status_code == 200
 
 
 def test_api_should_get_a_booking_by_uuid(client):
-    response = client.get("/api/reservas/e08f76e8-0e71-4a48-a85a-bf7e8f61479e")
+    response = client.get("/api/reservas/e08f76e8-0e71-4a48-a85a-bf7e8f61479e/")
     data = json.loads(response.data)
     assert data["booking"]["guest"]["name"] == "Bento"
 
 
 def test_api_should_return_status_code_404_for_a_inexisting_booking(client):
-    response = client.get("/api/reservas/e08f76b8-0e71-4a48-a85a-bf7e8f61479e")
+    response = client.get("/api/reservas/e08f76b8-0e71-4a48-a85a-bf7e8f61479e/")
     assert response.status_code == 404
 
 
@@ -29,7 +29,7 @@ def test_api_should_create_a_new_booking(client):
         "accommodation_id": 1,
     }
     response: Response = client.post(
-        "/api/reservas/cadastro",
+        "/api/reservas/cadastro/",
         data=json.dumps(booking_dto),
         headers={"content-type": "application/json"},
     )
@@ -42,7 +42,7 @@ def test_api_should_create_a_new_booking(client):
 
 def test_api_should_return_status_code_400(client):
     response = client.post(
-        "/api/reservas/cadastro",
+        "/api/reservas/cadastro/",
         data=json.dumps({}),
         headers={"content-type": "application/json"},
     )
@@ -51,13 +51,13 @@ def test_api_should_return_status_code_400(client):
 
 
 def test_api_should_delete_an_accommodation(client):
-    response = client.delete("/api/reservas/e08f76e8-0e71-4a48-a85a-bf7e8f61479e")
+    response = client.delete("/api/reservas/e08f76e8-0e71-4a48-a85a-bf7e8f61479e/")
     assert response.status_code == 200
     assert response.text == "DELETED"
 
 
 def test_api_should_return_status_code_404_on_delete(client):
-    response = client.delete("/api/reservas/e08f76e8-0e71-4a48-a85a-Cf7e8f61479e")
+    response = client.delete("/api/reservas/e08f76e8-0e71-4a48-a85a-Cf7e8f61479e/")
     assert response.status_code == 404
 
 
@@ -89,7 +89,7 @@ def test_api_should_update_an_accommodation(client):
         },
     }
     response = client.put(
-        "/api/reservas",
+        "/api/reservas/",
         data=json.dumps(updated_booking_data),
         headers={"content-type": "application/json"},
     )
@@ -126,7 +126,7 @@ def test_api_should_return_status_code_404_on_update(client):
         },
     }
     response = client.put(
-        "/api/reservas",
+        "/api/reservas/",
         data=json.dumps(updated_booking_data),
         headers={"content-type": "application/json"},
     )

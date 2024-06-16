@@ -20,7 +20,7 @@ from app.services.booking.list_all_bookings import list_all_bookings
 bp = Blueprint("api_booking", __name__, url_prefix="/api/reservas")
 
 
-@bp.get("")
+@bp.get("/")
 def get_bookings():
     try:
         db = get_db()
@@ -34,7 +34,7 @@ def get_bookings():
         return make_response(jsonify({"message": err.title}), 500)
 
 
-@bp.post("/cadastro")
+@bp.post("/cadastro/")
 def create_booking():
     try:
         booking_json = request.get_json()
@@ -68,7 +68,7 @@ def create_booking():
         return make_response(jsonify({"message": err.errors}), 400)
 
 
-@bp.get("/<uuid>")
+@bp.get("/<uuid>/")
 def get_accommodation(uuid):
     try:
         db = get_db()
@@ -84,7 +84,7 @@ def get_accommodation(uuid):
         return make_response(jsonify({"message": err.message}), 404)
 
 
-@bp.delete("/<uuid>")
+@bp.delete("/<uuid>/")
 def delete_accommodation(uuid):
     db = get_db()
     dao = BookingDAO(db)
@@ -100,7 +100,7 @@ def delete_accommodation(uuid):
         return make_response(jsonify({"message": err.message}), err.status)
 
 
-@bp.put("")
+@bp.put("/")
 def update_accommodation():
     db = get_db()
     dao = BookingDAO(db)
