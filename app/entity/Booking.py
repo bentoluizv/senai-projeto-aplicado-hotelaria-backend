@@ -50,3 +50,19 @@ class Booking(StrictModel):
         if self.check_out < self.check_in:
             raise ValueError("Check out date is before check in")
         return self
+
+    def calculate_period(self):
+        check_in = datetime.fromisoformat(self.check_in)
+        check_out = datetime.fromisoformat(self.check_out)
+        diffTime = check_out - check_in
+        return diffTime.days
+
+    def calculate_budget(self):
+        price = self.accommodation.price
+        period = self.calculate_period()
+
+        return period * price
+
+    def get_locator(self):
+        locator = self.uuid[:6].replace("-", "")
+        return locator
