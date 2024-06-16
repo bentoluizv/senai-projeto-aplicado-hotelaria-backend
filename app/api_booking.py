@@ -1,5 +1,5 @@
 from click import echo
-from flask import Blueprint, jsonify, make_response, request
+from flask import Blueprint, abort, jsonify, make_response, request
 from markupsafe import escape
 from pydantic import ValidationError
 
@@ -36,6 +36,9 @@ def get_bookings():
 def create_booking():
     try:
         booking_json = request.get_json()
+        if not booking_json:
+            abort(400)
+
         db = get_db()
 
         bookingDAO = BookingDAO(db)
