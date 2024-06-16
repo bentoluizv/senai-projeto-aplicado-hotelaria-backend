@@ -13,7 +13,7 @@ from app.errors.NotFoundError import NotFoundError
 bp = Blueprint("api_accommodation", __name__, url_prefix="/api/acomodacoes")
 
 
-@bp.get("")
+@bp.get("/")
 def get_accommodations():
     db = get_db()
     dao = AccommodationDAO(db)
@@ -30,7 +30,7 @@ def get_accommodations():
         return make_response({"message": err.title}, 500)
 
 
-@bp.post("/cadastro")
+@bp.post("/cadastro/")
 def create_accommodation():
     accommodation_json = request.get_json()
 
@@ -61,7 +61,7 @@ def create_accommodation():
         return make_response(jsonify({"message": err.message}), err.status)
 
 
-@bp.get("/<id>")
+@bp.get("/<id>/")
 def get_accommodation(id):
     db = get_db()
     dao = AccommodationDAO(db)
@@ -77,7 +77,7 @@ def get_accommodation(id):
         return make_response({"message": err.message}, err.status)
 
 
-@bp.delete("/<uuid>")
+@bp.delete("/<uuid>/")
 def delete_accommodation(uuid):
     db = get_db()
     dao = AccommodationDAO(db)
@@ -93,7 +93,7 @@ def delete_accommodation(uuid):
         return make_response({"message": err.message}, err.status)
 
 
-@bp.put("")
+@bp.put("/")
 def update_accommodation():
     db = get_db()
     dao = AccommodationDAO(db)

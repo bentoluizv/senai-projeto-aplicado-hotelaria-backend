@@ -2,7 +2,7 @@ import json
 
 
 def test_api_should_get_all_accommodations(client):
-    response = client.get("/api/acomodacoes")
+    response = client.get("/api/acomodacoes/")
     accommodations = json.loads(response.data)
 
     assert len(accommodations) == 6
@@ -10,7 +10,7 @@ def test_api_should_get_all_accommodations(client):
 
 
 def test_api_should_get_an_accommodation_by_id(client):
-    response = client.get("/api/acomodacoes/1")
+    response = client.get("/api/acomodacoes/1/")
     accommodation = json.loads(response.data)
 
     assert accommodation["name"] == "Domo"
@@ -18,7 +18,7 @@ def test_api_should_get_an_accommodation_by_id(client):
 
 
 def test_api_should_return_status_code_404(client):
-    response = client.get("/api/acomodacoes/12")
+    response = client.get("/api/acomodacoes/12/")
     assert response.status_code == 404
 
 
@@ -36,7 +36,7 @@ def test_api_should_create_an_accommodation(client):
     }
 
     response = client.post(
-        "/api/acomodacoes/cadastro",
+        "/api/acomodacoes/cadastro/",
         data=json.dumps(accommodation_dto),
         headers={"content-type": "application/json"},
     )
@@ -47,7 +47,7 @@ def test_api_should_create_an_accommodation(client):
 
 def test_api_should_return_status_code_400(client):
     response = client.post(
-        "/api/hospedes/cadastro",
+        "/api/hospedes/cadastro/",
         data=json.dumps({}),
         headers={"content-type": "application/json"},
     )
@@ -55,13 +55,13 @@ def test_api_should_return_status_code_400(client):
 
 
 def test_api_should_delete_an_accommodation(client):
-    response = client.delete("/api/acomodacoes/1")
+    response = client.delete("/api/acomodacoes/1/")
     assert response.status_code == 200
     assert response.text == "DELETED"
 
 
 def test_api_should_return_status_code_404_on_delete(client):
-    response = client.delete("/api/acomodacoes/8")
+    response = client.delete("/api/acomodacoes/8/")
     assert response.status_code == 404
 
 
@@ -80,7 +80,7 @@ def test_api_should_update_an_accommodation(client):
     }
 
     response = client.put(
-        "/api/acomodacoes",
+        "/api/acomodacoes/",
         data=json.dumps(data),
         headers={"content-type": "application/json"},
     )
@@ -103,7 +103,7 @@ def test_api_should_return_status_code_404_on_update(client):
         "amenities": ["wifi"],
     }
     response = client.put(
-        "/api/acomodacoes",
+        "/api/acomodacoes/",
         data=json.dumps(data),
         headers={"content-type": "application/json"},
     )

@@ -29,7 +29,7 @@ def get_guests():
         return make_response(jsonify(err.errors), 500)
 
 
-@bp.post("/cadastro")
+@bp.post("/cadastro/")
 def create_guest():
     db = get_db()
     dao = GuestDAO(db)
@@ -53,7 +53,7 @@ def create_guest():
         return make_response(jsonify({"message": err.message}), err.status)
 
 
-@bp.get("/<document>")
+@bp.get("/<document>/")
 def get_guest(document):
     db = get_db()
     dao = GuestDAO(db)
@@ -68,7 +68,7 @@ def get_guest(document):
         return make_response(jsonify({"message": err.message}), err.status)
 
 
-@bp.get("/<document>/reservas")
+@bp.get("/<document>/reservas/")
 def get_guests_bookings(document):
     try:
         db = get_db()
@@ -89,7 +89,7 @@ def get_guests_bookings(document):
         return make_response(jsonify({"message": err.message}), err.status)
 
 
-@bp.delete("/<document>")
+@bp.delete("/<document>/")
 def delete_guest(document):
     db = get_db()
     dao = GuestDAO(db)
@@ -104,7 +104,7 @@ def delete_guest(document):
         return make_response(jsonify({"message": err.message}), err.status)
 
 
-@bp.put("")
+@bp.put("/")
 def update_guest():
     db = get_db()
     dao = GuestDAO(db)
