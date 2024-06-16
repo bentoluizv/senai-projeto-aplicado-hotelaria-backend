@@ -16,7 +16,6 @@ class Input(TypedDict):
 class Output(TypedDict):
     uuid: str
     created_at: str
-    locator: str
 
 
 def create_new_booking(
@@ -44,5 +43,4 @@ def create_new_booking(
     return {
         "uuid": booking.uuid,
         "created_at": booking.created_at,
-        "locator": booking.get_locator(),
     }

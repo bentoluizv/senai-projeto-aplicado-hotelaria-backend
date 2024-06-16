@@ -62,7 +62,3 @@ class Booking(StrictModel):
         period = self.calculate_period()
 
         return period * price
-
-    def get_locator(self):
-        locator = self.uuid[:6].replace("-", "")
-        return locator
