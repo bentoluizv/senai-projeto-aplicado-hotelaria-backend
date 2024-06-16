@@ -1,11 +1,15 @@
 from click import echo
-from flask import Blueprint, abort, jsonify, make_response, request
+from flask import Blueprint, jsonify, make_response, request
 from markupsafe import escape
 from pydantic import ValidationError
 
+from app.data.dao.AccommodationDAO import AccommodationDAO
 from app.data.dao.BookingDAO import BookingDAO
+from app.data.dao.GuestDAO import GuestDAO
 from app.data.database.db import get_db
+from app.data.repositories.AccommodationRepository import AccommodationtRepository
 from app.data.repositories.BookingRepository import BookingRepository
+from app.data.repositories.GuestRepository import GuestRepository
 from app.entity.Booking import Booking
 from app.errors.AlreadyExists import AlreadyExistsError
 from app.errors.NotFoundError import NotFoundError
@@ -30,18 +34,33 @@ def get_bookings():
 
 @bp.post("/cadastro")
 def create_booking():
-    booking_json = request.get_json()
-
-    if booking_json is None:
-        abort(400)
-
-    db = get_db()
-    dao = BookingDAO(db)
-    repository = BookingRepository(dao)
-
     try:
-        booking = Booking.from_dict(booking_json)
-        repository.insert(booking)
+        booking_json = request.get_json()
+        db = get_db()
+
+        bookingDAO = BookingDAO(db)
+        bookingRepository = BookingRepository(bookingDAO)
+
+        guestDAO = GuestDAO(db)
+        guestRepository = GuestRepository(guestDAO)
+
+        accommodationDAO = AccommodationDAO(db)
+        accommodationRepository = AccommodationtRepository(accommodationDAO)
+
+        guest = guestRepository.findBy("document", booking_json["guest_document"])
+        accommodation = accommodationRepository.findBy(
+            "id", booking_json["accommodation_id"]
+        )
+
+        booking_data = {
+            "check_in": booking_json["check_in"],
+            "check_out": booking_json["check_out"],
+            "guest": guest,
+            "accommodation": accommodation,
+        }
+
+        booking = Booking.from_dict(booking_data)
+        bookingRepository.insert(booking)
         return make_response("CREATED", 201)
 
     except AlreadyExistsError as err:
