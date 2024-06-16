@@ -1,21 +1,20 @@
 from datetime import datetime
 from uuid import uuid4
 
+from app.entity.Accommodation import Accommodation
+from app.entity.Guests import Guest
+from app.utils.StrictModel import StrictModel
 from pydantic import (
     Field,
     field_validator,
     model_validator,
 )
 
-from app.entity.Accommodation import Accommodation
-from app.entity.Guests import Guest
-from app.utils.StrictModel import StrictModel
-
 
 class Booking(StrictModel):
     uuid: str = Field(default=(str(uuid4())))
     created_at: str = Field(default=datetime.now().isoformat())
-    status: str = Field(default="Aguardando Check-in")
+    status: str = Field(default="Aguardando Check-In")
     check_in: str
     check_out: str
     guest: Guest
