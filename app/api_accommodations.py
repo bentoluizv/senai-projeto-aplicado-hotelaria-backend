@@ -4,7 +4,7 @@ from markupsafe import escape
 from pydantic import ValidationError
 
 from app.data.dao.AccommodationDAO import AccommodationDAO
-from app.data.database.db import get_db
+from app.data.database.sqlite3.db import get_db
 from app.data.repositories.AccommodationRepository import AccommodationtRepository
 from app.entity.Accommodation import Accommodation
 from app.errors.AlreadyExists import AlreadyExistsError

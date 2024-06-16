@@ -5,7 +5,7 @@ import os
 from flask import Flask, json, render_template
 from flask_cors import CORS
 
-from .data.database import db
+from .data.database.sqlite3 import db
 
 
 def create_app(test_config=None):

@@ -1,7 +1,6 @@
 import pytest
-
 from app.data.dao.BookingDAO import BookingDAO
-from app.data.database.db import get_db
+from app.data.database.sqlite3.db import get_db
 
 
 @pytest.fixture

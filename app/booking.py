@@ -2,7 +2,7 @@ from flask import Blueprint, render_template
 from markupsafe import escape
 
 from app.data.dao.BookingDAO import BookingDAO
-from app.data.database.db import get_db
+from app.data.database.sqlite3.db import get_db
 from app.data.repositories.BookingRepository import BookingRepository
 
 bp = Blueprint("booking", __name__, url_prefix="/reservas")
@@ -17,9 +17,11 @@ def booking():
     print(bookings)  # Adicione este print para verificar os dados
     return render_template("index.html", rows=bookings)
 
+
 @bp.get("/cadastro/")
 def cadastro():
-    return render_template("newBooking.html")    
+    return render_template("newBooking.html")
+
 
 @bp.get("/<resource>/<guest_document>")
 def get_booking(resource, guest_document):
@@ -31,17 +33,11 @@ def get_booking(resource, guest_document):
     dao = BookingDAO(db)
     repository = BookingRepository(dao)
 
-    if resource_param == 'reserva':
+    if resource_param == "reserva":
         bookings = repository.findBy("uuid", str(url_param))
-    elif resource_param == 'hospede':
+    elif resource_param == "hospede":
         bookings = repository.findBy("document", str(url_param))
     else:
         bookings = []
 
     return render_template("index.html", rows=bookings)
-
-    
-
-
-
-

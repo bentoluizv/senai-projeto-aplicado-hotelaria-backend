@@ -4,7 +4,7 @@ from markupsafe import escape
 from pydantic import ValidationError
 
 from app.data.dao.AmenitieDAO import AmenitieDAO
-from app.data.database.db import get_db
+from app.data.database.sqlite3.db import get_db
 
 bp = Blueprint("api_amenities", __name__, url_prefix="/api/amenities")
 

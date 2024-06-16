@@ -7,7 +7,8 @@ dependencies = [
     "flask-cors",
     "types-Flask-Cors",
     "pytest",
-    "pydantic"
+    "pydantic",
+    "Flask-SQLAlchemy"
 ]
 
 [build-system]
