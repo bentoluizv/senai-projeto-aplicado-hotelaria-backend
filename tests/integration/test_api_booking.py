@@ -13,7 +13,7 @@ def test_api_should_get_all_bookings(client):
 def test_api_should_get_a_booking_by_uuid(client):
     response = client.get("/api/reservas/e08f76e8-0e71-4a48-a85a-bf7e8f61479e")
     data = json.loads(response.data)
-    assert data["booking"]["guest_name"] == "Bento"
+    assert data["booking"]["guest"]["name"] == "Bento"
 
 
 def test_api_should_return_status_code_404_for_a_inexisting_booking(client):

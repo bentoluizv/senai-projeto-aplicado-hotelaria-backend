@@ -1,25 +1,16 @@
-from typing import TypedDict
-
 from app.data.repositories.BookingRepository import BookingRepository
-from app.services.dto.BookingDTO import BookingDTO
 
 
-class Output(TypedDict):
-    bookings: list[BookingDTO]
-
-
-def list_all_bookings(bookingRepository: BookingRepository) -> Output:
+def list_all_bookings(bookingRepository: BookingRepository):
     existing_bookings = bookingRepository.find_many()
-    result: list[BookingDTO] = []
+    result = []
     for existing_booking in existing_bookings:
-        booking_dto: BookingDTO = {
+        booking_dto = {
             "uuid": existing_booking.uuid,
             "created_at": existing_booking.created_at,
             "status": existing_booking.status,
-            "guest_name": existing_booking.guest.name,
-            "guest_phone": existing_booking.guest.phone,
-            "accommodation_name": existing_booking.accommodation.name,
-            "accommodation_price": str(existing_booking.accommodation.price),
+            "guest": existing_booking.guest.to_dict(),
+            "accommodation": existing_booking.accommodation.to_dict(),
             "check_in": existing_booking.check_in,
             "check_out": existing_booking.check_out,
             "total": str(existing_booking.calculate_budget()),

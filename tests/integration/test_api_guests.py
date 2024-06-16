@@ -18,7 +18,7 @@ def test_api_should_get_all_bookings_from_an_especific_guest_by_document(client)
     data = json.loads(response.data)
     assert isinstance(data, list)
     assert len(data) > 0
-    assert data[0]["guest_name"] == "Bento"
+    assert data[0]["guest"]["name"] == "Bento"
     assert response.status_code == 200
 
 

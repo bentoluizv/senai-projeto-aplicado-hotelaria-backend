@@ -82,6 +82,7 @@ def get_guests_bookings(document):
         bookings_by_guest = find_bookings_by_guest(
             booking_repository, guest_repository, {"guest_document": str(url_param)}
         )["bookings"]
+
         return jsonify(bookings_by_guest)
 
     except NotFoundError as err:

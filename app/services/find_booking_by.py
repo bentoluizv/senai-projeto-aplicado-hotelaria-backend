@@ -1,31 +1,25 @@
 from typing import TypedDict
 
 from app.data.repositories.BookingRepository import BookingRepository
-from app.services.dto.BookingDTO import BookingDTO
 
 
 class Input(TypedDict):
-    id: str
-
-
-class Output(TypedDict):
-    booking: BookingDTO
+    key: str
+    value: str
 
 
 def find_booking_by(
     bookingRepository: BookingRepository,
     input: Input,
-) -> Output:
-    existing_booking = bookingRepository.findBy("uuid", input["id"])
+):
+    existing_booking = bookingRepository.findBy(input["key"], input["value"])
 
-    booking_dto: BookingDTO = {
+    booking_dto = {
         "uuid": existing_booking.uuid,
         "created_at": existing_booking.created_at,
         "status": existing_booking.status,
-        "guest_name": existing_booking.guest.name,
-        "guest_phone": existing_booking.guest.phone,
-        "accommodation_name": existing_booking.accommodation.name,
-        "accommodation_price": str(existing_booking.accommodation.price),
+        "guest": existing_booking.guest.to_dict(),
+        "accommodation": existing_booking.accommodation.to_dict(),
         "check_in": existing_booking.check_in,
         "check_out": existing_booking.check_out,
         "total": str(existing_booking.calculate_budget()),

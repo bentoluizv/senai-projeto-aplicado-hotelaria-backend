@@ -68,15 +68,15 @@ def create_booking():
         return make_response(jsonify({"message": err.errors}), 400)
 
 
-@bp.get("/<id>")
-def get_accommodation(id):
+@bp.get("/<uuid>")
+def get_accommodation(uuid):
     try:
         db = get_db()
         dao = BookingDAO(db)
         repository = BookingRepository(dao)
-        url_param = str(escape(id))
+        url_param = str(escape(uuid))
 
-        result = find_booking_by(repository, {"id": url_param})
+        result = find_booking_by(repository, {"key": "uuid", "value": url_param})
         return jsonify(result)
 
     except NotFoundError as err:
