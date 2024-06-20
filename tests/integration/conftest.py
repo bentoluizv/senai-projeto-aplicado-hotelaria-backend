@@ -1,16 +1,17 @@
 import os
 import tempfile
 
+import pytest
+
 from app import create_app
-from app.data.database.db import init_db, seed_db
-from pytest import fixture
+from app.data.database.sqlite.db import init_db, seed_db
 
 
-@fixture
+@pytest.fixture()
 def app():
     db_fd, db_path = tempfile.mkstemp()
 
-    app = create_app({"TESTING": True, "DATABASE": db_path})
+    app = create_app({'TESTING': True, 'DATABASE': db_path})
 
     with app.app_context():
         init_db()
@@ -22,11 +23,11 @@ def app():
     os.unlink(db_path)
 
 
-@fixture
+@pytest.fixture()
 def client(app):
     return app.test_client()
 
 
-@fixture
+@pytest.fixture()
 def runner(app):
     return app.test_cli_runner()

@@ -1,6 +1,9 @@
 from sqlite3 import Connection
 
-from app.data.database.models.AccommodationModel import AccommodationModel
+from app.schemas.AccommodationSchema import (
+    AccommodationDB,
+    AccommodationSchema,
+)
 
 
 class AccommodationDAO:
@@ -9,121 +12,235 @@ class AccommodationDAO:
 
     def count(self) -> int:
         cursor = self.db.cursor()
-        count = cursor.execute("SELECT COUNT(*) FROM accommodation").fetchone()
-        return count["COUNT(*)"]
+        cursor = cursor.execute('SELECT COUNT(*) FROM accommodation')
+        result = cursor.fetchone()
 
-    def insert(self, data: AccommodationModel):
+        return result['COUNT(*)']
+
+    def find_many(self) -> list[AccommodationDB]:
+        statement = """SELECT
+                            a.id,
+                            a.created_at,
+                            a.name,
+                            a.status,
+                            a.total_guests,
+                            a.single_beds,
+                            a.double_beds,
+                            a.min_nights,
+                            a.price,
+                            GROUP_CONCAT(am.amenitie) AS amenities
+                        FROM accommodation AS a
+                            LEFT JOIN amenities_per_accommodation AS apa
+                                ON a.id = apa.accommodation_id
+                            LEFT JOIN amenities AS am
+                                ON apa.amenitie_id = am.id
+                            GROUP BY a.id;"""
+
         cursor = self.db.cursor()
-        cursor.execute(
-            "INSERT INTO accommodation (created_at, name, status, total_guests, single_beds, double_beds, min_nights, price) VALUES (?, ?, ?, ?, ?, ?, ?, ?);",
-            (
-                data["created_at"],
-                data["name"],
-                data["status"],
-                data["total_guests"],
-                data["single_beds"],
-                data["double_beds"],
-                data["min_nights"],
-                data["price"],
-            ),
-        )
+        cursor.execute(statement)
+        result = cursor.fetchall()
 
-        id = cursor.lastrowid
+        if not result:
+            return []
 
-        for amenitie in data["amenities"]:
-            cursor.execute("SELECT id FROM amenities WHERE amenitie = ?", (amenitie,))
-            amenitie_id = cursor.fetchone()["id"]
-            cursor.execute(
-                "INSERT INTO amenities_per_accommodation (accommodation_id, amenitie_id) VALUES (?, ?)",
-                (id, amenitie_id),
-            )
+        for row in result:
+            row['amenities'] = row['amenities'].split(',')
 
-        self.db.commit()
+        return [AccommodationDB(**row) for row in result]
 
-    def findBy(self, property: str, value: str) -> AccommodationModel | None:
-        statement = f"SELECT a.id, a.created_at, a.name, a.status, a.total_guests, a.single_beds, a.double_beds, a.min_nights, a.price, GROUP_CONCAT(am.amenitie) AS amenities FROM accommodation AS a LEFT JOIN amenities_per_accommodation AS apa ON a.id = apa.accommodation_id LEFT JOIN amenities AS am ON apa.amenitie_id = am.id WHERE a.{property} = ? GROUP BY a.id;"
+    def find(self, id: str) -> AccommodationDB | None:
+        statement = f"""SELECT
+                            a.id,
+                            a.created_at,
+                            a.name,
+                            a.status,
+                            a.total_guests,
+                            a.single_beds,
+                            a.double_beds,
+                            a.min_nights,
+                            a.price,
+                            GROUP_CONCAT(am.amenitie) AS amenities
+                        FROM accommodation AS a
+                            LEFT JOIN amenities_per_accommodation AS apa
+                                ON a.id = apa.accommodation_id
+                            LEFT JOIN amenities AS am
+                                ON apa.amenitie_id = am.id
+                            WHERE a.id = {id}
+                            GROUP BY a.id;"""
+
         cursor = self.db.cursor()
-        cursor.execute(statement, (value,))
+        cursor.execute(statement)
         result = cursor.fetchone()
 
         if not result:
             return None
 
-        return {
-            "id": result["id"],
-            "name": result["name"],
-            "status": result["status"],
-            "created_at": result["created_at"],
-            "total_guests": result["total_guests"],
-            "min_nights": result["min_nights"],
-            "single_beds": result["single_beds"],
-            "double_beds": result["double_beds"],
-            "price": result["price"],
-            "amenities": result["amenities"].split(","),
-        }
+        for row in result:
+            row['amenities'] = row['amenities'].split(',')
 
-    def find_many(self) -> list[AccommodationModel]:
-        statement = "SELECT a.id, a.created_at, a.name, a.status, a.total_guests, a.single_beds, a.double_beds, a.min_nights, a.price, GROUP_CONCAT(am.amenitie) AS amenities FROM accommodation AS a LEFT JOIN amenities_per_accommodation AS apa ON a.id = apa.accommodation_id LEFT JOIN amenities AS am ON apa.amenitie_id = am.id GROUP BY a.id;"
+        return AccommodationDB(**result)
+
+    def find_by(self, property: str, value: str) -> list[AccommodationDB]:
+        statement = f"""SELECT
+                            a.id,
+                            a.created_at,
+                            a.name,
+                            a.status,
+                            a.total_guests,
+                            a.single_beds,
+                            a.double_beds,
+                            a.min_nights,
+                            a.price,
+                            GROUP_CONCAT(am.amenitie) AS amenities
+                        FROM accommodation AS a
+                            LEFT JOIN amenities_per_accommodation AS apa
+                                ON a.id = apa.accommodation_id
+                            LEFT JOIN amenities AS am
+                                ON apa.amenitie_id = am.id
+                            WHERE a.{property} = {value}
+                            GROUP BY a.id;"""
+
         cursor = self.db.cursor()
         cursor.execute(statement)
         result = cursor.fetchall()
 
-        if len(result) == 0:
-            return []
+        if not result:
+            return result
 
-        rows: list[AccommodationModel] = [
-            {
-                "id": row["id"],
-                "name": row["name"],
-                "status": row["status"],
-                "created_at": row["created_at"],
-                "total_guests": row["total_guests"],
-                "min_nights": row["min_nights"],
-                "single_beds": row["single_beds"],
-                "double_beds": row["double_beds"],
-                "price": row["price"],
-                "amenities": row["amenities"].split(","),
-            }
-            for row in result
-        ]
+        for row in result:
+            row['amenities'] = row['amenities'].split(',')
 
-        return rows
+        return [AccommodationDB(**row) for row in result]
 
-    def update(self, id: str, accommodation) -> None:
-        statement = "UPDATE accommodation SET name = ?, status = ?, total_guests = ?, single_beds = ?, double_beds = ?, min_nights = ?, price = ? WHERE id = ?;"
+    def create(self, accommodation: AccommodationSchema):
+        statement = """INSERT
+                        INTO
+                            accommodation (
+                                created_at,
+                                name,
+                                status,
+                                total_guests,
+                                single_beds,
+                                double_beds,
+                                min_nights,
+                                price
+                            )
+                        VALUES (
+                            :created_at,
+                            :name,
+                            :status,
+                            :total_guests,
+                            :single_beds,
+                            :double_beds,
+                            :min_nights,
+                            :price
+                        );"""
+
         cursor = self.db.cursor()
+        cursor.execute(statement, accommodation.model_dump())
 
-        cursor.execute(
-            statement,
-            (
-                accommodation["name"],
-                accommodation["status"],
-                accommodation["total_guests"],
-                accommodation["single_beds"],
-                accommodation["double_beds"],
-                accommodation["min_nights"],
-                accommodation["price"],
-                id,
-            ),
-        )
+        last_accommodation_id = cursor.lastrowid
 
-        cursor.execute(
-            "DELETE FROM amenities_per_accommodation WHERE accommodation_id = ?",
-            (id,),
-        )
+        for amenitie in accommodation.amenities:
+            select_amenitie_id_statement = f"""
+                    SELECT
+                        id
+                    FROM
+                        amenities
+                    WHERE
+                        amenitie = {amenitie};
+                    """
 
-        for amenitie in accommodation["amenities"]:
-            cursor.execute("SELECT id FROM amenities WHERE amenitie = ?", (amenitie,))
-            amenitie_id = cursor.fetchone()["id"]
-            cursor.execute(
-                "INSERT INTO amenities_per_accommodation (accommodation_id, amenitie_id) VALUES (?, ?)",
-                (id, str(amenitie_id)),
-            )
+            cursor.execute(select_amenitie_id_statement)
+            existing_amenitie = cursor.fetchone()
+
+            insert_amenitie_statement = f"""
+                    INSERT
+                        INTO amenities_per_accommodation
+                        (
+                            accommodation_id,
+                            amenitie_id
+                        )
+                        VALUES
+                        (
+                            {last_accommodation_id},
+                            {existing_amenitie['id']}
+                        );
+                    """
+            cursor.execute(insert_amenitie_statement)
 
         self.db.commit()
 
-    def delete(self, id: str):
-        statement = "DELETE FROM accommodation WHERE id = ?"
+    def update(self, id: str, accommodation: AccommodationSchema) -> None:
+        update_accommodatio_statement = f"""
+            UPDATE
+                accommodation
+            SET
+                name = :name,
+                status = :status,
+                total_guests = :total_guests,
+                single_beds = :single_beds,
+                double_beds = :double_beds,
+                min_nights = :min_nights,
+                price = :price
+            WHERE id = {id};
+        """
+
         cursor = self.db.cursor()
-        cursor.execute(statement, (id,))
+        cursor.execute(
+            update_accommodatio_statement, accommodation.model_dump()
+        )
+
+        delete_amenities_statement = f"""
+            DELETE
+                FROM
+                    amenities_per_accommodation
+                WHERE
+                    accommodation_id = {id}
+        """
+
+        cursor.execute(delete_amenities_statement)
+
+        for amenitie in accommodation.amenities:
+            select_amenitie_id_statement = f"""
+                SELECT
+                    id
+                FROM
+                    amenities
+                WHERE
+                    amenitie = {amenitie}
+            """
+
+            cursor.execute(select_amenitie_id_statement)
+            result = cursor.fetchone()
+
+            insert_amenitie_statement = f"""
+                INSERT
+                    INTO
+                        amenities_per_accommodation
+                        (
+                            accommodation_id,
+                            amenitie_id
+                        )
+                    VALUES
+                        (
+                            {id},
+                            {result[id]}
+                        )
+                """
+
+        cursor.execute(insert_amenitie_statement)
+        self.db.commit()
+
+    def delete(self, id: str):
+        delete_statement = f"""
+            DELETE
+                FROM
+                    accommodation
+                WHERE
+                    id = {id}
+        """
+
+        cursor = self.db.cursor()
+        cursor.execute(delete_statement)
         self.db.commit()

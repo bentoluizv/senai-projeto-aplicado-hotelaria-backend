@@ -1,5 +1,7 @@
 def is_valid_cpf(rawCpf: str) -> bool:
-    only_digits_cpf = rawCpf.replace(".", "").replace("-", "")
+    CONSTANT = 2
+
+    only_digits_cpf = rawCpf.replace('.', '').replace('-', '')
     last_two_digits = only_digits_cpf[-2:]
     first_six_digits = only_digits_cpf[:-2]
 
@@ -13,7 +15,7 @@ def is_valid_cpf(rawCpf: str) -> bool:
 
     remainder = sum % 11
 
-    if remainder < 2:
+    if remainder < CONSTANT:
         digits_list.append(0)
     else:
         digits_list.append(11 - remainder)
@@ -28,12 +30,12 @@ def is_valid_cpf(rawCpf: str) -> bool:
 
     remainder = sum % 11
 
-    if remainder < 2:
+    if remainder < CONSTANT:
         digits_list.append(0)
     else:
         digits_list.append(11 - remainder)
 
-    digits = "".join(map(str, digits_list))
+    digits = ''.join(map(str, digits_list))
 
     if digits != last_two_digits:
         return False

@@ -1,7 +1,8 @@
 import sqlite3
 
 import pytest
-from app.data.database.db import get_db
+
+from app.data.database.sqlite.db import get_db
 
 
 def test_get_close_db(app):
@@ -10,9 +11,9 @@ def test_get_close_db(app):
         assert db is get_db()
 
     with pytest.raises(sqlite3.ProgrammingError) as e:
-        db.execute("SELECT 1")
+        db.execute('SELECT 1')
 
-    assert "closed" in str(e.value)
+    assert 'closed' in str(e.value)
 
 
 def test_init_db_command(runner, monkeypatch):
@@ -22,7 +23,7 @@ def test_init_db_command(runner, monkeypatch):
     def fake_init_db():
         Recorder.called = True
 
-    monkeypatch.setattr("app.data.database.db.init_db", fake_init_db)
-    result = runner.invoke(args=["init-db"])
-    assert "Initialized" in result.output
+    monkeypatch.setattr('app.data.database.sqlite.db.init_db', fake_init_db)
+    result = runner.invoke(args=['init-db'])
+    assert 'Initialized' in result.output
     assert Recorder.called

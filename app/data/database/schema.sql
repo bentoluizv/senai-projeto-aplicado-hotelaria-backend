@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS guest (
 CREATE TABLE IF NOT EXISTS accommodation (
     id                      INTEGER PRIMARY KEY AUTOINCREMENT,
     created_at              TEXT NOT NULL,
-    name                    TEXT NOT NULL,
+    name                    TEXT UNIQUE NOT NULL,
     status                  TEXT NOT NULL,
     total_guests            INTEGER NOT NULL,
     single_beds             INTEGER NOT NULL,
@@ -47,8 +47,9 @@ CREATE TABLE IF NOT EXISTS booking (
     status                  TEXT NOT NULL,
     check_in                TEXT NOT NULL,
     check_out               TEXT NOT NULL,
-    document              TEXT NOT NULL,
-    accommodation_id      TEXT NOT NULL,
-    FOREIGN KEY(document) REFERENCES guest(uuid),
-    FOREIGN KEY(accommodation_id) REFERENCES accommodation(id)
+    guest_document          TEXT NOT NULL,
+    accommodation_id        TEXT NOT NULL,
+    budget                  INTEGER  NOT NULL
+    FOREIGN KEY(guest_document) REFERENCES guest(document) ON DELETE RESTRICT,
+    FOREIGN KEY(accommodation_id) REFERENCES accommodation(id) ON DELETE RESTRICT
 );

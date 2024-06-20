@@ -1,115 +1,105 @@
-from click import echo
-from flask import Blueprint, jsonify, make_response, request
+from http import HTTPStatus
+
+from flask import Blueprint, abort, jsonify, make_response, request
 from markupsafe import escape
 from pydantic import ValidationError
 
 from app.data.dao.AccommodationDAO import AccommodationDAO
-from app.data.database.db import get_db
-from app.data.repositories.AccommodationRepository import AccommodationtRepository
-from app.entity.Accommodation import Accommodation
+from app.data.database.sqlite.db import get_db
 from app.errors.AlreadyExists import AlreadyExistsError
 from app.errors.NotFoundError import NotFoundError
+from app.schemas.AccommodationSchema import AccommodationSchema
 
-bp = Blueprint("api_accommodation", __name__, url_prefix="/api/acomodacoes")
+bp = Blueprint('api_accommodation', __name__, url_prefix='/api/acomodacoes')
 
 
-@bp.get("/")
+@bp.get('/')
 def get_accommodations():
     db = get_db()
     dao = AccommodationDAO(db)
-    respository = AccommodationtRepository(dao)
 
     try:
         accommodations = [
-            accommodation.to_dict() for accommodation in respository.find_many()
+            accommodation.model_dump() for accommodation in dao.find_many()
         ]
-        return make_response(jsonify(accommodations), 200)
+        return jsonify(accommodations), HTTPStatus.OK
 
     except ValidationError as err:
-        echo(err)
-        return make_response({"message": err.title}, 500)
+        return abort(HTTPStatus.UNPROCESSABLE_ENTITY, err.json())
 
 
-@bp.post("/cadastro/")
+@bp.post('/cadastro/')
 def create_accommodation():
     accommodation_json = request.get_json()
 
     db = get_db()
     dao = AccommodationDAO(db)
-    repository = AccommodationtRepository(dao)
 
     parsed_dto = {
-        "name": accommodation_json["name"],
-        "total_guests": int(accommodation_json["total_guests"]),
-        "single_beds": int(accommodation_json["single_beds"]),
-        "double_beds": int(accommodation_json["double_beds"]),
-        "min_nights": int(accommodation_json["min_nights"]),
-        "price": int(accommodation_json["price"]),
-        "amenities": accommodation_json["amenities"],
+        'name': accommodation_json['name'],
+        'total_guests': int(accommodation_json['total_guests']),
+        'single_beds': int(accommodation_json['single_beds']),
+        'double_beds': int(accommodation_json['double_beds']),
+        'min_nights': int(accommodation_json['min_nights']),
+        'price': int(accommodation_json['price']),
+        'amenities': accommodation_json['amenities'],
     }
     try:
-        accommodation = Accommodation.from_dict(parsed_dto)
-        repository.insert(accommodation)
-        return make_response("CREATED", 201)
+        accommodation = AccommodationSchema(**parsed_dto)
+        dao.insert(accommodation)
+
+        return make_response(HTTPStatus.CREATED)
 
     except ValidationError as err:
-        echo(err)
-        return make_response(jsonify({"message": err.title}), 400)
+        return make_response(err.json(), HTTPStatus.CREATED)
 
     except AlreadyExistsError as err:
-        echo(err)
-        return make_response(jsonify({"message": err.message}), err.status)
+        return make_response(
+            jsonify({'message': err.message}), HTTPStatus.CONFLICT
+        )
 
 
-@bp.get("/<id>/")
+@bp.get('/<id>/')
 def get_accommodation(id):
     db = get_db()
     dao = AccommodationDAO(db)
-    repository = AccommodationtRepository(dao)
+    url_param = escape(id)
+
+    exists = dao.findBy('id', str(url_param))
+
+    if not exists:
+        abort(HTTPStatus.NOT_FOUND)
+
+    return jsonify(exists.model_dump(), HTTPStatus.OK)
+
+
+@bp.delete('/<id>/')
+def delete_accommodation(id):
+    db = get_db()
+    dao = AccommodationDAO(db)
     url_param = escape(id)
 
     try:
-        accommodation = repository.findBy("id", str(url_param))
-        return make_response(accommodation.to_json(), 200)
+        dao.delete(str(url_param))
+        return make_response('DELETED', 200)
 
     except NotFoundError as err:
-        echo(err)
-        return make_response({"message": err.message}, err.status)
+        return make_response({'message': err.message}, err.status)
 
 
-@bp.delete("/<uuid>/")
-def delete_accommodation(uuid):
+@bp.put('/<id>/')
+def update_accommodation(id):
     db = get_db()
     dao = AccommodationDAO(db)
-    repository = AccommodationtRepository(dao)
-    url_param = escape(uuid)
-
-    try:
-        repository.delete(str(url_param))
-        return make_response("DELETED", 200)
-
-    except NotFoundError as err:
-        echo(err)
-        return make_response({"message": err.message}, err.status)
-
-
-@bp.put("/")
-def update_accommodation():
-    db = get_db()
-    dao = AccommodationDAO(db)
-    repository = AccommodationtRepository(dao)
     data = request.get_json()
-    echo(data)
-
+    url_param = escape(id)
     try:
-        accommodation = Accommodation.from_dict(data)
-        repository.update(accommodation)
-        return "UPDATED", 201
+        accommodation = AccommodationSchema(**data)
+        dao.update(url_param, accommodation)
+        return 'UPDATED', 201
 
     except ValidationError as err:
-        echo(err)
-        return make_response(jsonify({"message": err.title}), 400)
+        return make_response(jsonify({'message': err.title}), 400)
 
     except NotFoundError as err:
-        echo(err)
-        return make_response({"message": err.message}, err.status)
+        return make_response({'message': err.message}, err.status)

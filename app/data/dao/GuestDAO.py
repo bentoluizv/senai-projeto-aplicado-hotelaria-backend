@@ -1,14 +1,6 @@
 from sqlite3 import Connection
-from typing import TypedDict
 
-from app.data.database.models.GuestModel import GuestModel
-
-
-class UpdateGuestData(TypedDict):
-    name: str
-    surname: str
-    country: str
-    phone: str
+from app.schemas.GuestSchema import GuestDB, GuestSchema
 
 
 class GuestDAO:
@@ -17,81 +9,123 @@ class GuestDAO:
 
     def count(self) -> int:
         cursor = self.db.cursor()
-        row = cursor.execute("SELECT COUNT(*) FROM guest").fetchone()
-        return row["COUNT(*)"]
-
-    def insert(self, guest: GuestModel) -> None:
-        cursor = self.db.cursor()
-        cursor.execute(
-            "INSERT INTO guest (document, created_at, name, surname, country, phone) VALUES (?, ?, ?, ?, ?, ?);",
-            (
-                guest["document"],
-                guest["created_at"],
-                guest["name"],
-                guest["surname"],
-                guest["country"],
-                guest["phone"],
-            ),
-        )
-        self.db.commit()
-
-    def findBy(self, property: str, value: str) -> GuestModel | None:
-        statement = f"SELECT document, created_at, name, surname, country, phone FROM guest WHERE guest.{property} = ?;"
-        cursor = self.db.cursor()
-        cursor.execute(statement, (value,))
+        cursor = cursor.execute('SELECT COUNT(*) FROM guest')
         result = cursor.fetchone()
 
-        if result is None:
+        return result['COUNT(*)']
+
+    def find_many(self) -> list[GuestDB]:
+        statement = """SELECT
+                        document,
+                        created_at,
+                        name,
+                        surname,
+                        country,
+                        phone
+                    FROM
+                        guest;"""
+
+        cursor = self.db.cursor()
+        cursor.execute(statement)
+
+        result = cursor.fetchall()
+
+        return [GuestDB(**row) for row in result]
+
+    def find(self, document: str) -> GuestDB | None:
+        statement = f"""SELECT
+                            document,
+                            created_at,
+                            name,
+                            surname,
+                            country,
+                            phone
+                        FROM
+                            guest
+                        WHERE
+                            guest.document = {document};"""
+
+        cursor = self.db.cursor()
+        cursor.execute(statement)
+        result = cursor.fetchone()
+
+        if not result:
             return None
 
-        return {
-            "document": result["document"],
-            "created_at": result["created_at"],
-            "name": result["name"],
-            "surname": result["surname"],
-            "country": result["country"],
-            "phone": result["phone"],
-        }
+        return GuestDB(**result)
 
-    def find_many(self) -> list[GuestModel]:
+    def find_by(self, property: str, value: str) -> list[GuestDB]:
+        statement = f"""SELECT
+                            document,
+                            created_at,
+                            name,
+                            surname,
+                            country,
+                            phone
+                        FROM
+                            guest
+                        WHERE
+                            guest.{property} = {value};"""
+
         cursor = self.db.cursor()
-        cursor.execute(
-            "SELECT document, created_at, name, surname, country, phone FROM guest;"
-        )
-        results = cursor.fetchall()
+        cursor.execute(statement)
+        result = cursor.fetchall()
+        return [GuestDB(**row) for row in result]
 
-        if len(results) == 0:
-            return []
+    def create(self, guest: GuestSchema):
+        statement = """INSERT
+                            INTO guest
+                            (
+                                document,
+                                created_at,
+                                name,
+                                surname,
+                                country,
+                                phone
+                            )
+                        VALUES
+                        (
+                            :document,
+                            :created_at,
+                            :name,
+                            :surname,
+                            :country,
+                            :phone
+                        );"""
 
-        guests: list[GuestModel] = [
-            {
-                "document": result["document"],
-                "name": result["name"],
-                "surname": result["surname"],
-                "phone": result["phone"],
-                "country": result["country"],
-                "created_at": result["created_at"],
-            }
-            for result in results
-        ]
+        guest_db = GuestDB(**guest.model_dump())
 
-        return guests
-
-    def update(self, document: str, guest: UpdateGuestData) -> None:
         cursor = self.db.cursor()
-        cursor.execute(
-            "UPDATE guest SET name = ?, surname = ?, country = ?, phone = ? WHERE document = ?;",
-            (
-                guest["name"],
-                guest["surname"],
-                guest["country"],
-                guest["phone"],
-                document,
-            ),
-        )
+        cursor.execute(statement, guest_db.model_dump())
+
+        self.db.commit()
+
+    def update(self, document: str, guest: GuestSchema) -> None:
+        statement = f"""UPDATE
+                            guest
+                        SET
+                            name = :name,
+                            surname = :surname,
+                            country = :country,
+                            phone = :phone
+                         WHERE
+                        document = {document};"""
+
+        cursor = self.db.cursor()
+        cursor.execute(statement, guest.model_dump())
+
         self.db.commit()
 
     def delete(self, document: str):
+        statement = f"""
+                    DELETE
+                        FROM
+                            guest
+                        WHERE
+                            document = {document}
+                    """
+
         cursor = self.db.cursor()
-        cursor.execute("DELETE FROM guest WHERE document = ?", (document,))
+        cursor.execute(statement)
+
         self.db.commit()

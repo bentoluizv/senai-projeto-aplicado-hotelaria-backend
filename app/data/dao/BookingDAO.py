@@ -1,182 +1,152 @@
 from sqlite3 import Connection
-from typing import TypedDict
 
-from app.data.database.models.BookingModel import BookingModel
-
-
-class UpdateBookingData(TypedDict):
-    status: str
-    check_in: str
-    check_out: str
-    guest_document: str
-    accommodation_id: str
-
-
-class CreationalBookingData(TypedDict):
-    uuid: str
-    created_at: str
-    status: str
-    check_in: str
-    check_out: str
-    guest_document: str
-    accommodation_id: str
+from app.schemas.BookingSchema import BookingDB, BookingSchema
 
 
 class BookingDAO:
     def __init__(self, db: Connection):
         self.db = db
 
-    def count(self):
+    def count(self) -> int:
         cursor = self.db.cursor()
-        count = cursor.execute("SELECT COUNT(*) FROM booking").fetchone()
-        return count["COUNT(*)"]
+        cursor = cursor.execute('SELECT COUNT(*) FROM booking')
+        result = cursor.fetchone()
 
-    def insert(self, data: CreationalBookingData):
-        statement = "INSERT INTO booking (uuid, created_at, status, check_in, check_out, document, accommodation_id) VALUES (?, ?, ?, ?, ?, ?, ?);"
-        cursor = self.db.cursor()
-        cursor.execute(
-            statement,
-            (
-                data["uuid"],
-                data["created_at"],
-                data["status"],
-                data["check_in"],
-                data["check_out"],
-                data["guest_document"],
-                data["accommodation_id"],
-            ),
-        )
-        self.db.commit()
+        return result['COUNT(*)']
 
-    def findBy(self, property: str, value: str) -> BookingModel | None:
-        cursor = self.db.cursor()
-        cursor.execute(
-            f"SELECT uuid, status, created_at, check_in, check_out, document, accommodation_id FROM booking WHERE booking.{property} = ?;",
-            (value,),
-        )
+    def find_many(self):
+        statement = """
+            SELECT
+                uuid,
+                status,
+                created_at,
+                check_in,
+                check_out,
+                document,
+                accommodation_id
+            FROM
+                booking
+        """
 
-        booking = cursor.fetchone()
-
-        if booking is None:
-            return None
-
-        guest_document = booking["document"]
-        accommodation_id = booking["accommodation_id"]
-
-        cursor.execute(
-            "SELECT created_at, document, name, surname, country, phone FROM guest WHERE guest.document = ?",
-            (guest_document,),
-        )
-        guest = cursor.fetchone()
-
-        cursor.execute(
-            "SELECT a.id, a.created_at, a.name, a.status, a.total_guests, a.single_beds, a.double_beds, a.min_nights, a.price, GROUP_CONCAT(am.amenitie) AS amenities FROM accommodation AS a LEFT JOIN amenities_per_accommodation AS apa ON a.id = apa.accommodation_id LEFT JOIN amenities AS am ON apa.amenitie_id = am.id WHERE a.id = ? GROUP BY a.id;",
-            (accommodation_id,),
-        )
-        accommodation = cursor.fetchone()
-
-        data: BookingModel = {
-            "uuid": booking["uuid"],
-            "status": booking["status"],
-            "created_at": booking["created_at"],
-            "check_in": booking["check_in"],
-            "check_out": booking["check_out"],
-            "guest": {
-                "document": guest["document"],
-                "created_at": guest["created_at"],
-                "name": guest["name"],
-                "surname": guest["surname"],
-                "country": guest["country"],
-                "phone": guest["phone"],
-            },
-            "accommodation": {
-                "id": accommodation["id"],
-                "created_at": accommodation["created_at"],
-                "name": accommodation["name"],
-                "status": accommodation["status"],
-                "total_guests": accommodation["total_guests"],
-                "single_beds": accommodation["single_beds"],
-                "double_beds": accommodation["double_beds"],
-                "min_nights": accommodation["min_nights"],
-                "price": accommodation["price"],
-                "amenities": accommodation["amenities"].split(","),
-            },
-        }
-        return data
-
-    def find_many(self) -> list[BookingModel]:
-        statement = "SELECT uuid, status, created_at, check_in, check_out, document, accommodation_id FROM booking"
         cursor = self.db.cursor()
         cursor.execute(statement)
-        results = cursor.fetchall()
+        result = cursor.fetchall()
 
-        bookings: list[BookingModel] = []
+        if not result:
+            return []
 
-        if len(results) == 0:
-            return results
+        return [BookingDB(**element) for element in result]
 
-        for booking in results:
-            guest_document = booking["document"]
-            accommodation_id = booking["accommodation_id"]
+    def update(self, uuid: str, data: BookingSchema):
+        statement = """
+            UPDATE
+                booking
+            SET
+                status = :status,
+                check_in = :check_in,
+                check_out = :check_out,
+                guest_document = :guest_document,
+                accommodation_id = :accommodation_id
+                buggert
+            WHERE
+                uuid = :;
+        """
 
-            guest = cursor.execute(
-                "SELECT created_at, document, name, surname, country, phone FROM guest WHERE guest.document = ?",
-                (guest_document,),
-            ).fetchone()
-
-            accommodation = cursor.execute(
-                "SELECT a.id, a.created_at, a.name, a.status, a.total_guests, a.single_beds, a.double_beds, a.min_nights, a.price, GROUP_CONCAT(am.amenitie) AS amenities FROM accommodation AS a LEFT JOIN amenities_per_accommodation AS apa ON a.id = apa.accommodation_id LEFT JOIN amenities AS am ON apa.amenitie_id = am.id WHERE a.id = ? GROUP BY a.id;",
-                (accommodation_id,),
-            ).fetchone()
-
-            data: BookingModel = {
-                "uuid": booking["uuid"],
-                "status": booking["status"],
-                "created_at": booking["created_at"],
-                "check_in": booking["check_in"],
-                "check_out": booking["check_out"],
-                "guest": {
-                    "document": guest["document"],
-                    "created_at": guest["created_at"],
-                    "name": guest["name"],
-                    "surname": guest["surname"],
-                    "country": guest["country"],
-                    "phone": guest["phone"],
-                },
-                "accommodation": {
-                    "id": accommodation["id"],
-                    "created_at": accommodation["created_at"],
-                    "name": accommodation["name"],
-                    "status": accommodation["status"],
-                    "total_guests": accommodation["total_guests"],
-                    "single_beds": accommodation["single_beds"],
-                    "double_beds": accommodation["double_beds"],
-                    "min_nights": accommodation["min_nights"],
-                    "price": accommodation["price"],
-                    "amenities": accommodation["amenities"].split(","),
-                },
-            }
-            bookings.append(data)
-        return bookings
-
-    def update(self, uuid: str, data: UpdateBookingData):
-        statement = "UPDATE booking SET status = ?, check_in = ?, check_out = ?, document = ?,  accommodation_id = ? WHERE uuid = ?;"
         cursor = self.db.cursor()
         cursor.execute(
             statement,
             (
-                data["status"],
-                data["check_in"],
-                data["check_out"],
-                data["guest_document"],
-                data["accommodation_id"],
+                data.status,
+                data.check_in,
+                data.check_out,
+                data.guest_documemt,
+                data.accommodation_id,
                 uuid,
             ),
         )
         self.db.commit()
 
+    def insert(self, data: BookingSchema):
+        booking_db = BookingDB(**data.model_dump())
+
+        insert_statement = """
+            INSERT
+                INTO
+                    booking
+                        (
+                        uuid,
+                        created_at,
+                        status,
+                        check_in,
+                        check_out,
+                        guest_document,
+                        accommodation_id
+                        budget
+                        )
+                VALUES
+                    (
+                    :uuid,
+                    :created_at,
+                    :status,
+                    :check_in,
+                    :check_out,
+                    :guest_document,
+                    :accommodation_id,
+                    :budget
+                    );
+            """
+
+        cursor = self.db.cursor()
+        cursor.execute(insert_statement, booking_db.model_dump())
+
+        self.db.commit()
+
+    def find(self, uuid: str) -> BookingDB | None:
+        cursor = self.db.cursor()
+        cursor.execute(
+            f"""SELECT
+                    uuid,
+                    created_at,
+                    status,
+                    check_in,
+                    check_out,
+                    accommodation_id
+                    guest_document
+                FROM booking
+                WHERE booking.uuid = {uuid};""",
+        )
+
+        result = cursor.fetchone()
+
+        if result is None:
+            return None
+
+        return BookingDB(**result)
+
+    def findBy(self, property: str, value: str):
+        cursor = self.db.cursor()
+        cursor.execute(
+            f"""SELECT
+                    uuid,
+                    created_at,
+                    status,
+                    check_in,
+                    check_out,
+                    accommodation_id
+                    guest_document
+                FROM booking
+                WHERE booking.{property} = {value};""",
+        )
+
+        result = cursor.fetchall()
+
+        if result is None:
+            return []
+
+        return [BookingDB(**element) for element in result]
+
     def delete(self, uuid: str):
-        statement = "DELETE FROM booking WHERE uuid = ?"
+        statement = 'DELETE FROM booking WHERE uuid = ?'
         cursor = self.db.cursor()
         cursor.execute(statement, (uuid,))
         self.db.commit()
