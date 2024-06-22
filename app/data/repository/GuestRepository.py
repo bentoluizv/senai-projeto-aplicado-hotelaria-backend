@@ -1,33 +1,39 @@
+from typing import Any
+
 from app.data.dao.GuestDAO import GuestDAO
+from app.data.dao.schemas.GuestSchema import GuestCreationalSchema
+from app.domain.Guest import Guest
 from app.errors.AlreadyExists import AlreadyExistsError
 from app.errors.NotFoundError import NotFoundError
-from app.schemas.GuestSchema import GuestDB, GuestSchema
 
 
 class GuestRepository:
     def __init__(self, dao: GuestDAO):
         self.dao = dao
 
-    def find_many(self) -> list[GuestDB]:
-        return self.dao.find_many()
+    def find_many(self) -> list[Guest]:
+        guests_db = self.dao.find_many()
 
-    def find(self, id: str) -> GuestDB:
-        guest = self.dao.find(id)
+        return [Guest(**guest_db.model_dump()) for guest_db in guests_db]
 
-        if not guest:
+    def find(self, id: str) -> Guest:
+        guest_db = self.dao.find(id)
+
+        if not guest_db:
             raise NotFoundError()
 
-        return guest
+        return Guest(**guest_db.model_dump())
 
-    def findBy(self, property: str, value: str) -> list[GuestDB]:
-        guest = self.dao.find_by(property, value)
+    def find_by(self, property: str, value: str) -> list[Guest]:
+        guests_db = self.dao.find_by(property, value)
 
-        if not guest:
-            raise NotFoundError()
+        if not guests_db:
+            return []
 
-        return guest
+        return [Guest(**guest_db.model_dump()) for guest_db in guests_db]
 
-    def create(self, guest: GuestSchema):
+    def create(self, data: dict[str, Any]):
+        guest = GuestCreationalSchema(**data)
         exists = self.dao.find(guest.document)
 
         if exists:
@@ -35,13 +41,14 @@ class GuestRepository:
 
         self.dao.create(guest)
 
-    def update(self, guest: GuestSchema):
-        exists = self.dao.find(guest.document)
+    def update(self, data: dict[str, Any]):
+        guest_data = GuestCreationalSchema(**data)
+        exists = self.dao.find(guest_data.document)
 
         if not exists:
             raise NotFoundError()
 
-        self.dao.update(guest.document, guest)
+        self.dao.update(guest_data)
 
     def delete(self, document: str):
         exists = self.dao.find(document)

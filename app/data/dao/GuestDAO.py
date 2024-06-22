@@ -1,6 +1,6 @@
 from sqlite3 import Connection
 
-from app.schemas.GuestSchema import GuestDB, GuestSchema
+from app.data.dao.schemas.GuestSchema import GuestCreationalSchema, GuestDB
 
 
 class GuestDAO:
@@ -15,38 +15,41 @@ class GuestDAO:
         return result['COUNT(*)']
 
     def find_many(self) -> list[GuestDB]:
-        statement = """SELECT
-                        document,
-                        created_at,
-                        name,
-                        surname,
-                        country,
-                        phone
-                    FROM
-                        guest;"""
+        select_all_statement = """
+            SELECT
+                document,
+                created_at,
+                name,
+                surname,
+                country,
+                phone
+            FROM
+                guest;
+        """
 
         cursor = self.db.cursor()
-        cursor.execute(statement)
-
+        cursor.execute(select_all_statement)
         result = cursor.fetchall()
 
         return [GuestDB(**row) for row in result]
 
     def find(self, document: str) -> GuestDB | None:
-        statement = f"""SELECT
-                            document,
-                            created_at,
-                            name,
-                            surname,
-                            country,
-                            phone
-                        FROM
-                            guest
-                        WHERE
-                            guest.document = {document};"""
+        select_by_id_statement = """
+            SELECT
+                document,
+                created_at,
+                name,
+                surname,
+                country,
+                phone
+            FROM
+                guest
+            WHERE
+                guest.document = ?;
+        """
 
         cursor = self.db.cursor()
-        cursor.execute(statement)
+        cursor.execute(select_by_id_statement, (document,))
         result = cursor.fetchone()
 
         if not result:
@@ -55,77 +58,79 @@ class GuestDAO:
         return GuestDB(**result)
 
     def find_by(self, property: str, value: str) -> list[GuestDB]:
-        statement = f"""SELECT
-                            document,
-                            created_at,
-                            name,
-                            surname,
-                            country,
-                            phone
-                        FROM
-                            guest
-                        WHERE
-                            guest.{property} = {value};"""
+        select_by_property_statement = f"""
+            SELECT
+                document,
+                created_at,
+                name,
+                surname,
+                country,
+                phone
+            FROM
+                guest
+            WHERE
+                guest.{property} = ?;
+        """
 
         cursor = self.db.cursor()
-        cursor.execute(statement)
+        cursor.execute(select_by_property_statement, (value,))
         result = cursor.fetchall()
+
         return [GuestDB(**row) for row in result]
 
-    def create(self, guest: GuestSchema):
-        statement = """INSERT
-                            INTO guest
-                            (
-                                document,
-                                created_at,
-                                name,
-                                surname,
-                                country,
-                                phone
-                            )
-                        VALUES
-                        (
-                            :document,
-                            :created_at,
-                            :name,
-                            :surname,
-                            :country,
-                            :phone
-                        );"""
+    def create(self, guest: GuestCreationalSchema):
+        create_statement = """
+            INSERT
+                INTO guest (
+                    document,
+                    created_at,
+                    name,
+                    surname,
+                    country,
+                    phone
+                )
+                VALUES (
+                    :document,
+                    :created_at,
+                    :name,
+                    :surname,
+                    :country,
+                    :phone
+                );
+        """
 
         guest_db = GuestDB(**guest.model_dump())
 
         cursor = self.db.cursor()
-        cursor.execute(statement, guest_db.model_dump())
-
+        cursor.execute(create_statement, guest_db.model_dump())
         self.db.commit()
 
-    def update(self, document: str, guest: GuestSchema) -> None:
-        statement = f"""UPDATE
-                            guest
-                        SET
-                            name = :name,
-                            surname = :surname,
-                            country = :country,
-                            phone = :phone
-                         WHERE
-                        document = {document};"""
+    def update(self, guest: GuestCreationalSchema) -> None:
+        update_statement = """
+            UPDATE
+                guest
+            SET
+                name = :name,
+                surname = :surname,
+                country = :country,
+                phone = :phone
+            WHERE
+                document = :document;
+        """
 
         cursor = self.db.cursor()
-        cursor.execute(statement, guest.model_dump())
-
+        cursor.execute(update_statement, guest.model_dump())
         self.db.commit()
 
     def delete(self, document: str):
-        statement = f"""
-                    DELETE
-                        FROM
-                            guest
-                        WHERE
-                            document = {document}
-                    """
+        delete_statement = """
+            DELETE
+                FROM
+                    guest
+                WHERE
+                    document = ?
+        """
 
         cursor = self.db.cursor()
-        cursor.execute(statement)
-
+        cursor.execute(delete_statement, (document,))
         self.db.commit()
