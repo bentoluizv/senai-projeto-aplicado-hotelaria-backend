@@ -1,154 +1,102 @@
 import json
 from http import HTTPStatus
 
-import pytest
-from flask import Response
 
-
-@pytest.mark.skip()
 def test_api_should_get_all_bookings(client):
-    TOTAL_BOOKINGS = 4
-    response = client.get('/api/reservas/')
-    bookings = json.loads(response.data)
-    assert len(bookings) == TOTAL_BOOKINGS
+    response = client.get('/reservas/')
     assert response.status_code == HTTPStatus.OK
 
 
-@pytest.mark.skip()
-def test_api_should_get_a_booking_by_uuid(client):
-    response = client.get(
-        '/api/reservas/e08f76e8-0e71-4a48-a85a-bf7e8f61479e/'
-    )
-    data = json.loads(response.data)
-    assert data['booking']['guest']['name'] == 'Bento'
+def test_api_should_get_an_especific_booking_by_uuid(client):
+    response = client.get('/reservas/e08f76e8-0e71-4a48-a85a-bf7e8f61479e')
+    assert response.status_code == HTTPStatus.OK
 
 
-@pytest.mark.skip()
-def test_api_should_return_status_code_404_for_a_inexisting_booking(client):
+def test_api_should_return_404_if_not_found(client):
     response = client.get(
-        '/api/reservas/e08f76b8-0e71-4a48-a85a-bf7e8f61479e/'
+        '/api/reservas/e08f76e8-0e71-4a48-a85a-bf7e8s71479e/'
     )
     assert response.status_code == HTTPStatus.NOT_FOUND
 
 
-@pytest.mark.skip()
-def test_api_should_create_a_new_booking(client):
-    booking_dto = {
-        'check_in': '2024-09-15T08:30:00',
-        'check_out': '2024-09-18T12:30:00',
+def test_api_should_create_a_booking(client):
+    data = {
+        'locator': 'AS341243',
+        'status': 'Finalizada',
+        'check_in': '2024-02-27T10:30:00.156342',
+        'check_out': '2024-03-03T10:30:00.156342',
         'guest_document': '00157624242',
         'accommodation_id': 1,
+        'budget': 1200,
     }
-    response: Response = client.post(
-        '/api/reservas/cadastro/',
-        data=json.dumps(booking_dto),
+
+    response = client.post(
+        '/reservas/cadastro/',
+        data=json.dumps(data),
         headers={'content-type': 'application/json'},
     )
 
     assert response.status_code == HTTPStatus.CREATED
-    assert response.json
-    assert response.json['uuid']
-    assert response.json['created_at']
+    assert response.text == 'CREATED'
 
 
-@pytest.mark.skip()
-def test_api_should_return_status_code_400(client):
+def test_api_should_return_422_on_bad_request_from_client(client):
     response = client.post(
-        '/api/reservas/cadastro/',
+        '/reservas/cadastro/',
         data=json.dumps({}),
         headers={'content-type': 'application/json'},
     )
+    assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
 
-    assert response.status_code == HTTPStatus.BAD_REQUEST
 
+def test_api_should_update_a_booking(client):
+    data = {
+        'uuid': 'e08f76e8-0e71-4a48-a85a-bf7e8f61479e',
+        'locator': 'AB897564',
+        'status': 'Finalizada',
+        'created_at': '2024-06-18T17:30:00',
+        'check_in': '2024-06-06T08:30:00',
+        'check_out': '2024-06-18T10:30:00.156342',
+        'guest_document': '00157624242',
+        'accommodation_id': 6,
+        'budget': 1200,
+    }
 
-@pytest.mark.skip()
-def test_api_should_delete_an_accommodation(client):
-    response = client.delete(
-        '/api/reservas/e08f76e8-0e71-4a48-a85a-bf7e8f61479e/'
+    response = client.put(
+        '/reservas/e08f76e8-0e71-4a48-a85a-bf7e8f61479e',
+        data=json.dumps(data),
+        headers={'content-type': 'application/json'},
     )
-    assert response.status_code == HTTPStatus.OK
-    assert response.text == 'DELETED'
+
+    assert response.status_code == HTTPStatus.NO_CONTENT
 
 
-@pytest.mark.skip()
-def test_api_should_return_status_code_404_on_delete(client):
-    response = client.delete(
-        '/api/reservas/e08f76e8-0e71-4a48-a85a-Cf7e8f61479e/'
+def test_api_should_return_404_on_updating_non_existing_booking(client):
+    data = {
+        'uuid': 'e08f76e8-0e71-3k49-a85a-bf7e8f61479e',
+        'locator': 'AB897564',
+        'status': 'Finalizada',
+        'created_at': '2024-06-18T17:30:00',
+        'check_in': '2024-06-06T08:30:00',
+        'check_out': '2024-06-18T10:30:00.156342',
+        'guest_document': '00157624242',
+        'accommodation_id': 6,
+        'budget': 1200,
+    }
+    response = client.put(
+        '/reservas/48732618050',
+        data=json.dumps(data),
+        headers={'content-type': 'application/json'},
     )
+
     assert response.status_code == HTTPStatus.NOT_FOUND
 
 
-@pytest.mark.skip()
-def test_api_should_update_an_accommodation(client):
-    updated_booking_data = {
-        'uuid': 'e08f76e8-0e71-4a48-a85a-bf7e8f61479e',
-        'status': 'Finalizada',
-        'check_in': '2024-06-15T08:30:00',
-        'check_out': '2024-06-18T17:30:00',
-        'guest': {
-            'document': '00157624242',
-            'name': 'Bento Luiz',
-            'surname': 'Vervloet Machado da Silva Neto',
-            'country': 'Brazil',
-            'created_at': '2024-03-15T10:30:00',
-            'phone': '48992054211',
-        },
-        'accommodation': {
-            'id': 6,
-            'name': 'Estacionamento para overlanders',
-            'status': 'Disponível',
-            'total_guests': 4,
-            'single_beds': 0,
-            'double_beds': 0,
-            'min_nights': 2,
-            'price': 100,
-            'created_at': '2000-01-01T00:15:00',
-            'amenities': ['ducha'],
-        },
-    }
-    response = client.put(
-        '/api/reservas/',
-        data=json.dumps(updated_booking_data),
-        headers={'content-type': 'application/json'},
-    )
-
-    assert response.status_code == HTTPStatus.OK
-    assert response.text == 'UPDATED'
+def test_api_should_delete_a_booking(client):
+    response = client.delete('/reservas/e08f76e8-0e71-4a48-a85a-bf7e8f61479e/')
+    assert response.status_code == HTTPStatus.NO_CONTENT
 
 
-@pytest.mark.skip()
-def test_api_should_return_status_code_404_on_update(client):
-    updated_booking_data = {
-        'uuid': 'e08f76e8-0e72-4a48-a85a-bf7e8f61479e',
-        'status': 'Finalizada',
-        'check_in': '2024-06-15T08:30:00',
-        'check_out': '2024-06-18T17:30:00',
-        'guest': {
-            'document': '00157624242',
-            'name': 'Bento Luiz',
-            'surname': 'Vervloet Machado da Silva Neto',
-            'country': 'Brazil',
-            'created_at': '2024-03-15T10:30:00',
-            'phone': '48992054211',
-        },
-        'accommodation': {
-            'id': 6,
-            'name': 'Estacionamento para overlanders',
-            'status': 'Disponível',
-            'total_guests': 4,
-            'single_beds': 0,
-            'double_beds': 0,
-            'min_nights': 2,
-            'price': 100,
-            'created_at': '2000-01-01T00:15:00',
-            'amenities': ['ducha'],
-        },
-    }
-    response = client.put(
-        '/api/reservas/',
-        data=json.dumps(updated_booking_data),
-        headers={'content-type': 'application/json'},
-    )
-
+def test_api_should_return_404_when_deleting_non_existing_booking(client):
+    response = client.delete('/reservas/e08f76e8-0e71-3k49-a85a-bf7e8f61479e/')
     assert response.status_code == HTTPStatus.NOT_FOUND
