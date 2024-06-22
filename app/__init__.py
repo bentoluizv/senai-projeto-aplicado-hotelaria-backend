@@ -3,7 +3,7 @@ import os
 from flask import Flask, render_template
 from flask_cors import CORS
 
-from . import api_accommodations, api_amenities, api_booking, api_guest
+from . import accommodation, booking, guest
 from .data.database.sqlite import db
 
 
@@ -36,9 +36,8 @@ def create_app(test_config=None):
 
     db.init_app(app)
 
-    app.register_blueprint(api_guest.bp)
-    app.register_blueprint(api_accommodations.bp)
-    app.register_blueprint(api_amenities.bp)
-    app.register_blueprint(api_booking.bp)
+    app.register_blueprint(guest.bp)
+    app.register_blueprint(accommodation.bp)
+    app.register_blueprint(booking.bp)
 
     return app
