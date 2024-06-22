@@ -14,7 +14,7 @@ INSERT INTO accommodation (created_at, status, name, total_guests, single_beds, 
             ("2000-01-01T00:12:00", "Disponível", "Cabana", 3, 1, 1, 2, 490),
             ("2000-01-01T00:15:00", "Disponível", "Estacionamento para overlanders", 4, 0, 0, 2, 100);
 
-INSERT INTO amenities (amenitie)
+INSERT INTO amenities (name)
        VALUES
             ("ar-condicionado"),
             ("wifi"),
@@ -59,9 +59,9 @@ INSERT INTO amenities_per_accommodation (accommodation_id, amenitie_id)
             (5, 7),
             (6, 5);
 
-INSERT INTO booking (uuid, created_at, status, check_in, check_out, document, accommodation_id)
+INSERT INTO booking (uuid, created_at, locator, status, check_in, check_out, guest_document, accommodation_id, budget)
         VALUES
-            ("e08f76e8-0e71-4a48-a85a-bf7e8f61479e", "2024-06-02T12:30:12", "Aguardando Check-In",  "2024-06-15T08:30:00", "2024-06-18T17:30:00", "00157624242", 6),
-            ("92f2f5bb-6cac-4485-a43e-6927213f662f", "2024-06-05T12:30:12", "Aguardando Check-In", "2024-06-15T08:30:00", "2024-06-18T17:30:00", "17323163927", 3),
-            ("1da32904-b059-4d00-a5c3-6538f75619e7", "2024-06-05T12:35:12", "Aguardando Check-In", "2024-06-15T08:30:00", "2024-06-18T17:30:00", "71807137910", 1),
-            ("fd49432c-a03a-40d3-9082-9efeb8a6332c", "2024-06-01T08:35:42", "Ativa", "2024-06-15T08:30:00", "2024-06-28T17:30:00", "65922869973", 4);
+            ("e08f76e8-0e71-4a48-a85a-bf7e8f61479e", "2024-06-02T12:30:12", "AB897564", "Aguardando Check-In",  "2024-06-15T08:30:00", "2024-06-18T17:30:00", "00157624242", 6, 0),
+            ("92f2f5bb-6cac-4485-a43e-6927213f662f", "2024-06-05T12:30:12", "AA978531", "Aguardando Check-In", "2024-06-15T08:30:00", "2024-06-18T17:30:00", "17323163927", 3, 0),
+            ("1da32904-b059-4d00-a5c3-6538f75619e7", "2024-06-05T12:35:12", "DS273845", "Aguardando Check-In", "2024-06-15T08:30:00", "2024-06-18T17:30:00", "71807137910", 1, 0),
+            ("fd49432c-a03a-40d3-9082-9efeb8a6332c", "2024-06-01T08:35:42", "GF965283", "Ativa", "2024-06-15T08:30:00", "2024-06-28T17:30:00", "65922869973", 4, 0);
