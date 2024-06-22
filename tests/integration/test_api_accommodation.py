@@ -1,51 +1,41 @@
 import json
 from http import HTTPStatus
 
-import pytest
+from app.data.dao.schemas.AccommodationSchema import (
+    AccommodationCreationalSchema,
+    AccommodationDB,
+)
 
 
-@pytest.mark.skip()
 def test_api_should_get_all_accommodations(client):
-    TOTAL_ACCOMMODATIONS = 6
-    response = client.get('/api/acomodacoes/')
-    accommodations = json.loads(response.data)
-
-    assert len(accommodations) == TOTAL_ACCOMMODATIONS
+    response = client.get('/acomodacoes/')
     assert response.status_code == HTTPStatus.OK
 
 
-@pytest.mark.skip()
-def test_api_should_get_an_accommodation_by_id(client):
-    response = client.get('/api/acomodacoes/1/')
-    accommodation = json.loads(response.data)
-
-    assert accommodation['name'] == 'Domo'
+def test_api_should_get_an_especific_accommodation_by_id(client):
+    response = client.get('/acomodacoes/1')
     assert response.status_code == HTTPStatus.OK
 
 
-@pytest.mark.skip()
-def test_api_should_return_status_code_404(client):
+def test_api_should_return_404_if_not_found(client):
     response = client.get('/api/acomodacoes/12/')
     assert response.status_code == HTTPStatus.NOT_FOUND
 
 
-@pytest.mark.skip()
-def test_api_should_create_an_accommodation(client):
-    accommodation_dto = {
-        'id': None,
-        'name': 'Quarto Individual',
-        'status': 'Disponível',
-        'total_guests': 1,
-        'single_beds': 1,
-        'double_beds': 0,
-        'min_nights': 2,
-        'price': 180,
-        'amenities': ['wifi'],
-    }
+def test_api_should_create_a_accommodation(client):
+    data = AccommodationCreationalSchema(**{
+        'name': 'Churrasqueira',
+        'status': 'Disponivel',
+        'total_guests': 6,
+        'single_beds': 0,
+        'double_beds': 2,
+        'price': 350,
+        'amenities': ['wifi', 'ducha'],
+    })
 
     response = client.post(
-        '/api/acomodacoes/cadastro/',
-        data=json.dumps(accommodation_dto),
+        '/acomodacoes/cadastro/',
+        data=json.dumps(data.model_dump()),
         headers={'content-type': 'application/json'},
     )
 
@@ -53,71 +43,62 @@ def test_api_should_create_an_accommodation(client):
     assert response.text == 'CREATED'
 
 
-@pytest.mark.skip()
-def test_api_should_return_status_code_400(client):
+def test_api_should_return_422_on_bad_request_from_client(client):
     response = client.post(
-        '/api/hospedes/cadastro/',
+        '/acomodacoes/cadastro/',
         data=json.dumps({}),
         headers={'content-type': 'application/json'},
     )
-    assert response.status_code == HTTPStatus.BAD_REQUEST
+    assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
 
 
-@pytest.mark.skip()
-def test_api_should_delete_an_accommodation(client):
-    response = client.delete('/api/acomodacoes/1/')
-    assert response.status_code == HTTPStatus.OK
-    assert response.text == 'DELETED'
+def test_api_should_delete_a_accommodation(client):
+    response = client.delete('/acomodacoes/1/')
+    assert response.status_code == HTTPStatus.NO_CONTENT
 
 
-@pytest.mark.skip()
-def test_api_should_return_status_code_404_on_delete(client):
-    response = client.delete('/api/acomodacoes/8/')
+def test_api_should_return_404_when_deleting_non_existing_accommodation(
+    client,
+):
+    response = client.delete('/acomodacoes/12/')
     assert response.status_code == HTTPStatus.NOT_FOUND
 
 
-@pytest.mark.skip()
-def test_api_should_update_an_accommodation(client):
-    data = {
+def test_api_should_update_a_accommodation(client):
+    data = AccommodationDB(**{
         'id': 1,
-        'created_at': '2024-06-07T13:43:24.494889',
-        'name': 'Quarto Individual',
-        'status': 'Disponível',
-        'total_guests': 1,
-        'single_beds': 1,
-        'double_beds': 0,
-        'min_nights': 2,
-        'price': 180,
-        'amenities': ['wifi'],
-    }
+        'name': 'Churrasqueira',
+        'status': 'Disponivel',
+        'total_guests': 6,
+        'single_beds': 0,
+        'double_beds': 2,
+        'price': 350,
+        'amenities': ['wifi', 'ducha'],
+    })
 
     response = client.put(
-        '/api/acomodacoes/',
-        data=json.dumps(data),
+        '/acomodacoes/1/',
+        data=json.dumps(data.model_dump()),
         headers={'content-type': 'application/json'},
     )
 
-    assert response.status_code == HTTPStatus.CREATED
-    assert response.text == 'UPDATED'
+    assert response.status_code == HTTPStatus.NO_CONTENT
 
 
-@pytest.mark.skip()
-def test_api_should_return_status_code_404_on_update(client):
-    data = {
-        'id': 12,
-        'created_at': '',
-        'name': 'Quarto Individual',
-        'status': 'Disponível',
-        'total_guests': 1,
-        'single_beds': 1,
-        'double_beds': 0,
-        'min_nights': 2,
-        'price': 180,
-        'amenities': ['wifi'],
-    }
+def test_api_should_return_404_on_updating_non_existing_accommodation(client):
+    data = AccommodationDB(**{
+        'id': 32,
+        'name': 'Churrasqueira',
+        'status': 'Disponivel',
+        'total_guests': 6,
+        'single_beds': 0,
+        'double_beds': 2,
+        'price': 350,
+        'amenities': ['wifi', 'ducha'],
+    })
     response = client.put(
-        '/api/acomodacoes/',
-        data=json.dumps(data),
+        '/acomodacoes/32',
+        data=json.dumps(data.model_dump()),
         headers={'content-type': 'application/json'},
     )
 

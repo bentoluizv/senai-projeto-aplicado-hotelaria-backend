@@ -1,52 +1,60 @@
 from app.data.dao.AccommodationDAO import AccommodationDAO
+from app.data.dao.schemas.AccommodationSchema import (
+    AccommodationCreationalSchema,
+    AccommodationDB,
+)
+from app.domain.Accommodation import Accommodation
 from app.errors.AlreadyExists import AlreadyExistsError
 from app.errors.NotFoundError import NotFoundError
-from app.schemas.AccommodationSchema import (
-    AccommodationDB,
-    AccommodationSchema,
-)
 
 
 class AccommodationRepository:
     def __init__(self, dao: AccommodationDAO):
         self.dao = dao
 
-    def find_many(self) -> list[AccommodationDB]:
-        return self.dao.find_many()
+    def find_many(self) -> list[Accommodation]:
+        accommodations_db = self.dao.find_many()
 
-    def find(self, id: str) -> AccommodationDB:
-        guest = self.dao.find(id)
+        return [
+            Accommodation(**accommodation_db.model_dump())
+            for accommodation_db in accommodations_db
+        ]
 
-        if not guest:
-            raise NotFoundError()
-
-        return guest
-
-    def findBy(self, property: str, value: str) -> list[AccommodationDB]:
-        guest = self.dao.find_by(property, value)
-
-        if not guest:
-            raise NotFoundError()
-
-        return guest
-
-    def create(self, accommodation: AccommodationSchema):
-        guest = self.dao.find_by('name', accommodation.name)
-
-        if guest:
-            raise AlreadyExistsError()
-
-        self.dao.create(accommodation)
-
-    def update(self, accommodation: AccommodationSchema):
-        exists = self.dao.find_by('name', accommodation.name)
+    def find(self, id: int) -> Accommodation:
+        exists = self.dao.find(id)
 
         if not exists:
             raise NotFoundError()
 
-        self.dao.update(str(exists[0].id), accommodation)
+        return Accommodation(**exists.model_dump())
 
-    def delete(self, id: str):
+    def find_by(self, property: str, value: str) -> list[Accommodation]:
+        exists = self.dao.find_by(property, value)
+
+        if not exists:
+            return []
+
+        return [
+            Accommodation(**accommodation_db.model_dump())
+            for accommodation_db in exists
+        ]
+
+    def create(self, accommodation: AccommodationCreationalSchema):
+        exists = self.dao.find_by('name', accommodation.name)
+
+        if exists:
+            raise AlreadyExistsError()
+
+        self.dao.create(accommodation)
+
+    def update(self, accommodation: Accommodation):
+        exists = self.dao.find(accommodation.id)
+
+        if not exists:
+            raise NotFoundError()
+        self.dao.update(AccommodationDB(**accommodation.model_dump()))
+
+    def delete(self, id: int):
         exists = self.dao.find(id)
 
         if not exists:

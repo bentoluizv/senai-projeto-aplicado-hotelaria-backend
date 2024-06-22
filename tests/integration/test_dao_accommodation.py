@@ -1,6 +1,10 @@
 import pytest
 
 from app.data.dao.AccommodationDAO import AccommodationDAO
+from app.data.dao.schemas.AccommodationSchema import (
+    AccommodationCreationalSchema,
+    AccommodationDB,
+)
 from app.data.database.sqlite.db import get_db
 
 
@@ -12,14 +16,25 @@ def accommodation_dao(app):
         yield dao
 
 
-@pytest.mark.skip()
-def test_should_count_the_number_of_rows(accommodation_dao):
+def test_dao_count(accommodation_dao):
     TOTAL_ACCOMMODATIONS = 6
     assert accommodation_dao.count() == TOTAL_ACCOMMODATIONS
 
 
-@pytest.mark.skip()
-def test_should_create_an_accommodation(accommodation_dao):
+def test_should_return_one_accommodation_by_its_id(accommodation_dao):
+    accommodation = accommodation_dao.find(1)
+    assert accommodation.name == 'Domo'
+    assert accommodation.amenities
+
+
+def test_should_return_all_accommodations(accommodation_dao):
+    TOTAL_ACCOMMODATIONS = 6
+    data = accommodation_dao.find_many()
+    assert len(data) == TOTAL_ACCOMMODATIONS
+    assert data[0].amenities
+
+
+def test_dao_create(accommodation_dao):
     accommodation_dto = {
         'name': 'Quarto Individual',
         'status': 'Disponivel',
@@ -32,29 +47,16 @@ def test_should_create_an_accommodation(accommodation_dao):
         'amenities': ['ducha', 'wifi'],
     }
 
-    accommodation_dao.insert(accommodation_dto)
+    accommodation_dao.create(
+        AccommodationCreationalSchema(**accommodation_dto)
+    )
     TOTAL_ACCOMMODATIONS = 7
     assert accommodation_dao.count() == TOTAL_ACCOMMODATIONS
 
 
-@pytest.mark.skip()
-def test_should_return_one_accommodation_by_its_uuid(accommodation_dao):
-    accommodation = accommodation_dao.findBy('id', 1)
-    assert accommodation['name'] == 'Domo'
-    assert 'amenities' in accommodation
-
-
-@pytest.mark.skip()
-def test_should_return_all_accommodations(accommodation_dao):
-    TOTAL_ACCOMMODATIONS = 6
-    data = accommodation_dao.find_many()
-    assert len(data) == TOTAL_ACCOMMODATIONS
-    assert data[0]['amenities']
-
-
-@pytest.mark.skip()
 def test_should_update_one_accommodation(accommodation_dao):
     accommodation_dto = {
+        'id': 6,
         'name': 'Quarto Individual',
         'status': 'Disponivel',
         'total_guests': 1,
@@ -62,16 +64,16 @@ def test_should_update_one_accommodation(accommodation_dao):
         'double_beds': 0,
         'min_nights': 2,
         'price': 180,
-        'amenities': ['ducha', 'wifi'],
+        'amenities': ['wifi', 'ducha'],
     }
 
-    accommodation_dao.update(1, accommodation_dto)
-    result = accommodation_dao.findBy('id', 1)
-    assert result['name'] == 'Quarto Individual'
+    accommodation_dao.update(AccommodationDB(**accommodation_dto))
+    result = accommodation_dao.find(6)
+    assert result.name == 'Quarto Individual'
+    assert 'wifi' in result.amenities
 
 
-@pytest.mark.skip()
 def test_should_delete_one_accommodation_by_its_uuid(accommodation_dao):
     accommodation_dao.delete(1)
-    res = accommodation_dao.findBy('id', 1)
+    res = accommodation_dao.find(1)
     assert res is None
