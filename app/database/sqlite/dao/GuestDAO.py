@@ -1,6 +1,9 @@
 from sqlite3 import Connection
 
-from app.data.dao.schemas.GuestSchema import GuestCreationalSchema, GuestDB
+from app.database.schemas.GuestSchema import (
+    GuestCreationalSchema,
+    GuestDB,
+)
 
 
 class GuestDAO:

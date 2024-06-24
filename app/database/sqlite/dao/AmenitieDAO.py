@@ -1,6 +1,6 @@
 from sqlite3 import Connection
 
-from app.data.dao.schemas.AmenitieSchema import AmenitieDB
+from app.database.schemas.AmenitieSchema import AmenitieDB
 
 
 class AmenitieDAO:

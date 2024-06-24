@@ -1,7 +1,7 @@
 from typing import Any
 
-from app.data.dao.GuestDAO import GuestDAO
-from app.data.dao.schemas.GuestSchema import GuestCreationalSchema
+from app.database.schemas.GuestSchema import GuestCreationalSchema
+from app.database.sqlite.dao.GuestDAO import GuestDAO
 from app.domain.Guest import Guest
 from app.errors.AlreadyExists import AlreadyExistsError
 from app.errors.NotFoundError import NotFoundError

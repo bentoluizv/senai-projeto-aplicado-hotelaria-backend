@@ -1,8 +1,8 @@
-from app.data.dao.AccommodationDAO import AccommodationDAO
-from app.data.dao.schemas.AccommodationSchema import (
+from app.database.schemas.AccommodationSchema import (
     AccommodationCreationalSchema,
     AccommodationDB,
 )
+from app.database.sqlite.dao.AccommodationDAO import AccommodationDAO
 from app.domain.Accommodation import Accommodation
 from app.errors.AlreadyExists import AlreadyExistsError
 from app.errors.NotFoundError import NotFoundError

@@ -3,8 +3,8 @@ from http import HTTPStatus
 from flask import Blueprint, jsonify, make_response
 from pydantic import ValidationError
 
-from app.data.dao.AmenitieDAO import AmenitieDAO
-from app.data.database.sqlite.db import get_db
+from app.database.sqlite.dao.AmenitieDAO import AmenitieDAO
+from app.database.sqlite.db import get_db
 
 bp = Blueprint('api_amenities', __name__, url_prefix='/amenities')
 

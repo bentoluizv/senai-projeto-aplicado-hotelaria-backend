@@ -1,8 +1,8 @@
 import pytest
 
-from app.data.dao.GuestDAO import GuestDAO
-from app.data.dao.schemas.GuestSchema import GuestCreationalSchema
-from app.data.database.sqlite.db import get_db
+from app.database.schemas.GuestSchema import GuestCreationalSchema
+from app.database.sqlite.dao.GuestDAO import GuestDAO
+from app.database.sqlite.db import get_db
 
 
 @pytest.fixture()

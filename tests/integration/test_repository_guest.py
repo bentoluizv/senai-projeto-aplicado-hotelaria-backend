@@ -1,8 +1,8 @@
 import pytest
 
-from app.data.dao.GuestDAO import GuestDAO
-from app.data.database.sqlite.db import get_db
-from app.data.repository.GuestRepository import GuestRepository
+from app.database.sqlite.dao.GuestDAO import GuestDAO
+from app.database.sqlite.db import get_db
+from app.database.sqlite.repository.GuestRepository import GuestRepository
 from app.errors.NotFoundError import NotFoundError
 
 

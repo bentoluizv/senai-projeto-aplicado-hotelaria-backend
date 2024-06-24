@@ -1,7 +1,7 @@
 import pytest
 
-from app.data.dao.AmenitieDAO import AmenitieDAO
-from app.data.database.sqlite.db import get_db
+from app.database.sqlite.dao.AmenitieDAO import AmenitieDAO
+from app.database.sqlite.db import get_db
 
 
 @pytest.fixture()

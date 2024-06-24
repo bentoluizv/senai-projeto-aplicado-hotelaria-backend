@@ -1,11 +1,11 @@
 import pytest
 
-from app.data.dao.AccommodationDAO import AccommodationDAO
-from app.data.dao.schemas.AccommodationSchema import (
+from app.database.schemas.AccommodationSchema import (
     AccommodationCreationalSchema,
     AccommodationDB,
 )
-from app.data.database.sqlite.db import get_db
+from app.database.sqlite.dao.AccommodationDAO import AccommodationDAO
+from app.database.sqlite.db import get_db
 
 
 @pytest.fixture()

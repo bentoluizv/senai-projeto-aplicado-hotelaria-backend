@@ -1,10 +1,10 @@
 from sqlite3 import Connection
 
-from app.data.dao.AmenitieDAO import AmenitieDAO
-from app.data.dao.schemas.AccommodationSchema import (
+from app.database.schemas.AccommodationSchema import (
     AccommodationCreationalSchema,
     AccommodationDB,
 )
+from app.database.sqlite.dao.AmenitieDAO import AmenitieDAO
 
 
 class AccommodationDAO:

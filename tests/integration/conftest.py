@@ -4,7 +4,7 @@ import tempfile
 import pytest
 
 from app import create_app
-from app.data.database.sqlite.db import init_db, seed_db
+from app.database.sqlite.db import init_db, seed_db
 
 
 @pytest.fixture()

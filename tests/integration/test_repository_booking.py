@@ -1,10 +1,10 @@
 import pytest
 
-from app.data.dao.AccommodationDAO import AccommodationDAO
-from app.data.dao.BookingDAO import BookingDAO
-from app.data.dao.GuestDAO import GuestDAO
-from app.data.database.sqlite.db import get_db
-from app.data.repository.BookingRepository import BookingRepository
+from app.database.sqlite.dao.AccommodationDAO import AccommodationDAO
+from app.database.sqlite.dao.BookingDAO import BookingDAO
+from app.database.sqlite.dao.GuestDAO import GuestDAO
+from app.database.sqlite.db import get_db
+from app.database.sqlite.repository.BookingRepository import BookingRepository
 from app.errors.NotFoundError import NotFoundError
 
 

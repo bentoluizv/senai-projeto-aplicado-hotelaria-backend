@@ -2,7 +2,7 @@ import sqlite3
 
 import pytest
 
-from app.data.database.sqlite.db import get_db
+from app.database.sqlite.db import get_db
 
 
 def test_get_close_db(app):

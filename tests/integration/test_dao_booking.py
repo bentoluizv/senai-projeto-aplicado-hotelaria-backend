@@ -1,11 +1,11 @@
 import pytest
 
-from app.data.dao.BookingDAO import BookingDAO
-from app.data.dao.schemas.BookingSchema import (
+from app.database.schemas.BookingSchema import (
     BookingCreationalSchema,
     BookingDB,
 )
-from app.data.database.sqlite.db import get_db
+from app.database.sqlite.dao.BookingDAO import BookingDAO
+from app.database.sqlite.db import get_db
 
 
 @pytest.fixture()

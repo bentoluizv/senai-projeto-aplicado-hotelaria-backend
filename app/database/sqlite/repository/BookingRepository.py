@@ -1,12 +1,12 @@
 from typing import Any
 
-from app.data.dao.AccommodationDAO import AccommodationDAO
-from app.data.dao.BookingDAO import BookingDAO
-from app.data.dao.GuestDAO import GuestDAO
-from app.data.dao.schemas.BookingSchema import (
+from app.database.schemas.BookingSchema import (
     BookingCreationalSchema,
     BookingDB,
 )
+from app.database.sqlite.dao.AccommodationDAO import AccommodationDAO
+from app.database.sqlite.dao.BookingDAO import BookingDAO
+from app.database.sqlite.dao.GuestDAO import GuestDAO
 from app.domain.Accommodation import Accommodation
 from app.domain.Booking import Booking
 from app.domain.Guest import Guest

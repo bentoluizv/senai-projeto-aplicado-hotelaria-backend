@@ -1,7 +1,7 @@
 import json
 from http import HTTPStatus
 
-from app.data.dao.schemas.AccommodationSchema import (
+from app.database.schemas.AccommodationSchema import (
     AccommodationCreationalSchema,
     AccommodationDB,
 )

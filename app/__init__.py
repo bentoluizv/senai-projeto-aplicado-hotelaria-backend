@@ -1,10 +1,10 @@
 import os
 
-from flask import Flask, render_template
+from flask import Flask
 from flask_cors import CORS
 
 from . import accommodation, booking, guest
-from .data.database.sqlite import db
+from .database.sqlite import db
 
 
 def create_app(test_config=None):
@@ -25,10 +25,6 @@ def create_app(test_config=None):
         pass
 
     CORS(app)
-
-    @app.get('/')
-    def index():
-        return render_template('index.html')
 
     @app.get('/hello')
     def hello():

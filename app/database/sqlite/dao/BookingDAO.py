@@ -1,6 +1,6 @@
 from sqlite3 import Connection
 
-from app.data.dao.schemas.BookingSchema import (
+from app.database.schemas.BookingSchema import (
     BookingCreationalSchema,
     BookingDB,
 )
