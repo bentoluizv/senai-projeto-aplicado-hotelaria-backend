@@ -36,15 +36,15 @@ def test_find_guest_by_name(session):
 
 
 def test_update_guest(session):
-    statement = (
+    update_statement = (
         update(GuestDB)
         .where(GuestDB.name == 'Maria')
         .values(country='Argentina')
     )
-    session.execute(statement)
+    session.execute(update_statement)
 
-    statement = select(GuestDB).where(GuestDB.name == 'Maria')
-    guest_db = session.scalar(statement)
+    select_statement = select(GuestDB).where(GuestDB.name == 'Maria')
+    guest_db = session.scalar(select_statement)
     assert guest_db
     assert guest_db.country == 'Argentina'
 
