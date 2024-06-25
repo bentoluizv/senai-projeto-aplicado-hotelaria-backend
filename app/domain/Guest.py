@@ -18,7 +18,7 @@ class Guest(StrictModel):
     @classmethod
     def parse_input_data(cls, data: dict[str, Any]):
         for k, v in data.items():
-            if k in {'created_at'}:
+            if k in {'created_at'} and not isinstance(v, datetime):
                 data[k] = datetime.fromisoformat(v)
 
         return data
