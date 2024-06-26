@@ -33,4 +33,4 @@ class Booking(BaseModel):
 
 
 class BookingList(BaseModel):
-    bookings = List[Booking]
+    bookings: List[Booking]
