@@ -1,0 +1,37 @@
+{
+    "amenities": [
+        {
+            "id": 1,
+            "name": "ar-condicionado"
+        },
+        {
+            "id": 2,
+            "name": "wifi"
+        },
+        {
+            "id": 3,
+            "name": "tv"
+        },
+        {
+            "id": 4,
+            "name": "frigobar"
+        },
+        {
+            "id": 5,
+            "name": "ducha"
+        },
+        {
+            "id": 6,
+            "name": "cozinha"
+        },
+        {
+            "id": 7,
+            "name": "toalhas"
+        },
+        {
+            "id": 8,
+            "name": "banheira"
+        }
+    ]
+
+}
