@@ -1,24 +1,19 @@
 from datetime import datetime
-from typing import Any
+from typing import List
 
-from pydantic import model_validator
-
-from app.utils.StrictModel import StrictModel
+from pydantic import BaseModel, ConfigDict, Field
 
 
-class Guest(StrictModel):
+class Guest(BaseModel):
+    model_config = ConfigDict(frozen=True)
+
+    created_at: datetime = Field(default=datetime.now())
     document: str
     name: str
     surname: str
     phone: str
     country: str
-    created_at: datetime
 
-    @model_validator(mode='before')
-    @classmethod
-    def parse_input_data(cls, data: dict[str, Any]):
-        for k, v in data.items():
-            if k in {'created_at'} and not isinstance(v, datetime):
-                data[k] = datetime.fromisoformat(v)
 
-        return data
+class GuestList(BaseModel):
+    guests: List[Guest]

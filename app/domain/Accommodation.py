@@ -1,13 +1,16 @@
 from datetime import datetime
+from typing import List
 
-from pydantic import model_validator
+from pydantic import BaseModel, ConfigDict, Field
 
-from app.utils.StrictModel import StrictModel
+from app.domain.Amenitie import Amenitie
 
 
-class Accommodation(StrictModel):
-    id: int
-    created_at: datetime
+class Accommodation(BaseModel):
+    model_config = ConfigDict(frozen=True)
+
+    id: int | None
+    created_at: datetime = Field(default=datetime.now())
     name: str
     status: str
     total_guests: int
@@ -15,12 +18,8 @@ class Accommodation(StrictModel):
     double_beds: int
     min_nights: int
     price: int
-    amenities: list[str]
+    amenities: list[Amenitie]
 
-    @model_validator(mode='before')
-    @classmethod
-    def convert_str_to_crated_at_datetime(cls, data: dict):
-        for k, v in data.items():
-            if k in {'created_at'}:
-                data[k] = datetime.fromisoformat(v)
-        return data
+
+class AccommodationList(BaseModel):
+    accommodations: List[Accommodation]
