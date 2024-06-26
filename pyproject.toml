@@ -7,13 +7,9 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.12"
-flask = "^3.0.3"
-flask-cors = "^4.0.1"
-types-flask-cors = "^4.0.0.20240523"
 pydantic = "^2.7.4"
 fastapi = "^0.111.0"
 sqlalchemy = "^2.0.31"
-pydantic-settings = "^2.3.3"
 
 
 [tool.poetry.group.dev.dependencies]
