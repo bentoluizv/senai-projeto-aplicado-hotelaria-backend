@@ -10,6 +10,7 @@ from app.database.db import get_session
 from app.database.models import AccommodationDB, AmenitieDB
 from app.domain.Accommodation import (
     Accommodation,
+    AccommodationDTO,
     AccommodationList,
 )
 
@@ -22,12 +23,12 @@ router = APIRouter(tags=['Acomodações'], prefix='/acomodacoes')
     response_model=Accommodation,
 )
 async def create_accommodation(
-    accommodation: Accommodation,
+    accommodation_dto: AccommodationDTO,
     session: Session = Depends(get_session),
 ):
     db_accommodation = session.scalar(
         select(AccommodationDB).where(
-            AccommodationDB.name == accommodation.name
+            AccommodationDB.name == accommodation_dto.name
         )
     )
 
@@ -37,19 +38,19 @@ async def create_accommodation(
             detail='Accommodation already exists',
         )
     db_accommodation = AccommodationDB(
-        name=accommodation.name,
-        status=accommodation.status,
+        name=accommodation_dto.name,
+        status=accommodation_dto.status,
         created_at=datetime.datetime.now().isoformat(),
-        single_beds=accommodation.single_beds,
-        double_beds=accommodation.double_beds,
-        min_nights=accommodation.min_nights,
-        total_guests=accommodation.total_guests,
-        price=accommodation.price,
+        single_beds=accommodation_dto.single_beds,
+        double_beds=accommodation_dto.double_beds,
+        min_nights=accommodation_dto.min_nights,
+        total_guests=accommodation_dto.total_guests,
+        price=accommodation_dto.price,
         amenities=[],
     )
 
-    for amenitie in accommodation.amenities:
-        db_amentie = session.get(AmenitieDB, amenitie.id)
+    for amenitie in accommodation_dto.amenities:
+        db_amentie = session.get(AmenitieDB, amenitie)
         if db_amentie:
             db_accommodation.amenities.append(db_amentie)
 
