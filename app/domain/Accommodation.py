@@ -6,6 +6,19 @@ from pydantic import BaseModel, ConfigDict, Field
 from app.domain.Amenitie import Amenitie
 
 
+class AccommodationDTO(BaseModel):
+    model_config = ConfigDict(frozen=True)
+
+    name: str = Field(default='Disponivel')
+    status: str
+    total_guests: int
+    single_beds: int
+    double_beds: int
+    min_nights: int
+    price: int
+    amenities: list[str]
+
+
 class Accommodation(BaseModel):
     model_config = ConfigDict(frozen=True)
 
