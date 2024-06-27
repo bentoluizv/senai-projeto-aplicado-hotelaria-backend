@@ -125,7 +125,7 @@ async def update_accommodation(
 async def delete_accommodation(
     id: int, session: Session = Depends(get_session)
 ):
-    db_accommodations = session.get(AmenitieDB, id)
+    db_accommodations = session.get(AccommodationDB, id)
 
     if not db_accommodations:
         raise HTTPException(
