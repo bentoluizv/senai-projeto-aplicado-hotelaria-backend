@@ -3,7 +3,6 @@ from http import HTTPStatus
 
 def test_create_accommodation(client):
     data = {
-        'id': None,
         'name': 'Churrasqueira',
         'status': 'Disponivel',
         'total_guests': 6,
@@ -11,7 +10,7 @@ def test_create_accommodation(client):
         'double_beds': 2,
         'min_nights': 2,
         'price': 350,
-        'amenities': [{'id': 2, 'name': 'wifi'}, {'id': 7, 'name': 'toalhas'}],
+        'amenities': ['wifi', 'toalhas'],
     }
 
     response = client.post('/acomodacoes', json=data)
