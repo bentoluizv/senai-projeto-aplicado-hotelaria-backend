@@ -37,6 +37,17 @@ async def create_accommodation(
             status_code=HTTPStatus.BAD_REQUEST,
             detail='Accommodation already exists',
         )
+
+    db_amenities: List[AmenitieDB] = []
+
+    for amenitie in accommodation_dto.amenities:
+        db_amenitie = session.scalar(
+            select(AmenitieDB).where(AmenitieDB.name == amenitie)
+        )
+
+        if db_amenitie:
+            db_amenities.append(db_amenitie)
+
     db_accommodation = AccommodationDB(
         name=accommodation_dto.name,
         status=accommodation_dto.status,
@@ -46,17 +57,12 @@ async def create_accommodation(
         min_nights=accommodation_dto.min_nights,
         total_guests=accommodation_dto.total_guests,
         price=accommodation_dto.price,
-        amenities=[],
+        amenities=db_amenities,
     )
-
-    for amenitie in accommodation_dto.amenities:
-        db_amentie = session.get(AmenitieDB, amenitie)
-        if db_amentie:
-            db_accommodation.amenities.append(db_amentie)
 
     session.add(db_accommodation)
     session.commit()
-
+    session.refresh(db_accommodation)
     return db_accommodation
 
 
