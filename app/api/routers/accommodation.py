@@ -10,8 +10,9 @@ from app.database.db import get_session
 from app.database.models import AccommodationDB, AmenitieDB
 from app.domain.Accommodation import (
     Accommodation,
-    AccommodationDTO,
+    AccommodationCreationalDTO,
     AccommodationList,
+    AccommodationUpdateDTO,
 )
 
 router = APIRouter(tags=['Acomodações'], prefix='/acomodacoes')
@@ -23,7 +24,7 @@ router = APIRouter(tags=['Acomodações'], prefix='/acomodacoes')
     response_model=Accommodation,
 )
 async def create_accommodation(
-    accommodation_dto: AccommodationDTO,
+    accommodation_dto: AccommodationCreationalDTO,
     session: Session = Depends(get_session),
 ):
     db_accommodation = session.scalar(
@@ -95,7 +96,7 @@ async def find_accommodation(id: str, session: Session = Depends(get_session)):
 )
 async def update_accommodation(
     id: str,
-    accommodation: Accommodation,
+    accommodation_dto: AccommodationUpdateDTO,
     session: Session = Depends(get_session),
 ):
     db_accommodation = session.get(AccommodationDB, id)
@@ -105,17 +106,21 @@ async def update_accommodation(
             status_code=HTTPStatus.NOT_FOUND, detail='Accomodation not found'
         )
 
-    db_accommodation.name = accommodation.name
-    db_accommodation.status = accommodation.status
-    db_accommodation.total_guests = accommodation.total_guests
-    db_accommodation.single_beds = accommodation.single_beds
-    db_accommodation.double_beds = accommodation.double_beds
-    db_accommodation.min_nights = accommodation.min_nights
-    db_accommodation.price = accommodation.price
+    db_accommodation.name = accommodation_dto.name
+    db_accommodation.status = accommodation_dto.status
+    db_accommodation.total_guests = accommodation_dto.total_guests
+    db_accommodation.single_beds = accommodation_dto.single_beds
+    db_accommodation.double_beds = accommodation_dto.double_beds
+    db_accommodation.min_nights = accommodation_dto.min_nights
+    db_accommodation.price = accommodation_dto.price
 
     db_amenities: List[AmenitieDB] = []
-    for amenitie in accommodation.amenities:
-        db_amenitie = session.get(AmenitieDB, amenitie.id)
+
+    for amenitie in accommodation_dto.amenities:
+        db_amenitie = session.scalar(
+            select(AmenitieDB).where(AmenitieDB.name == amenitie)
+        )
+
         if db_amenitie:
             db_amenities.append(db_amenitie)
 
@@ -123,7 +128,6 @@ async def update_accommodation(
 
     session.commit()
     session.refresh(db_accommodation)
-
     return db_accommodation
 
 
