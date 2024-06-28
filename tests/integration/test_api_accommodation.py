@@ -1,5 +1,7 @@
 from http import HTTPStatus
 
+from click import echo
+
 
 def test_create_accommodation(client):
     data = {
@@ -19,7 +21,7 @@ def test_create_accommodation(client):
     assert 'created_at' in data
 
 
-def test_list_all_guests(client):
+def test_list_all_accommodation(client):
     TOTAL_ACCOMMODATIONS = 6
     response = client.get('/acomodacoes')
     data = response.json()
@@ -27,7 +29,7 @@ def test_list_all_guests(client):
     assert len(data['accommodations']) == TOTAL_ACCOMMODATIONS
 
 
-def test_find_guest(client):
+def test_find_accommodation(client):
     response = client.get('/acomodacoes/6')
     data = response.json()
     assert response.status_code == HTTPStatus.OK
@@ -35,7 +37,7 @@ def test_find_guest(client):
     assert data['name'] == 'Estacionamento para overlanders'
 
 
-def test_update_guest(client):
+def test_update_accommodation(client):
     data = {
         'id': 1,
         'name': 'Domo',
@@ -45,9 +47,8 @@ def test_update_guest(client):
         'double_beds': 2,
         'min_nights': 2,
         'price': 1380,
-        'amenities': [{'id': 2, 'name': 'wifi'}, {'id': 7, 'name': 'toalhas'}],
+        'amenities': ['wifi', 'toalhas'],
     }
-
     response = client.put('/acomodacoes/1', json=data)
 
     data = response.json()
