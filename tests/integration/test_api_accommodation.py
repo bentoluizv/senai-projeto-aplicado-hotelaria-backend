@@ -1,7 +1,5 @@
 from http import HTTPStatus
 
-from click import echo
-
 
 def test_create_accommodation(client):
     data = {
