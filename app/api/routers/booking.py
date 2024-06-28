@@ -8,7 +8,13 @@ from sqlalchemy.orm import Session
 
 from app.database.db import get_session
 from app.database.models import AccommodationDB, BookingDB, GuestDB
-from app.domain.Booking import Booking, BookingDTO, BookingList
+from app.domain.Booking import (
+    Booking,
+    BookingDTO,
+    BookingList,
+    BookingUpdateDTO,
+)
+from app.utils.generate_locator import generate_locator
 
 router = APIRouter(tags=['Reservas'], prefix='/reservas')
 
@@ -21,15 +27,6 @@ router = APIRouter(tags=['Reservas'], prefix='/reservas')
 async def create_booking(
     booking_dto: BookingDTO, session: Session = Depends(get_session)
 ):
-    exists = session.scalar(
-        select(BookingDB).where(BookingDB.locator == booking_dto.locator)
-    )
-
-    if exists:
-        raise HTTPException(
-            status_code=HTTPStatus.BAD_REQUEST, detail='Booking already exists'
-        )
-
     db_guest = session.get(GuestDB, booking_dto.guest_document)
     db_accommodation = session.get(
         AccommodationDB, booking_dto.accommodation_id
@@ -46,7 +43,7 @@ async def create_booking(
     db_booking = BookingDB(
         uuid=str(uuid4()),
         created_at=datetime.now().isoformat(),
-        locator=booking_dto.locator,
+        locator=generate_locator(),
         check_in=booking_dto.check_in,
         check_out=booking_dto.check_out,
         budget=booking_dto.budget,
@@ -82,7 +79,9 @@ async def find_booking(uuid: str, session: Session = Depends(get_session)):
 
 @router.put('/{uuid}', status_code=HTTPStatus.OK, response_model=Booking)
 async def update_booking(
-    uuid: str, booking_dto: BookingDTO, session: Session = Depends(get_session)
+    uuid: str,
+    booking_dto: BookingUpdateDTO,
+    session: Session = Depends(get_session),
 ):
     db_booking = session.get(BookingDB, uuid)
 
