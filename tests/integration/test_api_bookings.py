@@ -5,7 +5,7 @@ from http import HTTPStatus
 def test_create_booking(client):
     data = {
         'locator': 'KS928374',
-        'status': 'Aguardando Pagamento',
+        'status': 'Confirmado',
         'check_in': datetime(2024, 12, 8).isoformat(),
         'check_out': datetime(2024, 12, 12).isoformat(),
         'budget': 8200,
