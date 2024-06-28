@@ -36,7 +36,7 @@ class AccommodationUpdateDTO(BaseModel):
 class Accommodation(BaseModel):
     model_config = ConfigDict(frozen=True)
 
-    id: int | None
+    id: int
     created_at: datetime = Field(default=datetime.now())
     name: str
     status: str
