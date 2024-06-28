@@ -8,8 +8,17 @@ from app.domain.Accommodation import Accommodation
 from app.domain.Guest import Guest
 
 
-class BookingDTO(BaseModel):
+class BookingUpdateDTO(BaseModel):
+    status: str
     locator: str
+    check_in: str
+    check_out: str
+    guest_document: str
+    accommodation_id: int
+    budget: int
+
+
+class BookingDTO(BaseModel):
     status: str
     check_in: str
     check_out: str
