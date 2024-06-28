@@ -45,7 +45,7 @@ async def find_booking(uuid: str, session: Session = Depends(get_session)):
     return db_booking
 
 
-@router.put('/{uuid}', status_code=HTTPStatus.OK, response_model=Booking)
+@router.put('/{uuid}', status_code=HTTPStatus.NO_CONTENT)
 async def update_booking(
     uuid: str,
     booking_dto: BookingUpdateDTO,
@@ -87,8 +87,6 @@ async def update_booking(
             )
         db_booking.accommodation_id = db_accommodation.id
         db_booking.accommodation = db_accommodation
-
-        return db_booking
 
 
 @router.delete('/{uuid}', status_code=HTTPStatus.NO_CONTENT)

@@ -52,10 +52,7 @@ def test_update_booking(client):
         '/reservas/b2a72d82-71e1-11e9-8f9e-2a86e4085a59', json=data
     )
 
-    data = response.json()
-    assert response.status_code == HTTPStatus.OK
-    assert data['locator'] == 'KS928374'
-    assert data['check_out'] == '2024-12-22T00:00:00'
+    assert response.status_code == HTTPStatus.NO_CONTENT
 
 
 def test_delete_guest(client):
