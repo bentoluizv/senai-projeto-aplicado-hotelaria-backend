@@ -6,10 +6,25 @@ from pydantic import BaseModel, ConfigDict, Field
 from app.domain.Amenitie import Amenitie
 
 
-class AccommodationDTO(BaseModel):
+class AccommodationCreationalDTO(BaseModel):
     model_config = ConfigDict(frozen=True)
 
-    name: str = Field(default='Disponivel')
+    name: str
+    status: str = Field(default='Disponivel')
+    total_guests: int
+    single_beds: int
+    double_beds: int
+    min_nights: int
+    price: int
+    amenities: list[str]
+
+
+class AccommodationUpdateDTO(BaseModel):
+    model_config = ConfigDict(frozen=True)
+
+    id: int
+    created_at: datetime
+    name: str
     status: str
     total_guests: int
     single_beds: int
