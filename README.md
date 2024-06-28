@@ -6,187 +6,124 @@ O projeto é baseado na demanda da indústria publicada na plataforma SAGA do SE
 
 link: https://plataforma.gpinovacao.senai.br/plataforma/demandas-da-industria/interna/9790
 
-## Rodando localmente
+## Dependências:
+| Dependência  | Versão |
+| ------------- | ------------- |
+| python  | 3.12.3  |
+| pydantic  | 2.7.4  |
+| fastapi  | 0.111.0  |
+| sqlalchemy  | 2.0.31  |
+| pytest  | 8.2.2  |
+| taskipy  |1.13.0  |
+| ruff  | 0.4.9 |
 
-Clone o projeto
 
-```bash
-  git clone https://github.com/bentoluizv/senai_projeto_aplicado_quintadoypua.git
+## Configurando o ambiente de desenvolvimento:
+
+Instale o Poetry para a gestão de dependências.
+
+```powershell
+# Windowns (powershell)
+(Invoke-WebRequest -Uri https://install.python-poetry.org -UseBasicParsing).Content | py -
+# If you have installed Python through the Microsoft Store, replace py with python in the command above.
+
+
+# Linux
+curl -sSL https://install.python-poetry.org | python3 -
 ```
 
-Entre no diretório do projeto
+Clone o projeto e entre no diretorio
 
 ```bash
-  cd ./senai_projeto_aplicado_quintadoypua
+  git clone https://github.com/bentoluizv/projeto-aplicado-backend
+  cd ./projeto-aplicado-backend
 ```
 
-Inicie o .venv
+
+Inicie o *.venv* e instale as dependências:
+```bash
+poetry shell
+poetry install
+```
+### Usando o taskipy para  automatização de tarefas:
 
 ```bash
-# LINUX
+[tool.taskipy.tasks]
+lint = 'ruff check . && ruff check . --diff'
+# Roda o lint do ruff
 
-  python3 -m venv .venv
+format = 'ruff check . --fix && ruff format .'
+# Roda o format do ruff
 
-  . .venv/bin/activate
+dev = 'fastapi dev app/api/main.py'
+# Roda o servidor de desenvolvimento
 
-# WIN
+pre_test = 'task lint'
+# Roda o lint antes de rodar os testes
 
-  py -m venv .venv
+test = 'pytest -s -x --cov=app -vv'
+# Roda a suite de testes com pystest
 
-  . .venv/Script/activate
+post_test = 'coverage html'
+# Roda o test coverage
+
+run = 'fastapi run app/api/main.py'
+# Roda o servidor de produçãp
+
+------------------
+Para rodar apenas digite 'task <command>'
+
 ```
-
-Atualize o pip e instale as dependências
-
-```bash
-  pip install --upgrade pip
-  pip install -e .
-```
-
-## Inicializando o Banco de Dados
-
-Para inicializar rode o seguinde comando paraa aplicação criar um banco de dados sqlite rodando o arquivo sql com o schema das tabelas:
-
-```bash
-  flask --app app init-db
-  flask --app app seed-db
-```
-
-"init-db" irá inicialiar o banco de dados executando o script SQL com o schema e "seed-db" irá carregar as tabelas com algum dado inicial.
-
-## Inicializando o Servidor de Desenvolvimento
+### Inicializando o Servidor de Desenvolvimento
 
 Para inicializar um servidor de desenvolvimento flask rode:
 
 ```bash
-  flask --app app run --debug
+  task dev
 ```
+Com o servidor de desenvolvimento em funcionamento você pode acessar a documentação da API em http://127.0.0.1:8000/docs ou http://127.0.0.1:8000/redoc.
 
-## Documentação
-
-### Tipos
+## Estrutura de Pastas
 
 ```bash
-  guest = {
-    'document': str,
-    'created_at': datetime,
-    'name': str,
-    'surname': str,
-    'country': str,
-    'phones': List[str]
-  }
-
-  accommodation = {
-    'uuid': str
-    'created_at': datetime
-    'name': str,
-    'status': str,
-    'name': str,
-    'total_guests': int,
-    'single_beds': int,
-    'double_beds': int,
-    'min_nights': int,
-    'price': int
-    'amenities': List[str]
-  }
-
-    booking = {
-    'uuid': str,
-    'created_at': datetime,
-    'guest': Guest,
-    'accommodation': Accommodation,
-    'status': str,
-    'check_in': datetime,
-    'check_out': datetime,
-  }
-
-
+.
+├── README.md
+├── app
+│   ├── api
+│   │   ├── __init__.py
+│   │   ├── main.py
+│   │   └── routers
+│   │       ├── accommodation.py
+│   │       ├── amenities.py
+│   │       ├── booking.py
+│   │       └── guests.py
+│   ├── database
+│   │   ├── db.py
+│   │   ├── db_init.py
+│   │   ├── json
+│   │   │   ├── accommodations.json
+│   │   │   ├── amenities.json
+│   │   │   ├── bookings.json
+│   │   │   └── guests.json
+│   │   └── models.py
+│   ├── domain
+│   │   ├── Accommodation.py
+│   │   ├── Amenitie.py
+│   │   ├── Booking.py
+│   │   └── Guest.py
+│   └── utils
+│       ├── generate_locator.py
+│       └── is_valid_cpf.py
+├── database.db
+├── poetry.lock
+├── pyproject.toml
+└── tests
+    └── integration
+        ├── conftest.py
+        ├── test_api_accommodation.py
+        ├── test_api_bookings.py
+        ├── test_api_guests.py
+        ├── test_db_accommodation.py
+        ├── test_db_booking.py
+        └── test_db_guest.py
 ```
-
-### Abrindo uma conexão com o banco de dados
-
-```bash
-  db = get_db() # SQLite3 Database Connection
-  result = db.cursor().execute(SELECT * FROM guests;) # Lista
-
-```
-
-## Camada de Dados
-
-Camada responsável pelo acesso ao banco de dados (através do módulo database.py), organização da queries de consulta e mutações utilizando DAOs (Data Access Objects) para cada entidade e Repositórios para centralizar a criação das classes especificas de cada entidade.
-
-```bash
-# Como instanciar o repositório.
-db = get_db() # Importada do modulo database.py
-dao = GuestDAO(db) #  DAO referente a tabela de Hóspedes
-repository = GuestRepository(dao)
-
-# O repositório expõe as seguintes operações:
-
-count(): int # Retorna a quantidade de registros em uma tabela
-insert(Entidade): None # Cria um novo registro
-find(id): <Entidade>   # Procura um registro de acordo com uma identificação
-find_many(): List[Entidade]  # Lista todos os registros
-update(Entidade): None  # Atualiza um registro já existente
-delete(document): None  # Deleta um registro a partir da uma identificação
-
-
-```
-
-## Documentação da API (Em construção)
-
-#### > Retorna todos os hóspedes
-
-```http
-  GET /api/hospedes/
-```
-
-#### > Retorna um hóspede
-
-```http
-  GET /api/hospedes/${document}/
-```
-
-| Parâmetro  | Tipo     | Descrição                                                |
-| :--------- | :------- | :------------------------------------------------------- |
-| `document` | `string` | **Obrigatório**. O documento de identificação do hóspede |
-
-#### > Cadastra um novo hóspedee
-
-```http
-  POST /api/hospedes/cadastro/
-```
-
-#### body da requisição
-
-| Parâmetro  | Tipo     | Descrição                            |
-| :--------- | :------- | :----------------------------------- |
-| `document` | `string` | Documento de Identificação. Ex.: CPF |
-| `name`     | `string` |                                      |
-| `surname`  | `string` |                                      |
-| `country`  | `string` |                                      |
-| `phone`    | `string` |                                      |
-
-#### > Deleta um hóspede
-
-```http
-  DELETE /api/hospedes/${document}/
-```
-
-| Parâmetro  | Tipo     | Descrição                                                |
-| :--------- | :------- | :------------------------------------------------------- |
-| `document` | `string` | **Obrigatório**. O documento de identificação do hóspede |
-
-#### > Atualiza um hóspede
-
-```http
-  PUT /api/hospedes/
-```
-
-| Parâmetro  | Tipo     | Descrição                            |
-| :--------- | :------- | :----------------------------------- |
-| `document` | `string` | Documento de Identificação. Ex.: CPF |
-| `name`     | `string` |                                      |
-| `surname`  | `string` |                                      |
-| `country`  | `string` |                                      |
-| `phone`    | `string` |                                      |
