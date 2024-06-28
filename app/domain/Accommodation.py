@@ -23,7 +23,6 @@ class AccommodationUpdateDTO(BaseModel):
     model_config = ConfigDict(frozen=True)
 
     id: int
-    created_at: datetime
     name: str
     status: str
     total_guests: int
