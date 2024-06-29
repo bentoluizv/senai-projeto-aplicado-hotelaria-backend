@@ -1,4 +1,6 @@
+from datetime import datetime
 from http import HTTPStatus
+from uuid import uuid4
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
@@ -12,7 +14,7 @@ from app.domain.Booking import (
     BookingList,
     BookingUpdateDTO,
 )
-from app.services.createNewBooking import createNewBooking
+from app.utils.generate_locator import generate_locator
 
 router = APIRouter(tags=['Reservas'], prefix='/reservas')
 
@@ -25,7 +27,46 @@ router = APIRouter(tags=['Reservas'], prefix='/reservas')
 async def create_booking(
     booking_dto: BookingCreationalDTO, session: Session = Depends(get_session)
 ):
-    return createNewBooking(session, booking_dto)
+    db_guest = session.get(GuestDB, booking_dto.guest_document)
+    db_accommodation = session.get(
+        AccommodationDB, booking_dto.accommodation_id
+    )
+
+    if not db_guest:
+        raise HTTPException(
+            status_code=HTTPStatus.BAD_REQUEST,
+            detail='Guest does not exist',
+        )
+
+    if not db_accommodation:
+        raise HTTPException(
+            status_code=HTTPStatus.BAD_REQUEST,
+            detail='Accommodation does not exist',
+        )
+
+    if db_accommodation.status in {'Ocupada', 'Aguardando Reserva'}:
+        raise HTTPException(
+            status_code=HTTPStatus.BAD_REQUEST,
+            detail='Accommodation already booked',
+        )
+
+    db_booking = BookingDB(
+        uuid=str(uuid4()),
+        created_at=datetime.now().isoformat(),
+        locator=generate_locator(),
+        check_in=booking_dto.check_in,
+        check_out=booking_dto.check_out,
+        budget=booking_dto.budget,
+        status=booking_dto.status,
+        guest_document=booking_dto.guest_document,
+        accommodation_id=booking_dto.accommodation_id,
+        guest=db_guest,
+        accommodation=db_accommodation,
+    )
+    session.add(db_booking)
+    session.commit()
+
+    return db_booking
 
 
 @router.get('/', status_code=HTTPStatus.OK, response_model=BookingList)
