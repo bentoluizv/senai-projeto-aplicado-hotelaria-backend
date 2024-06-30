@@ -98,7 +98,6 @@ async def update_booking(
             status_code=HTTPStatus.NOT_FOUND, detail='Booking not found'
         )
 
-    db_booking.locator = booking_dto.locator
     db_booking.status = booking_dto.status
     db_booking.check_in = booking_dto.check_in
     db_booking.check_out = booking_dto.check_out

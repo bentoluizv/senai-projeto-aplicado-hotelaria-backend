@@ -33,7 +33,6 @@ class BookingList(BaseModel):
 
 class BookingUpdateDTO(BaseModel):
     status: str
-    locator: str
     check_in: str
     check_out: str
     guest_document: str
