@@ -74,15 +74,31 @@ async def list_all_bookings(session: Session = Depends(get_session)):
     return {'bookings': db_bookings}
 
 
-@router.get('/{uuid}', status_code=HTTPStatus.OK, response_model=Booking)
-async def find_booking(uuid: str, session: Session = Depends(get_session)):
-    db_booking = session.get(BookingDB, uuid)
+@router.get('/{identifier}', status_code=HTTPStatus.OK, response_model=Booking)
+async def find_booking(
+    identifier: str, session: Session = Depends(get_session)
+):
+    UUID_LENGTH = 36
+    if len(identifier) == UUID_LENGTH:
+        db_booking = session.get(BookingDB, identifier)
 
-    if not db_booking:
-        raise HTTPException(
-            status_code=HTTPStatus.NOT_FOUND, detail='Booking not found'
+        if not db_booking:
+            raise HTTPException(
+                status_code=HTTPStatus.NOT_FOUND, detail='Booking not found'
+            )
+
+        return db_booking
+
+    else:
+        db_booking = session.scalar(
+            select(BookingDB).where(BookingDB.locator == identifier)
         )
-    return db_booking
+        if not db_booking:
+            raise HTTPException(
+                status_code=HTTPStatus.NOT_FOUND, detail='Booking not found'
+            )
+
+        return db_booking
 
 
 @router.put('/{uuid}', status_code=HTTPStatus.NO_CONTENT)
