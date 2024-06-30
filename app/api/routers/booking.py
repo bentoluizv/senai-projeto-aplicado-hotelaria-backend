@@ -11,7 +11,6 @@ from app.database.models import AccommodationDB, BookingDB, GuestDB
 from app.domain.Booking import (
     Booking,
     BookingCreationalDTO,
-    BookingList,
     BookingUpdateDTO,
 )
 from app.utils.generate_locator import generate_locator
@@ -69,7 +68,7 @@ async def create_booking(
     return db_booking
 
 
-@router.get('/', status_code=HTTPStatus.OK, response_model=BookingList)
+@router.get('/', status_code=HTTPStatus.OK)
 async def list_all_bookings(session: Session = Depends(get_session)):
     db_bookings = session.scalars(select(BookingDB)).all()
     return {'bookings': db_bookings}
