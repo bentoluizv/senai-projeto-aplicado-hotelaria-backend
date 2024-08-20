@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from app.database.db_init import db_init
 from app.database.models import Base, GuestDB
 
-engine = create_engine('sqlite:///./database.db', echo=True)
+engine = create_engine('sqlite:///./database.db')
 
 Base.metadata.create_all(engine)
 
