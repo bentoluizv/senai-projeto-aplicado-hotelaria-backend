@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.database.db import get_session
+from app.database.db import get_database_session
 from app.database.models import AccommodationDB, AmenitieDB
 from app.domain.Accommodation import (
     Accommodation,
@@ -25,7 +25,7 @@ router = APIRouter(tags=['Acomodações'], prefix='/acomodacoes')
 )
 async def create_accommodation(
     accommodation_dto: AccommodationCreationalDTO,
-    session: Session = Depends(get_session),
+    session: Session = Depends(get_database_session),
 ):
     db_accommodation = session.scalar(
         select(AccommodationDB).where(
@@ -68,7 +68,9 @@ async def create_accommodation(
 
 
 @router.get('/', status_code=HTTPStatus.OK, response_model=AccommodationList)
-async def list_all_accommodations(session: Session = Depends(get_session)):
+async def list_all_accommodations(
+    session: Session = Depends(get_database_session),
+):
     db_accommodations = session.scalars(select(AccommodationDB)).all()
     return {'accommodations': db_accommodations}
 
@@ -78,7 +80,9 @@ async def list_all_accommodations(session: Session = Depends(get_session)):
     status_code=HTTPStatus.OK,
     response_model=Accommodation,
 )
-async def find_accommodation(id: str, session: Session = Depends(get_session)):
+async def find_accommodation(
+    id: str, session: Session = Depends(get_database_session)
+):
     db_accommodation = session.get(AccommodationDB, id)
 
     if not db_accommodation:
@@ -97,7 +101,7 @@ async def find_accommodation(id: str, session: Session = Depends(get_session)):
 async def update_accommodation(
     id: str,
     accommodation_dto: AccommodationUpdateDTO,
-    session: Session = Depends(get_session),
+    session: Session = Depends(get_database_session),
 ):
     db_accommodation = session.get(AccommodationDB, id)
 
@@ -133,7 +137,7 @@ async def update_accommodation(
 
 @router.delete('/{id}', status_code=HTTPStatus.NO_CONTENT)
 async def delete_accommodation(
-    id: int, session: Session = Depends(get_session)
+    id: int, session: Session = Depends(get_database_session)
 ):
     db_accommodations = session.get(AccommodationDB, id)
 

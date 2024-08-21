@@ -8,6 +8,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
+    # TODO: Configurar origin para aceitar somente o endereço do frontend
     allow_origins=['*'],
     allow_credentials=True,
     allow_methods=['*'],

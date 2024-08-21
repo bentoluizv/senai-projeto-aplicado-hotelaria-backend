@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.database.db import get_session
+from app.database.db import get_database_session
 from app.database.models import AccommodationDB, BookingDB, GuestDB
 from app.domain.Booking import (
     Booking,
@@ -24,7 +24,8 @@ router = APIRouter(tags=['Reservas'], prefix='/reservas')
     response_model=Booking,
 )
 async def create_booking(
-    booking_dto: BookingCreationalDTO, session: Session = Depends(get_session)
+    booking_dto: BookingCreationalDTO,
+    session: Session = Depends(get_database_session),
 ):
     db_guest = session.get(GuestDB, booking_dto.guest_document)
     db_accommodation = session.get(
@@ -69,14 +70,14 @@ async def create_booking(
 
 
 @router.get('/', status_code=HTTPStatus.OK)
-async def list_all_bookings(session: Session = Depends(get_session)):
+async def list_all_bookings(session: Session = Depends(get_database_session)):
     db_bookings = session.scalars(select(BookingDB)).all()
     return {'bookings': db_bookings}
 
 
 @router.get('/{identifier}', status_code=HTTPStatus.OK, response_model=Booking)
 async def find_booking(
-    identifier: str, session: Session = Depends(get_session)
+    identifier: str, session: Session = Depends(get_database_session)
 ):
     UUID_LENGTH = 36
     if len(identifier) == UUID_LENGTH:
@@ -105,7 +106,7 @@ async def find_booking(
 async def update_booking(
     uuid: str,
     booking_dto: BookingUpdateDTO,
-    session: Session = Depends(get_session),
+    session: Session = Depends(get_database_session),
 ):
     db_booking = session.get(BookingDB, uuid)
 
@@ -145,7 +146,9 @@ async def update_booking(
 
 
 @router.delete('/{uuid}', status_code=HTTPStatus.NO_CONTENT)
-async def delete_booking(uuid: str, session: Session = Depends(get_session)):
+async def delete_booking(
+    uuid: str, session: Session = Depends(get_database_session)
+):
     db_booking = session.get(BookingDB, uuid)
 
     if not db_booking:

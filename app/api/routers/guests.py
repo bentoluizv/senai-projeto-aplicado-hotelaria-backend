@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.database.db import get_session
+from app.database.db import get_database_session
 from app.database.models import GuestDB
 from app.domain.Guest import Guest, GuestList
 
@@ -16,7 +16,9 @@ router = APIRouter(tags=['Hóspedes'], prefix='/hospedes')
     status_code=HTTPStatus.CREATED,
     response_model=Guest,
 )
-async def create_guest(guest: Guest, session: Session = Depends(get_session)):
+async def create_guest(
+    guest: Guest, session: Session = Depends(get_database_session)
+):
     db_guest = session.get(GuestDB, guest.document)
 
     if db_guest:
@@ -39,7 +41,7 @@ async def create_guest(guest: Guest, session: Session = Depends(get_session)):
 
 
 @router.get('/', status_code=HTTPStatus.OK, response_model=GuestList)
-async def list_all_guests(session: Session = Depends(get_session)):
+async def list_all_guests(session: Session = Depends(get_database_session)):
     db_guests = session.scalars(select(GuestDB)).all()
     return {'guests': db_guests}
 
@@ -49,7 +51,9 @@ async def list_all_guests(session: Session = Depends(get_session)):
     status_code=HTTPStatus.OK,
     response_model=Guest,
 )
-async def find_guest(document: str, session: Session = Depends(get_session)):
+async def find_guest(
+    document: str, session: Session = Depends(get_database_session)
+):
     db_guest = session.get(GuestDB, document)
 
     if not db_guest:
@@ -66,7 +70,9 @@ async def find_guest(document: str, session: Session = Depends(get_session)):
     response_model=Guest,
 )
 async def update_guest(
-    document: str, guest: Guest, session: Session = Depends(get_session)
+    document: str,
+    guest: Guest,
+    session: Session = Depends(get_database_session),
 ):
     db_guest = session.get(GuestDB, document)
 
@@ -87,7 +93,9 @@ async def update_guest(
 
 
 @router.delete('/{document}', status_code=HTTPStatus.NO_CONTENT)
-async def delete_guest(document: str, session: Session = Depends(get_session)):
+async def delete_guest(
+    document: str, session: Session = Depends(get_database_session)
+):
     db_guest = session.get(GuestDB, document)
 
     if not db_guest:
