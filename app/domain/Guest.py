@@ -1,12 +1,10 @@
 from datetime import datetime
 from typing import List
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, Field
 
 
 class Guest(BaseModel):
-    model_config = ConfigDict(frozen=True)
-
     created_at: datetime = Field(default=datetime.now())
     document: str
     name: str
