@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field
 
 class Guest(BaseModel):
     uuid: UUID = Field(default_factory=uuid4)
-    created_at: datetime = Field(default=datetime.now())
+    created_at: datetime = Field(default_factory=datetime.now)
     document: str
     name: str
     surname: str

@@ -1,6 +1,7 @@
 from datetime import datetime
 from uuid import UUID, uuid4
 
+from backend.app.utils.generate_locator import generate_locator
 from pydantic import BaseModel, Field
 
 from app.domain.Accommodation import Accommodation
@@ -9,8 +10,8 @@ from app.domain.Guest import Guest
 
 class Booking(BaseModel):
     uuid: UUID = Field(default_factory=uuid4)
-    created_at: datetime = Field(default=datetime.now())
-    locator: str
+    created_at: datetime = Field(default_factory=datetime.now)
+    locator: str = Field(default_factory=generate_locator)
     status: str
     check_in: datetime
     check_out: datetime

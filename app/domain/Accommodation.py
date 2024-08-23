@@ -7,7 +7,7 @@ from app.domain.Amenitie import Amenitie
 
 class Accommodation(BaseModel):
     id: int
-    created_at: datetime = Field(default=datetime.now())
+    created_at: datetime = Field(default_factory=datetime.now)
     name: str
     status: str
     total_guests: int
