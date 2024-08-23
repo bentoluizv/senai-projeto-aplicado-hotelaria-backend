@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 from app.database.db import get_database_session
 from app.database.models import GuestDB
-from app.domain.Guest import Guest, GuestList
+from app.domain.Guest import Guest
 
 router = APIRouter(tags=['Hóspedes'], prefix='/hospedes')
 
@@ -26,9 +26,10 @@ async def create_guest(
             status_code=HTTPStatus.BAD_REQUEST, detail='Guest already exists'
         )
     db_guest = GuestDB(
+        uuid=guest.uuid,
         name=guest.name,
         document=guest.document,
-        created_at=guest.created_at.isoformat(),
+        created_at=guest.created_at,
         surname=guest.surname,
         country=guest.country,
         phone=guest.phone,
@@ -40,7 +41,7 @@ async def create_guest(
     return db_guest
 
 
-@router.get('/', status_code=HTTPStatus.OK, response_model=GuestList)
+@router.get('/', status_code=HTTPStatus.OK, response_model=list[Guest])
 async def list_all_guests(session: Session = Depends(get_database_session)):
     db_guests = session.scalars(select(GuestDB)).all()
     return {'guests': db_guests}

@@ -10,8 +10,7 @@ from app.database.db import get_database_session
 from app.database.models import AccommodationDB, AmenitieDB
 from app.domain.Accommodation import (
     Accommodation,
-    AccommodationCreationalDTO,
-    AccommodationList,
+    AccommodationCreateDTO,
     AccommodationUpdateDTO,
 )
 
@@ -24,7 +23,7 @@ router = APIRouter(tags=['Acomodações'], prefix='/acomodacoes')
     response_model=Accommodation,
 )
 async def create_accommodation(
-    accommodation_dto: AccommodationCreationalDTO,
+    accommodation_dto: AccommodationCreateDTO,
     session: Session = Depends(get_database_session),
 ):
     db_accommodation = session.scalar(
@@ -52,7 +51,7 @@ async def create_accommodation(
     db_accommodation = AccommodationDB(
         name=accommodation_dto.name,
         status=accommodation_dto.status,
-        created_at=datetime.datetime.now().isoformat(),
+        created_at=datetime.datetime.now(),
         single_beds=accommodation_dto.single_beds,
         double_beds=accommodation_dto.double_beds,
         min_nights=accommodation_dto.min_nights,
@@ -67,7 +66,7 @@ async def create_accommodation(
     return db_accommodation
 
 
-@router.get('/', status_code=HTTPStatus.OK, response_model=AccommodationList)
+@router.get('/', status_code=HTTPStatus.OK, response_model=list[Accommodation])
 async def list_all_accommodations(
     session: Session = Depends(get_database_session),
 ):
@@ -93,6 +92,8 @@ async def find_accommodation(
     return db_accommodation
 
 
+# TODO: Repensar Lógica de Update!! Objeto vem só com a propriedade a ser
+#       atualizada e não todas.
 @router.put(
     '/{id}',
     status_code=HTTPStatus.OK,
@@ -110,23 +111,23 @@ async def update_accommodation(
             status_code=HTTPStatus.NOT_FOUND, detail='Accomodation not found'
         )
 
-    db_accommodation.name = accommodation_dto.name
-    db_accommodation.status = accommodation_dto.status
-    db_accommodation.total_guests = accommodation_dto.total_guests
-    db_accommodation.single_beds = accommodation_dto.single_beds
-    db_accommodation.double_beds = accommodation_dto.double_beds
-    db_accommodation.min_nights = accommodation_dto.min_nights
-    db_accommodation.price = accommodation_dto.price
+    # db_accommodation.name = accommodation_dto.name
+    # db_accommodation.status = accommodation_dto.status
+    # db_accommodation.total_guests = accommodation_dto.total_guests
+    # db_accommodation.single_beds = accommodation_dto.single_beds
+    # db_accommodation.double_beds = accommodation_dto.double_beds
+    # db_accommodation.min_nights = accommodation_dto.min_nights
+    # db_accommodation.price = accommodation_dto.price
 
     db_amenities: List[AmenitieDB] = []
 
-    for amenitie in accommodation_dto.amenities:
-        db_amenitie = session.scalar(
-            select(AmenitieDB).where(AmenitieDB.name == amenitie)
-        )
+    # for amenitie in accommodation_dto.amenities:
+    #     db_amenitie = session.scalar(
+    #         select(AmenitieDB).where(AmenitieDB.name == amenitie)
+    #     )
 
-        if db_amenitie:
-            db_amenities.append(db_amenitie)
+    # if db_amenitie:
+    #     db_amenities.append(db_amenitie)
 
     db_accommodation.amenities = db_amenities
 

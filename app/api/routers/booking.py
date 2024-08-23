@@ -10,7 +10,7 @@ from app.database.db import get_database_session
 from app.database.models import AccommodationDB, BookingDB, GuestDB
 from app.domain.Booking import (
     Booking,
-    BookingCreationalDTO,
+    BookingCreateDTO,
     BookingUpdateDTO,
 )
 from app.utils.generate_locator import generate_locator
@@ -24,7 +24,7 @@ router = APIRouter(tags=['Reservas'], prefix='/reservas')
     response_model=Booking,
 )
 async def create_booking(
-    booking_dto: BookingCreationalDTO,
+    booking_dto: BookingCreateDTO,
     session: Session = Depends(get_database_session),
 ):
     db_guest = session.get(GuestDB, booking_dto.guest_document)
@@ -51,8 +51,8 @@ async def create_booking(
         )
 
     db_booking = BookingDB(
-        uuid=str(uuid4()),
-        created_at=datetime.now().isoformat(),
+        uuid=uuid4(),
+        created_at=datetime.now(),
         locator=generate_locator(),
         check_in=booking_dto.check_in,
         check_out=booking_dto.check_out,
@@ -115,10 +115,10 @@ async def update_booking(
             status_code=HTTPStatus.NOT_FOUND, detail='Booking not found'
         )
 
-    db_booking.status = booking_dto.status
-    db_booking.check_in = booking_dto.check_in
-    db_booking.check_out = booking_dto.check_out
-    db_booking.budget = booking_dto.budget
+    # db_booking.status = booking_dto.status
+    # db_booking.check_in = booking_dto.check_in
+    # db_booking.check_out = booking_dto.check_out
+    # db_booking.budget = booking_dto.budget
 
     if db_booking.guest_document != booking_dto.guest_document:
         db_guest = session.get(GuestDB, booking_dto.guest_document)
