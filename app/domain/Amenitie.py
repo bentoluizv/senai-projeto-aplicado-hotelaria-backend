@@ -1,5 +1,3 @@
-from typing import List
-
 from pydantic import BaseModel
 
 
@@ -8,5 +6,9 @@ class Amenitie(BaseModel):
     name: str
 
 
-class AmenitieList(BaseModel):
-    amenities: List[Amenitie]
+class AmenitieUpdateDTO(BaseModel):
+    name: str | None
+
+
+class AmenitieCreateDTO(BaseModel):
+    name: str
