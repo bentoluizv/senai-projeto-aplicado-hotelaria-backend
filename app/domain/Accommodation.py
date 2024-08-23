@@ -6,29 +6,6 @@ from pydantic import BaseModel, Field
 from app.domain.Amenitie import Amenitie
 
 
-class AccommodationCreationalDTO(BaseModel):
-    name: str
-    status: str = Field(default='Disponivel')
-    total_guests: int
-    single_beds: int
-    double_beds: int
-    min_nights: int
-    price: int
-    amenities: list[str]
-
-
-class AccommodationUpdateDTO(BaseModel):
-    id: int
-    name: str
-    status: str
-    total_guests: int
-    single_beds: int
-    double_beds: int
-    min_nights: int
-    price: int
-    amenities: list[str]
-
-
 class Accommodation(BaseModel):
     id: int
     created_at: datetime = Field(default=datetime.now())
@@ -42,5 +19,23 @@ class Accommodation(BaseModel):
     amenities: list[Amenitie]
 
 
-class AccommodationList(BaseModel):
-    accommodations: List[Accommodation]
+class AccommodationCreateDTO(BaseModel):
+    name: str
+    status: str = 'Disponivel'
+    total_guests: int
+    single_beds: int
+    double_beds: int
+    min_nights: int
+    price: int
+    amenities: list[str]
+
+
+class AccommodationUpdateDTO(BaseModel):
+    name: str | None = None
+    status: str | None = None
+    total_guests: int | None = None
+    single_beds: int | None = None
+    double_beds: int | None = None
+    min_nights: int | None = None
+    price: int | None = None
+    amenities: list[str] | None = None
