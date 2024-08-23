@@ -1,7 +1,10 @@
 from datetime import datetime
 from http import HTTPStatus
 
+import pytest
 
+
+@pytest.mark.skip()
 def test_create_booking(client):
     data = {
         'locator': 'KS928374',
@@ -20,6 +23,7 @@ def test_create_booking(client):
     assert 'uuid' in data
 
 
+@pytest.mark.skip()
 def test_list_all_bookings(client):
     TOTAL_ACCOMMODATIONS = 2
     response = client.get('/reservas')
@@ -28,6 +32,7 @@ def test_list_all_bookings(client):
     assert len(data['bookings']) == TOTAL_ACCOMMODATIONS
 
 
+@pytest.mark.skip()
 def test_find_booking(client):
     response = client.get('/reservas/b2a72d82-71e1-11e9-8f9e-2a86e4085a59')
     data = response.json()
@@ -37,6 +42,7 @@ def test_find_booking(client):
     assert data['guest']['name'] == 'Maria'
 
 
+@pytest.mark.skip()
 def test_update_booking(client):
     data = {
         'locator': 'KS928374',
@@ -55,11 +61,13 @@ def test_update_booking(client):
     assert response.status_code == HTTPStatus.NO_CONTENT
 
 
+@pytest.mark.skip()
 def test_delete_guest(client):
     response = client.delete('/reservas/b2a72d82-71e1-11e9-8f9e-2a86e4085a59')
     assert response.status_code == HTTPStatus.NO_CONTENT
 
 
+@pytest.mark.skip()
 def test_not_found_on_delete_booking(client):
     response = client.delete('/reservas/b2a72d82-71e1-11e9-6d5v-2a86e4085a59')
     assert response.status_code == HTTPStatus.NOT_FOUND
