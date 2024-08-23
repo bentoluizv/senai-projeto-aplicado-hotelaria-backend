@@ -14,12 +14,12 @@ class Guest(BaseModel):
     country: str
 
 
-class GuestUpdatetableDTO(BaseModel):
-    document: str | None
-    name: str | None
-    surname: str | None
-    phone: str | None
-    country: str | None
+class GuestUpdateDTO(BaseModel):
+    document: str | None = None
+    name: str | None = None
+    surname: str | None = None
+    phone: str | None = None
+    country: str | None = None
 
 
 class GuestCreateDTO(BaseModel):
