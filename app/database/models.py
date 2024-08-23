@@ -1,6 +1,7 @@
 from datetime import datetime
 from uuid import UUID
 
+from pydantic import EmailStr
 from sqlalchemy import (
     Column,
     DateTime,
@@ -24,8 +25,15 @@ class Base(MappedAsDataclass, DeclarativeBase):
     pass
 
 
+class UserDB(Base):
+    __tablename__ = 'users'
+    uuid: Mapped[UUID] = mapped_column(Uuid, primary_key=True)
+    email: Mapped[EmailStr] = mapped_column(String, unique=True)
+    password: Mapped[str] = mapped_column(String)
+
+
 class GuestDB(Base):
-    __tablename__ = 'guest'
+    __tablename__ = 'guests'
     uuid: Mapped[UUID] = mapped_column(Uuid, primary_key=True)
     document: Mapped[str] = mapped_column(String, unique=True)
     created_at: Mapped[datetime] = mapped_column(DateTime)
@@ -39,14 +47,14 @@ amenities_per_accommodation = Table(
     'amenities_per_accommodation',
     Base.metadata,
     Column(
-        'accommodation_id', ForeignKey('accommodation.id', ondelete='CASCADE')
+        'accommodation_id', ForeignKey('accommodations.id', ondelete='CASCADE')
     ),
-    Column('amenitie_id', ForeignKey('amenitie.id', ondelete='CASCADE')),
+    Column('amenitie_id', ForeignKey('amenities.id', ondelete='CASCADE')),
 )
 
 
 class AccommodationDB(Base):
-    __tablename__ = 'accommodation'
+    __tablename__ = 'accommodations'
 
     id: Mapped[int] = mapped_column(
         Integer, primary_key=True, autoincrement=True, init=False
@@ -65,7 +73,7 @@ class AccommodationDB(Base):
 
 
 class AmenitieDB(Base):
-    __tablename__ = 'amenitie'
+    __tablename__ = 'amenities'
 
     id: Mapped[int] = mapped_column(
         Integer, primary_key=True, autoincrement=True, init=False
@@ -74,20 +82,20 @@ class AmenitieDB(Base):
 
 
 class BookingDB(Base):
-    __tablename__ = 'booking'
+    __tablename__ = 'bookings'
 
     uuid: Mapped[UUID] = mapped_column(Uuid, primary_key=True)
     created_at: Mapped[datetime] = mapped_column(DateTime)
     locator: Mapped[str] = mapped_column(String, unique=True)
     status: Mapped[str] = mapped_column(String)
-    check_in: Mapped[str] = mapped_column(DateTime)
+    check_in: Mapped[datetime] = mapped_column(DateTime)
     check_out: Mapped[datetime] = mapped_column(DateTime)
     budget: Mapped[int] = mapped_column(Float)
     guest_document: Mapped[str] = mapped_column(
-        String, ForeignKey('guest.document', ondelete='RESTRICT')
+        String, ForeignKey('guests.document', ondelete='RESTRICT')
     )
     accommodation_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey('accommodation.id', ondelete='RESTRICT')
+        Integer, ForeignKey('accommodations.id', ondelete='RESTRICT')
     )
     guest: Mapped['GuestDB'] = relationship()
     accommodation: Mapped['AccommodationDB'] = relationship()
