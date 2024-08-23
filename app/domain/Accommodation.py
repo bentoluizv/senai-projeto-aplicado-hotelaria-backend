@@ -14,7 +14,7 @@ class Accommodation(BaseModel):
     single_beds: int
     double_beds: int
     min_nights: int
-    price: int
+    price: float
     amenities: list[Amenitie]
 
 
@@ -25,7 +25,7 @@ class AccommodationCreateDTO(BaseModel):
     single_beds: int
     double_beds: int
     min_nights: int
-    price: int
+    price: float
     amenities: list[str]
 
 
@@ -36,5 +36,5 @@ class AccommodationUpdateDTO(BaseModel):
     single_beds: int | None = None
     double_beds: int | None = None
     min_nights: int | None = None
-    price: int | None = None
+    price: float | None = None
     amenities: list[str] | None = None
