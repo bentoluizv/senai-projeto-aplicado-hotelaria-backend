@@ -7,7 +7,7 @@ class Amenitie(BaseModel):
 
 
 class AmenitieUpdateDTO(BaseModel):
-    name: str | None
+    name: str | None = None
 
 
 class AmenitieCreateDTO(BaseModel):
