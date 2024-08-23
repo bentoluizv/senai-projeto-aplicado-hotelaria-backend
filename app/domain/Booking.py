@@ -1,11 +1,11 @@
 from datetime import datetime
 from uuid import UUID, uuid4
 
-from backend.app.utils.generate_locator import generate_locator
 from pydantic import BaseModel, Field
 
 from app.domain.Accommodation import Accommodation
 from app.domain.Guest import Guest
+from app.utils.generate_locator import generate_locator
 
 
 class Booking(BaseModel):
@@ -17,22 +17,22 @@ class Booking(BaseModel):
     check_out: datetime
     guest: Guest
     accommodation: Accommodation
-    budget: int
+    budget: float
 
 
 class BookingUpdateDTO(BaseModel):
-    status: str | None
-    check_in: str | None
-    check_out: str | None
-    guest_document: str | None
-    accommodation_id: int | None
-    budget: int | None
+    status: str | None = None
+    check_in: datetime | None = None
+    check_out: datetime | None = None
+    guest_document: str | None = None
+    accommodation_id: int | None = None
+    budget: float | None = None
 
 
 class BookingCreateDTO(BaseModel):
     status: str
-    check_in: str
-    check_out: str
+    check_in: datetime
+    check_out: datetime
     guest_document: str
     accommodation_id: int
-    budget: int
+    budget: float
