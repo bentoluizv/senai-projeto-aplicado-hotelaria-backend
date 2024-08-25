@@ -3,21 +3,10 @@ from uuid import UUID, uuid4
 
 from pydantic import BaseModel, Field
 
+from app.data.database.models import BookingDB
 from app.domain.Accommodation import Accommodation
 from app.domain.Guest import Guest
 from app.utils.generate_locator import generate_locator
-
-
-class Booking(BaseModel):
-    uuid: UUID = Field(default_factory=uuid4)
-    created_at: datetime = Field(default_factory=datetime.now)
-    locator: str = Field(default_factory=generate_locator)
-    status: str
-    check_in: datetime
-    check_out: datetime
-    guest: Guest
-    accommodation: Accommodation
-    budget: float
 
 
 class BookingUpdateDTO(BaseModel):
@@ -36,3 +25,23 @@ class BookingCreateDTO(BaseModel):
     guest_document: str
     accommodation_id: int
     budget: float
+
+
+class Booking(BaseModel):
+    uuid: UUID = Field(default_factory=uuid4)
+    created_at: datetime = Field(default_factory=datetime.now)
+    locator: str = Field(default_factory=generate_locator)
+    status: str
+    check_in: datetime
+    check_out: datetime
+    guest: Guest
+    accommodation: Accommodation
+    budget: float
+
+    @classmethod
+    def from_database(cls, data: BookingDB):
+        return cls(**data.__dict__)
+
+    @classmethod
+    def create(cls, data: BookingCreateDTO):
+        return cls(**data.model_dump())

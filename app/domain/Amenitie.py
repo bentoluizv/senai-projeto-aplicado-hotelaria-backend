@@ -1,9 +1,6 @@
 from pydantic import BaseModel
 
-
-class Amenitie(BaseModel):
-    id: int
-    name: str
+from app.data.database.models import AmenitieDB
 
 
 class AmenitieUpdateDTO(BaseModel):
@@ -12,3 +9,16 @@ class AmenitieUpdateDTO(BaseModel):
 
 class AmenitieCreateDTO(BaseModel):
     name: str
+
+
+class Amenitie(BaseModel):
+    id: int
+    name: str
+
+    @classmethod
+    def from_database(cls, data: AmenitieDB):
+        return cls(**data.__dict__)
+
+    @classmethod
+    def create(cls, data: AmenitieCreateDTO):
+        return cls(**data.model_dump())

@@ -3,15 +3,7 @@ from uuid import UUID, uuid4
 
 from pydantic import BaseModel, Field
 
-
-class Guest(BaseModel):
-    uuid: UUID = Field(default_factory=uuid4)
-    created_at: datetime = Field(default_factory=datetime.now)
-    document: str
-    name: str
-    surname: str
-    phone: str
-    country: str
+from app.data.database.models import GuestDB
 
 
 class GuestUpdateDTO(BaseModel):
@@ -28,3 +20,21 @@ class GuestCreateDTO(BaseModel):
     surname: str
     phone: str
     country: str
+
+
+class Guest(BaseModel):
+    uuid: UUID = Field(default_factory=uuid4)
+    created_at: datetime = Field(default_factory=datetime.now)
+    document: str
+    name: str
+    surname: str
+    phone: str
+    country: str
+
+    @classmethod
+    def from_database(cls, data: GuestDB):
+        return cls(**data.__dict__)
+
+    @classmethod
+    def create(cls, data: GuestCreateDTO):
+        return cls(**data.model_dump())
