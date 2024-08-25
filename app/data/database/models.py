@@ -65,7 +65,6 @@ class AccommodationDB(Base):
     total_guests: Mapped[int] = mapped_column(Integer)
     single_beds: Mapped[int] = mapped_column(Integer)
     double_beds: Mapped[int] = mapped_column(Integer)
-    min_nights: Mapped[int] = mapped_column(Integer)
     price: Mapped[int] = mapped_column(Float)
     amenities: Mapped[list['AmenitieDB']] = relationship(
         secondary=amenities_per_accommodation
