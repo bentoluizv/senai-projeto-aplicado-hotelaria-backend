@@ -1,6 +1,6 @@
 from sqlalchemy import select
 
-from app.database.models import UserDB
+from app.data.database.models import UserDB
 
 
 def test_db_engine(engine):
