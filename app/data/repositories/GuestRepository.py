@@ -61,3 +61,4 @@ class GuestRepository:
             raise NotFoundError(id)
 
         self.database.delete(db_guest)
+        self.database.commit()
