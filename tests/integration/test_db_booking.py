@@ -1,10 +1,10 @@
 import datetime
-from uuid import uuid4
+from uuid import UUID, uuid4
 
 import pytest
 from sqlalchemy import select, update
 
-from app.database.models import (
+from app.data.database.models import (
     AccommodationDB,
     BookingDB,
     GuestDB,
@@ -15,6 +15,12 @@ from app.database.models import (
 def test_create_booking(session):
     BUDGET = 12000
 
+    db_guest = session.get(
+        GuestDB, UUID('f20c129f-6b7e-4047-9f1c-63e52633c22e')
+    )
+
+    db_accommodation = session.get(AccommodationDB, 1)
+
     new_booking = BookingDB(
         uuid=uuid4(),
         created_at=datetime.datetime.now(),
@@ -23,10 +29,8 @@ def test_create_booking(session):
         check_in=datetime.datetime(2024, 12, 18),
         check_out=datetime.datetime(2025, 1, 4),
         budget=12000,
-        accommodation_id=1,
-        guest_document='45678912300',
-        accommodation=session.get(AccommodationDB, 1),
-        guest=session.get(GuestDB, '45678912300'),
+        guest=db_guest,
+        accommodation=db_accommodation,
     )
 
     session.add(new_booking)
