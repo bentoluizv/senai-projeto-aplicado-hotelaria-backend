@@ -3,7 +3,7 @@ import datetime
 import pytest
 from sqlalchemy import select, update
 
-from app.database.models import AccommodationDB, AmenitieDB
+from app.data.database.models import AccommodationDB, AmenitieDB
 
 
 @pytest.mark.skip()
@@ -15,7 +15,6 @@ def test_create_accommodation(session):
         single_beds=1,
         total_guests=0,
         double_beds=0,
-        min_nights=2,
         price=180,
         amenities=[],
     )
