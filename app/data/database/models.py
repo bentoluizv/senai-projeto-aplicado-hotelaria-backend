@@ -91,10 +91,12 @@ class BookingDB(Base):
     check_out: Mapped[datetime] = mapped_column(DateTime)
     budget: Mapped[int] = mapped_column(Float)
     guest_document: Mapped[str] = mapped_column(
-        String, ForeignKey('guests.document', ondelete='RESTRICT')
+        String, ForeignKey('guests.document', ondelete='RESTRICT'), init=False
     )
     accommodation_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey('accommodations.id', ondelete='RESTRICT')
+        Integer,
+        ForeignKey('accommodations.id', ondelete='RESTRICT'),
+        init=False,
     )
     guest: Mapped['GuestDB'] = relationship()
     accommodation: Mapped['AccommodationDB'] = relationship()
