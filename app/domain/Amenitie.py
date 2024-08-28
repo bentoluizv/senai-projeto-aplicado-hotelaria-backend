@@ -12,7 +12,7 @@ class AmenitieCreateDTO(BaseModel):
 
 
 class Amenitie(BaseModel):
-    id: int
+    id: int | None = None
     name: str
 
     @classmethod
