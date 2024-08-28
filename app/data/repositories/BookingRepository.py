@@ -4,7 +4,11 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.data.database.models import BookingDB
-from app.domain.Booking import Booking, BookingCreateDTO, BookingUpdateDTO
+from app.domain.Booking import (
+    Booking,
+    BookingDTOWithGuestAndAccommodation,
+    BookingUpdateDTO,
+)
 from app.domain.errors.AlreadyExistsError import AlreadyExistsError
 from app.domain.errors.NotFoundError import NotFoundError
 
@@ -31,7 +35,7 @@ class BookingRepository:
 
         return booking
 
-    def insert(self, data: BookingCreateDTO):
+    def insert(self, data: BookingDTOWithGuestAndAccommodation):
         booking = Booking.create(data)
         exists = self.database.scalar(
             select(BookingDB).where(BookingDB.locator == booking.locator)
