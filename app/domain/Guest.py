@@ -23,13 +23,13 @@ class GuestCreateDTO(BaseModel):
 
 
 class Guest(BaseModel):
-    uuid: UUID = Field(default_factory=uuid4)
-    created_at: datetime = Field(default_factory=datetime.now)
     document: str
     name: str
     surname: str
     phone: str
     country: str
+    uuid: UUID = Field(default_factory=uuid4)
+    created_at: datetime = Field(default_factory=datetime.now)
 
     @classmethod
     def from_database(cls, data: GuestDB):
