@@ -1,7 +1,5 @@
-from datetime import datetime
-
-from app.data.database.models import AccommodationDB, AmenitieDB
 from app.domain.Accommodation import Accommodation, AccommodationCreateDTO
+from app.domain.Amenitie import Amenitie
 
 
 def test_should_create_a_new_accommodation_from_dto():
@@ -15,27 +13,18 @@ def test_should_create_a_new_accommodation_from_dto():
         name='Quarto de Testes',
     )
 
-    accommodation = Accommodation.create(accommodation_dto)
-
-    assert accommodation
-    assert hasattr(accommodation, 'id')
-    assert hasattr(accommodation, 'created_at')
-
-
-def test_should_create_a_new_accommodation_from_db_obj():
-    accommodation_db = AccommodationDB(
-        created_at=datetime.now(),
-        status='Disponivel',
-        amenities=[AmenitieDB(name='WIFI')],
-        double_beds=2,
-        price=250,
-        single_beds=1,
-        total_guests=3,
-        name='Quarto de Testes',
+    accommodation = Accommodation(
+        amenities=[
+            Amenitie(name=amenitie) for amenitie in accommodation_dto.amenities
+        ],
+        double_beds=accommodation_dto.double_beds,
+        name=accommodation_dto.name,
+        price=accommodation_dto.price,
+        single_beds=accommodation_dto.single_beds,
+        status=accommodation_dto.status,
+        total_guests=accommodation_dto.total_guests,
     )
 
-    accommodation = Accommodation.from_database(accommodation_db)
-
-    assert accommodation.name == 'Quarto de Testes'
+    assert accommodation
     assert hasattr(accommodation, 'id')
     assert hasattr(accommodation, 'created_at')
