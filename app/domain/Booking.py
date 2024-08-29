@@ -4,7 +4,6 @@ from uuid import UUID, uuid4
 
 from pydantic import BaseModel, Field, model_validator
 
-from app.data.database.models import AccommodationDB, BookingDB, GuestDB
 from app.domain.Accommodation import Accommodation
 from app.domain.Guest import Guest
 from app.utils.generate_locator import generate_locator
@@ -54,25 +53,3 @@ class Booking(BaseModel):
     guest: Guest
     accommodation: Accommodation
     budget: float
-
-    @model_validator(mode='before')
-    @classmethod
-    def check_input_data(cls, data: Any) -> Any:
-        if isinstance(data['accommodation'], AccommodationDB) and isinstance(
-            data['guest'], GuestDB
-        ):
-            data['accommodation'] = Accommodation.from_database(
-                data['accommodation']
-            )
-
-            data['guest'] = Guest.from_database(data['guest'])
-
-        return data
-
-    @classmethod
-    def from_database(cls, data: BookingDB):
-        return cls(**data.__dict__)
-
-    @classmethod
-    def create(cls, data: BookingDTOWithGuestAndAccommodation):
-        return cls(**data.model_dump())

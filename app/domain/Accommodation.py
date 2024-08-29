@@ -37,26 +37,3 @@ class Accommodation(BaseModel):
     double_beds: int
     price: float
     amenities: list[Amenitie]
-
-    @model_validator(mode='before')
-    @classmethod
-    def check_input_data(cls, data: Any) -> Any:
-        if all(isinstance(item, str) for item in data['amenities']):
-            data['amenities'] = [
-                Amenitie(name=amenitie) for amenitie in data['amenities']
-            ]
-
-        if all(isinstance(item, AmenitieDB) for item in data['amenities']):
-            data['amenities'] = [
-                Amenitie(name=amenitie.name, id=amenitie.id)
-                for amenitie in data['amenities']
-            ]
-        return data
-
-    @classmethod
-    def from_database(cls, data: AccommodationDB):
-        return cls(**data.__dict__)
-
-    @classmethod
-    def create(cls, data: AccommodationCreateDTO):
-        return cls(**data.model_dump())
