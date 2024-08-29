@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from app.domain.Accommodation import Accommodation, AccommodationCreateDTO
 from app.domain.Amenitie import Amenitie
 
@@ -14,8 +16,11 @@ def test_should_create_a_new_accommodation_from_dto():
     )
 
     accommodation = Accommodation(
+        id=1,
+        created_at=datetime.now(),
         amenities=[
-            Amenitie(name=amenitie) for amenitie in accommodation_dto.amenities
+            Amenitie(id=1, name=amenitie)
+            for amenitie in accommodation_dto.amenities
         ],
         double_beds=accommodation_dto.double_beds,
         name=accommodation_dto.name,

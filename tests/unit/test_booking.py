@@ -1,4 +1,5 @@
 from datetime import datetime
+from uuid import uuid4
 
 from app.domain.Accommodation import Accommodation
 from app.domain.Amenitie import Amenitie
@@ -7,6 +8,7 @@ from app.domain.Booking import (
     BookingCreateDTO,
 )
 from app.domain.Guest import Guest
+from app.utils.generate_locator import generate_locator
 
 
 def test_should_create_a_new_booking_from_dto():
@@ -20,6 +22,8 @@ def test_should_create_a_new_booking_from_dto():
     )
 
     guest = Guest(
+        uuid=uuid4(),
+        created_at=datetime.now(),
         document=booking_dto.guest_document,
         name='Bento',
         surname='Machado',
@@ -29,8 +33,9 @@ def test_should_create_a_new_booking_from_dto():
 
     accommodation = Accommodation(
         id=booking_dto.accommodation_id,
+        created_at=datetime.now(),
         status='Disponivel',
-        amenities=[Amenitie(name='ar-condicionado')],
+        amenities=[Amenitie(id=1, name='ar-condicionado')],
         double_beds=2,
         price=250,
         single_beds=1,
@@ -39,6 +44,9 @@ def test_should_create_a_new_booking_from_dto():
     )
 
     booking = Booking(
+        uuid=uuid4(),
+        created_at=datetime.now(),
+        locator=generate_locator(),
         accommodation=accommodation,
         budget=booking_dto.budget,
         check_in=booking_dto.check_in,
@@ -50,6 +58,9 @@ def test_should_create_a_new_booking_from_dto():
     assert booking
     assert hasattr(booking, 'uuid')
     assert hasattr(booking, 'created_at')
-    assert Amenitie(name='ar-condicionado') in booking.accommodation.amenities
+    assert (
+        Amenitie(id=1, name='ar-condicionado')
+        in booking.accommodation.amenities
+    )
     assert booking.guest.name == 'Bento'
     assert booking.accommodation.name == 'Quarto de Testes'
