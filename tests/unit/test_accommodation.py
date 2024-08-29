@@ -23,7 +23,7 @@ def test_should_create_a_new_accommodation_from_dto():
 
 
 def test_should_create_a_new_accommodation_from_db_obj():
-    guest_db = AccommodationDB(
+    accommodation_db = AccommodationDB(
         created_at=datetime.now(),
         status='Disponivel',
         amenities=[AmenitieDB(name='WIFI')],
@@ -34,7 +34,7 @@ def test_should_create_a_new_accommodation_from_db_obj():
         name='Quarto de Testes',
     )
 
-    accommodation = Accommodation.from_database(guest_db)
+    accommodation = Accommodation.from_database(accommodation_db)
 
     assert accommodation.name == 'Quarto de Testes'
     assert hasattr(accommodation, 'id')
