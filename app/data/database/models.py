@@ -60,12 +60,12 @@ class AccommodationDB(Base):
         Integer, primary_key=True, autoincrement=True, init=False
     )
     created_at: Mapped[datetime] = mapped_column(DateTime)
-    name: Mapped[str] = mapped_column(String)
+    name: Mapped[str] = mapped_column(String, unique=True)
     status: Mapped[str] = mapped_column(String)
     total_guests: Mapped[int] = mapped_column(Integer)
     single_beds: Mapped[int] = mapped_column(Integer)
     double_beds: Mapped[int] = mapped_column(Integer)
-    price: Mapped[int] = mapped_column(Float)
+    price: Mapped[float] = mapped_column(Float)
     amenities: Mapped[list['AmenitieDB']] = relationship(
         secondary=amenities_per_accommodation
     )
