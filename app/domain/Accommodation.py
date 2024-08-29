@@ -1,9 +1,7 @@
 from datetime import datetime
-from typing import Any
 
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field
 
-from app.data.database.models import AccommodationDB, AmenitieDB
 from app.domain.Amenitie import Amenitie
 
 
