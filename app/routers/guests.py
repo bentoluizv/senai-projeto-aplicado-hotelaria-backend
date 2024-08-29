@@ -6,8 +6,8 @@ from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
-from app.data.database.db import get_database_session
 from app.domain.Guest import Guest, GuestCreateDTO, GuestUpdateDTO
+from app.infra.database.db import get_database_session
 
 router = APIRouter(tags=['Hóspedes'], prefix='/guests')
 

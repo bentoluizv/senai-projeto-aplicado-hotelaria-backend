@@ -3,12 +3,12 @@ from http import HTTPStatus
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-from app.data.database.db import get_database_session
 from app.domain.Booking import (
     Booking,
     BookingCreateDTO,
     BookingUpdateDTO,
 )
+from app.infra.database.db import get_database_session
 
 router = APIRouter(tags=['Reservas'], prefix='/reservas')
 

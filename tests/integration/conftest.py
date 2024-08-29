@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.pool import StaticPool
 
 from app.app import app
-from app.data.database.models import (
+from app.infra.database.models import (
     AccommodationDB,
     AmenitieDB,
     Base,

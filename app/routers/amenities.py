@@ -3,8 +3,8 @@ from http import HTTPStatus
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-from app.data.database.db import get_database_session
 from app.domain.Amenitie import Amenitie
+from app.infra.database.db import get_database_session
 
 router = APIRouter(tags=['Amenidades'], prefix='/amenities')
 
