@@ -16,7 +16,6 @@ from app.data.database.models import (
     GuestDB,
     UserDB,
 )
-from app.factory.repository_factory import RepositoryFactory
 
 
 @pytest.fixture(scope='session')
@@ -90,8 +89,3 @@ def session(engine):
 def client():
     with TestClient(app) as client:
         yield client
-
-
-@pytest.fixture()
-def repository_factory(session: Session):
-    return RepositoryFactory(session)
