@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 from app.domain.Amenitie import Amenitie
 
@@ -26,8 +26,8 @@ class AccommodationCreateDTO(BaseModel):
 
 
 class Accommodation(BaseModel):
-    id: int | None = None
-    created_at: datetime = Field(default_factory=datetime.now)
+    id: int
+    created_at: datetime
     name: str
     status: str
     total_guests: int

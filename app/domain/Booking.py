@@ -1,11 +1,10 @@
 from datetime import datetime
-from uuid import UUID, uuid4
+from uuid import UUID
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 from app.domain.Accommodation import Accommodation
 from app.domain.Guest import Guest
-from app.utils.generate_locator import generate_locator
 
 
 class BookingUpdateDTO(BaseModel):
@@ -27,9 +26,9 @@ class BookingCreateDTO(BaseModel):
 
 
 class Booking(BaseModel):
-    uuid: UUID = Field(default_factory=uuid4)
-    created_at: datetime = Field(default_factory=datetime.now)
-    locator: str = Field(default_factory=generate_locator)
+    uuid: UUID
+    created_at: datetime
+    locator: str
     status: str
     check_in: datetime
     check_out: datetime

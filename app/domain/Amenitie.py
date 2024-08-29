@@ -10,5 +10,5 @@ class AmenitieCreateDTO(BaseModel):
 
 
 class Amenitie(BaseModel):
-    id: int | None = None
+    id: int
     name: str
