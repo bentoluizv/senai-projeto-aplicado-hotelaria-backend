@@ -1,5 +1,5 @@
 from datetime import datetime
-from uuid import UUID
+from uuid import UUID, uuid4
 
 from pydantic import EmailStr
 from sqlalchemy import (
@@ -11,6 +11,7 @@ from sqlalchemy import (
     String,
     Table,
     Uuid,
+    func,
 )
 from sqlalchemy.orm import (
     DeclarativeBase,
@@ -19,6 +20,8 @@ from sqlalchemy.orm import (
     mapped_column,
     relationship,
 )
+
+from app.utils.generate_locator import generate_locator
 
 
 class Base(MappedAsDataclass, DeclarativeBase):
@@ -34,9 +37,13 @@ class UserDB(Base):
 
 class GuestDB(Base):
     __tablename__ = 'guests'
-    uuid: Mapped[UUID] = mapped_column(Uuid, primary_key=True)
+    uuid: Mapped[UUID] = mapped_column(
+        Uuid, primary_key=True, default_factory=uuid4, init=False
+    )
     document: Mapped[str] = mapped_column(String, unique=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime, default=func.now(), init=False
+    )
     name: Mapped[str] = mapped_column(String)
     surname: Mapped[str] = mapped_column(String)
     country: Mapped[str] = mapped_column(String)
@@ -59,7 +66,9 @@ class AccommodationDB(Base):
     id: Mapped[int] = mapped_column(
         Integer, primary_key=True, autoincrement=True, init=False
     )
-    created_at: Mapped[datetime] = mapped_column(DateTime)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime, default_factory=func.now, init=False
+    )
     name: Mapped[str] = mapped_column(String, unique=True)
     status: Mapped[str] = mapped_column(String)
     total_guests: Mapped[int] = mapped_column(Integer)
@@ -83,9 +92,15 @@ class AmenitieDB(Base):
 class BookingDB(Base):
     __tablename__ = 'bookings'
 
-    uuid: Mapped[UUID] = mapped_column(Uuid, primary_key=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime)
-    locator: Mapped[str] = mapped_column(String, unique=True)
+    uuid: Mapped[UUID] = mapped_column(
+        Uuid, primary_key=True, default_factory=uuid4, init=False
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime, default_factory=func.now, init=False
+    )
+    locator: Mapped[str] = mapped_column(
+        String, unique=True, default_factory=generate_locator, init=False
+    )
     status: Mapped[str] = mapped_column(String)
     check_in: Mapped[datetime] = mapped_column(DateTime)
     check_out: Mapped[datetime] = mapped_column(DateTime)
