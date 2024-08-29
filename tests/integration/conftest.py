@@ -10,6 +10,7 @@ from sqlalchemy.pool import StaticPool
 from app.app import app
 from app.data.database.models import (
     AccommodationDB,
+    AmenitieDB,
     Base,
     BookingDB,
     GuestDB,
@@ -50,6 +51,8 @@ def session(engine):
             phone='48992054211',
         )
 
+        new_amenities = [AmenitieDB(name='wifi'), AmenitieDB(name='ducha')]
+
         new_accommodation = AccommodationDB(
             created_at=datetime.now(),
             double_beds=2,
@@ -74,6 +77,7 @@ def session(engine):
         )
         session.add(new_guest)
         session.add(new_user)
+        session.add_all(new_amenities)
         session.add(new_accommodation)
         session.add(new_booking)
 
