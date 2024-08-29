@@ -41,9 +41,7 @@ def session(engine):
         )
 
         new_guest = GuestDB(
-            uuid=UUID('f20c129f-6b7e-4047-9f1c-63e52633c22e'),
             document='00157624242',
-            created_at=datetime.now(),
             name='Bento',
             surname='Machado',
             country='Brasil',
@@ -53,7 +51,6 @@ def session(engine):
         new_amenities = [AmenitieDB(name='wifi'), AmenitieDB(name='ducha')]
 
         new_accommodation = AccommodationDB(
-            created_at=datetime.now(),
             double_beds=2,
             name='Quarto de Teste',
             price=250,
@@ -67,10 +64,7 @@ def session(engine):
             budget=8000,
             check_in=datetime(2024, 12, 22),
             check_out=datetime(2025, 1, 7),
-            created_at=datetime.now(),
-            locator='ZNX45852',
             status='Aguardando Check In',
-            uuid=UUID('b304906b-1f1a-4cc1-9ef4-06b6de38c390'),
             accommodation=new_accommodation,
             guest=new_guest,
         )
