@@ -104,7 +104,7 @@ class BookingDB(Base):
         String, unique=True, default_factory=generate_locator, init=False
     )
     status: Mapped[Status] = mapped_column(
-        Enum, default=Status.BOOKED, init=False
+        Enum(Status), default=Status.BOOKED, init=False
     )
     check_in: Mapped[datetime] = mapped_column(DateTime)
     check_out: Mapped[datetime] = mapped_column(DateTime)
