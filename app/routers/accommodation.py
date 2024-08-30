@@ -3,12 +3,12 @@ from http import HTTPStatus
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-from app.domain.Accommodation import (
-    Accommodation,
+from app.infra.database.db import get_database_session
+from app.infra.database.models import AccommodationDB
+from app.schemas.Accommodation import (
     AccommodationCreateDTO,
     AccommodationUpdateDTO,
 )
-from app.infra.database.db import get_database_session
 
 router = APIRouter(tags=['Acomodações'], prefix='/acomodacoes')
 
@@ -16,7 +16,7 @@ router = APIRouter(tags=['Acomodações'], prefix='/acomodacoes')
 @router.post(
     '/',
     status_code=HTTPStatus.CREATED,
-    response_model=Accommodation,
+    response_model=AccommodationDB,
 )
 async def create_accommodation(
     accommodation_dto: AccommodationCreateDTO,
@@ -24,7 +24,9 @@ async def create_accommodation(
 ): ...
 
 
-@router.get('/', status_code=HTTPStatus.OK, response_model=list[Accommodation])
+@router.get(
+    '/', status_code=HTTPStatus.OK, response_model=tuple[AccommodationDB]
+)
 async def list_all_accommodations(
     session: Session = Depends(get_database_session),
 ): ...
@@ -33,7 +35,7 @@ async def list_all_accommodations(
 @router.get(
     '/{id}',
     status_code=HTTPStatus.OK,
-    response_model=Accommodation,
+    response_model=AccommodationDB,
 )
 async def find_accommodation(
     id: str, session: Session = Depends(get_database_session)
@@ -43,7 +45,7 @@ async def find_accommodation(
 @router.put(
     '/{id}',
     status_code=HTTPStatus.OK,
-    response_model=Accommodation,
+    response_model=AccommodationDB,
 )
 async def update_accommodation(
     id: str,

@@ -6,8 +6,9 @@ from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
-from app.domain.Guest import Guest, GuestCreateDTO, GuestUpdateDTO
 from app.infra.database.db import get_database_session
+from app.infra.database.models import GuestDB
+from app.schemas.Guest import GuestCreateDTO, GuestUpdateDTO
 
 router = APIRouter(tags=['Hóspedes'], prefix='/guests')
 
@@ -16,27 +17,27 @@ class Message(BaseModel):
     content: str
 
 
-@router.get('/', status_code=HTTPStatus.OK, response_model=list[Guest])
+@router.get('/', status_code=HTTPStatus.OK, response_model=tuple[GuestDB])
 async def list_all_guests(
     session: Annotated[Session, Depends(get_database_session)],
-) -> list[Guest]: ...
+): ...
 
 
 @router.post('/', status_code=HTTPStatus.CREATED, response_model=Message)
 async def create_guest(
     data: GuestCreateDTO,
     session: Annotated[Session, Depends(get_database_session)],
-) -> Message: ...
+): ...
 
 
 @router.get(
     '/{uuid}',
     status_code=HTTPStatus.OK,
-    response_model=Guest,
+    response_model=GuestDB,
 )
 async def find_guest(
     uuid: UUID, session: Annotated[Session, Depends(get_database_session)]
-) -> Guest: ...
+): ...
 
 
 @router.put(

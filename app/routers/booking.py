@@ -3,12 +3,12 @@ from http import HTTPStatus
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-from app.domain.Booking import (
-    Booking,
+from app.infra.database.db import get_database_session
+from app.infra.database.models import BookingDB
+from app.schemas.Booking import (
     BookingCreateDTO,
     BookingUpdateDTO,
 )
-from app.infra.database.db import get_database_session
 
 router = APIRouter(tags=['Reservas'], prefix='/reservas')
 
@@ -16,7 +16,7 @@ router = APIRouter(tags=['Reservas'], prefix='/reservas')
 @router.post(
     '/',
     status_code=HTTPStatus.CREATED,
-    response_model=Booking,
+    response_model=BookingDB,
 )
 async def create_booking(
     booking_dto: BookingCreateDTO,
@@ -30,7 +30,9 @@ async def list_all_bookings(
 ): ...
 
 
-@router.get('/{identifier}', status_code=HTTPStatus.OK, response_model=Booking)
+@router.get(
+    '/{identifier}', status_code=HTTPStatus.OK, response_model=BookingDB
+)
 async def find_booking(
     identifier: str, session: Session = Depends(get_database_session)
 ): ...
