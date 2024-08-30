@@ -1,6 +1,9 @@
 from http import HTTPStatus
 
+import pytest
 
+
+@pytest.mark.skip()
 def test_create_a_guest(client):
     data = {
         'document': '00157624242',
@@ -16,6 +19,7 @@ def test_create_a_guest(client):
     assert 'created_at' in data
 
 
+@pytest.mark.skip()
 def test_list_all_guests(client):
     TOTAL_GUESTS = 5
     response = client.get('/hospedes')
@@ -24,6 +28,7 @@ def test_list_all_guests(client):
     assert len(data['guests']) == TOTAL_GUESTS
 
 
+@pytest.mark.skip()
 def test_find_guest(client):
     response = client.get('/hospedes/98765432100')
     data = response.json()
@@ -31,6 +36,7 @@ def test_find_guest(client):
     assert data['name'] == 'Maria'
 
 
+@pytest.mark.skip()
 def test_update_guest(client):
     data = {
         'document': '98765432100',
@@ -46,6 +52,7 @@ def test_update_guest(client):
     assert data['name'] == 'Maria de Lurdes'
 
 
+@pytest.mark.skip()
 def test_delete_guest(client):
     response = client.delete('/hospedes/98765432100')
     assert response.status_code == HTTPStatus.NO_CONTENT

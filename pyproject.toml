@@ -27,8 +27,11 @@ build-backend = "poetry.core.masonry.api"
 line-length = 79
 extend-exclude = ['migrations']
 
+
+
 [tool.ruff.lint]
 preview = true
+ignore = ['PLR6301']
 select = ['I', 'F', 'E', 'W', 'PL', 'PT']
 
 [tool.ruff.format]
