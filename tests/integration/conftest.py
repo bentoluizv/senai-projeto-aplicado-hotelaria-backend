@@ -64,7 +64,6 @@ def session(engine):
             budget=8000,
             check_in=datetime(2024, 12, 22),
             check_out=datetime(2025, 1, 7),
-            status='Aguardando Check In',
             accommodation=new_accommodation,
             guest=new_guest,
         )
