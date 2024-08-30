@@ -7,8 +7,3 @@ class AmenitieUpdateDTO(BaseModel):
 
 class AmenitieCreateDTO(BaseModel):
     name: str
-
-
-class Amenitie(BaseModel):
-    id: int
-    name: str
