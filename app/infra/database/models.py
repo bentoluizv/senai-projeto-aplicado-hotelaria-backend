@@ -5,6 +5,7 @@ from pydantic import EmailStr
 from sqlalchemy import (
     Column,
     DateTime,
+    Enum,
     Float,
     ForeignKey,
     Integer,
@@ -21,6 +22,7 @@ from sqlalchemy.orm import (
     relationship,
 )
 
+from app.schemas.Booking import Status
 from app.utils.generate_locator import generate_locator
 
 
@@ -101,10 +103,12 @@ class BookingDB(Base):
     locator: Mapped[str] = mapped_column(
         String, unique=True, default_factory=generate_locator, init=False
     )
-    status: Mapped[str] = mapped_column(String)
+    status: Mapped[Status] = mapped_column(
+        Enum, default=Status.BOOKED, init=False
+    )
     check_in: Mapped[datetime] = mapped_column(DateTime)
     check_out: Mapped[datetime] = mapped_column(DateTime)
-    budget: Mapped[int] = mapped_column(Float)
+    budget: Mapped[float] = mapped_column(Float)
     guest_document: Mapped[str] = mapped_column(
         String, ForeignKey('guests.document', ondelete='RESTRICT'), init=False
     )
