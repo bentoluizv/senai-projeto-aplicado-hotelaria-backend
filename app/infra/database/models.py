@@ -32,7 +32,9 @@ class Base(MappedAsDataclass, DeclarativeBase):
 
 class UserDB(Base):
     __tablename__ = 'users'
-    uuid: Mapped[UUID] = mapped_column(Uuid, primary_key=True)
+    uuid: Mapped[UUID] = mapped_column(
+        Uuid, primary_key=True, default_factory=uuid4, init=False
+    )
     email: Mapped[EmailStr] = mapped_column(String, unique=True)
     password: Mapped[str] = mapped_column(String)
 
