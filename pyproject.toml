@@ -10,6 +10,7 @@ python = "3.12.3"
 pydantic = "2.7.4"
 fastapi = "0.111.0"
 sqlalchemy = "2.0.31"
+pwdlib = {extras = ["argon2"], version = "^0.2.1"}
 
 
 [tool.poetry.group.dev.dependencies]
@@ -45,8 +46,8 @@ addopts = '-p no:warnings'
 [tool.taskipy.tasks]
 lint = 'ruff check . && ruff check . --diff'
 format = 'ruff check . --fix && ruff format .'
-dev = 'fastapi dev app/api/main.py'
+dev = 'fastapi dev app/app.py'
 pre_test = 'task lint'
 test = 'pytest -s -x --cov=app -vv'
 post_test = 'coverage html'
-run = 'fastapi run app/api/main.py'
+run = 'fastapi run app/app.py'
