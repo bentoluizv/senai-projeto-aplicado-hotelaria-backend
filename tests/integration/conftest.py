@@ -35,7 +35,6 @@ def session(engine):
 
     with Session(engine) as session:
         new_user = UserDB(
-            uuid=UUID('6ab53765-3a8f-40a1-89e6-0b9834187f22'),
             email='teste@teste.com',
             password='superhardpassword',
         )
