@@ -16,7 +16,6 @@ from app.infra.database.models import (
     GuestDB,
     UserDB,
 )
-from app.schemas.User import Role
 
 
 @pytest.fixture(scope='session')
@@ -38,7 +37,6 @@ def session(engine):
         new_user = UserDB(
             email='teste@teste.com',
             password='superhardpassword',
-            role=Role.ADMIN,
         )
 
         new_guest = GuestDB(

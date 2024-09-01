@@ -46,6 +46,3 @@ def test_delete_guest(session):
 
     with pytest.raises(NotFoundError):
         delete(session, 'b73e37e2-ddca-4bec-86a9-016b5341c36f')
-
-
-# TODO: Testar casos de erros

@@ -5,13 +5,11 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
-from app.auth.token import get_current_user
 from app.errors.AlreadyExistsError import AlreadyExistsError
 from app.errors.NotFoundError import NotFoundError
 from app.infra.database.db import get_database_session
-from app.infra.database.models import GuestDB, UserDB
+from app.infra.database.models import GuestDB
 from app.schemas.Guest import GuestCreateDTO, GuestUpdateDTO
-from app.schemas.User import Role
 from app.services.guests import (
     create,
     delete,
@@ -20,11 +18,7 @@ from app.services.guests import (
     update,
 )
 
-router = APIRouter(
-    tags=['Hóspedes'],
-    prefix='/guests',
-    dependencies=[Depends(get_current_user)],
-)
+router = APIRouter(tags=['Hóspedes'], prefix='/guests')
 
 
 class Message(BaseModel):
@@ -95,19 +89,8 @@ async def update_guest(
 
 @router.delete('/{uuid}', status_code=HTTPStatus.OK, response_model=Message)
 async def delete_guest(
-    uuid: str,
-    session: Annotated[
-        Session,
-        Depends(get_database_session),
-    ],
-    user: Annotated[UserDB, Depends(get_current_user)],
+    uuid: str, session: Annotated[Session, Depends(get_database_session)]
 ):
-    if user.role != Role.ADMIN:
-        raise HTTPException(
-            status_code=HTTPStatus.FORBIDDEN,
-            detail='Method not allowed',
-        )
-
     try:
         delete(session, uuid)
         return Message(content='DELETED')

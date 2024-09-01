@@ -23,7 +23,6 @@ from sqlalchemy.orm import (
 )
 
 from app.schemas.Booking import Status
-from app.schemas.User import Role
 from app.utils.generate_locator import generate_locator
 
 
@@ -38,7 +37,6 @@ class UserDB(Base):
     )
     email: Mapped[EmailStr] = mapped_column(String, unique=True)
     password: Mapped[str] = mapped_column(String)
-    role: Mapped[Role] = mapped_column(Enum(Role))
 
 
 class GuestDB(Base):
