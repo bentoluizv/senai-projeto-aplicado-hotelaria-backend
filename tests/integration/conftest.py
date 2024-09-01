@@ -1,4 +1,5 @@
 from datetime import datetime
+from uuid import UUID
 
 import pytest
 from fastapi.testclient import TestClient
@@ -45,6 +46,8 @@ def session(engine):
             country='Brasil',
             phone='48992054211',
         )
+
+        new_guest.uuid = UUID('b73e37e2-ddca-4bec-86a9-016b5341c36f')
 
         new_amenities = [AmenitieDB(name='wifi'), AmenitieDB(name='ducha')]
 
