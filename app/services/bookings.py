@@ -1,12 +1,14 @@
+from uuid import UUID
+
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.errors.NotFoundError import NotFoundError
 from app.infra.database.models import AccommodationDB, BookingDB, GuestDB
-from app.schemas.Booking import BookingCreateDTO
+from app.schemas.Booking import BookingCreateDTO, BookingUpdateDTO
 
 
-def create_new_booking(session: Session, booking_dto: BookingCreateDTO):
+def register(session: Session, booking_dto: BookingCreateDTO):
     # TODO: Validar se existem outras reservas
     # no periodo de checkin/checkout escolhidos
 
@@ -40,3 +42,26 @@ def create_new_booking(session: Session, booking_dto: BookingCreateDTO):
     session.add(new_booking)
 
     session.commit()
+
+
+def list_all(session: Session):
+    bookings = tuple(session.scalars(select(BookingDB)).all())
+
+    return bookings
+
+
+def find_by_id(session: Session, id: str):
+    uuid = UUID(id)
+
+    existing_booking = session.get(BookingDB, uuid)
+
+    if not existing_booking:
+        raise NotFoundError(uuid)
+
+    return existing_booking
+
+
+def update(session: Session, id: str, booking_dto: BookingUpdateDTO): ...
+
+
+# TODO: Implementar regras para atualizar uma reserva.

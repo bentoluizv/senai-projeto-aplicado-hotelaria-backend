@@ -4,12 +4,13 @@ from sqlalchemy.orm import Session
 from app.errors.AlreadyExistsError import AlreadyExistsError
 from app.errors.NotFoundError import NotFoundError
 from app.infra.database.models import AccommodationDB, AmenitieDB
-from app.schemas.Accommodation import AccommodationCreateDTO
+from app.schemas.Accommodation import (
+    AccommodationCreateDTO,
+    AccommodationUpdateDTO,
+)
 
 
-def create_new_accommodation(
-    session: Session, accommodation: AccommodationCreateDTO
-):
+def create(session: Session, accommodation: AccommodationCreateDTO):
     existing_accommodation = session.scalar(
         select(AccommodationDB).where(
             AccommodationDB.name == accommodation.name
@@ -43,4 +44,45 @@ def create_new_accommodation(
 
     session.add(new_db_accommodation)
 
+    session.commit()
+
+
+def list_all(session: Session):
+    accommodations = tuple(session.scalars(select(AccommodationDB)).all())
+
+    return accommodations
+
+
+def find_by_id(session: Session, id: str):
+    existing_accommodation = session.get(AccommodationDB, id)
+
+    if not existing_accommodation:
+        raise NotFoundError(id)
+
+    return existing_accommodation
+
+
+def update(session: Session, id: str, data: AccommodationUpdateDTO):
+    existing_accommodation = session.get(AccommodationDB, id)
+
+    if not existing_accommodation:
+        raise NotFoundError(id)
+
+    for key, value in data.model_dump().items():
+        if value:
+            setattr(existing_accommodation, key, value)
+
+    session.commit()
+    session.refresh(existing_accommodation)
+
+    return existing_accommodation
+
+
+def delete(session: Session, id: str):
+    existing_accommodation = session.get(AccommodationDB, id)
+
+    if not existing_accommodation:
+        raise NotFoundError(id)
+
+    session.delete(existing_accommodation)
     session.commit()

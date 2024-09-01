@@ -6,7 +6,7 @@ from app.infra.database.models import AmenitieDB
 from app.schemas.Amenitie import AmenitieCreateDTO
 
 
-def create_new_amenitie(session: Session, amenitie: AmenitieCreateDTO):
+def create(session: Session, amenitie: AmenitieCreateDTO):
     existing_amenitie = session.scalar(
         select(AmenitieDB).where(AmenitieDB.name == amenitie.name)
     )
