@@ -15,7 +15,10 @@ Você pode baixar python diretamente do site oficial mas é altamente recomendad
 Com o pyenv instalado você poderá instalar a versão do python adequada da seguinte forma:
 
 ```sh
-pyenv install 3.12.3
+pyenv install 3.12.5
+Downloading Python-3.12.5.tar.xz...
+-> https://www.python.org/ftp/python/3.12.5/Python-3.12.5.tar.xz
+Installing Python-3.12.5...
 ```
 
 ### Clone o projeto diretamente do Github
@@ -34,13 +37,13 @@ poetry shell
 The currently activated Python version 3.10.12 is not supported by the project (3.12.3).
 Trying to find and use a compatible version.
 Using python3 (3.12.3)
-Spawning shell within /home/bentoluizv/.cache/pypoetry/virtualenvs/app-kWK05R3W-py3.12
-. /home/bentoluizv/.cache/pypoetry/virtualenvs/app-kWK05R3W-py3.12/bin/activate
+Spawning shell within /.cache/pypoetry/virtualenvs/app-kWK05R3W-py3.12
+. /.cache/pypoetry/virtualenvs/app-kWK05R3W-py3.12/bin/activate
 
-bentoluizv@DESKTOPD5OD07S:~/$ ./home/bentoluizv/.cache/pypoetry/virtualenvs/app-kWK05R3W-py3.12/bin/activate
+:~/$ ./.cache/pypoetry/virtualenvs/app-kWK05R3W-py3.12/bin/activate
 
 
-(app-py3.12) bentoluizv@DESKTOPD5OD07S:~/$
+(app-py3.12) :~/$
 ```
 
 ```sh
@@ -126,69 +129,36 @@ O projeto utiliza pytest para rodar testes de integração que cobrem operaçõe
 Os testes podem ser executados de forma automatizada gerando coverage report e também checando o linter através do comando `task test`
 
 ```sh
-All checks passed!
-============================================================================================== test session starts ==============================================================================================
-platform linux -- Python 3.12.3, pytest-8.2.2, pluggy-1.5.0 -- /home/bentoluizv/.cache/pypoetry/virtualenvs/app-kWK05R3W-py3.12/bin/python
-cachedir: .pytest_cache
-rootdir: /home/bentoluizv/workspace/projetoaplicado1/teste/projeto-aplicado-backend
 configfile: pyproject.toml
 plugins: cov-5.0.0, anyio-4.4.0
-collecting ...
+collected 18 items
 
-tests/integration/test_api_accommodation.py::test_create_accommodation PASSED
-tests/integration/test_api_accommodation.py::test_list_all_accommodation PASSED
-tests/integration/test_api_accommodation.py::test_find_accommodation PASSED
-tests/integration/test_api_accommodation.py::test_update_accommodation PASSED
-tests/integration/test_api_accommodation.py::test_delete_guest PASSED
-tests/integration/test_api_bookings.py::test_create_booking PASSED
-tests/integration/test_api_bookings.py::test_list_all_bookings PASSED
-tests/integration/test_api_bookings.py::test_find_booking PASSED
-tests/integration/test_api_bookings.py::test_update_booking PASSED
-tests/integration/test_api_bookings.py::test_delete_guest PASSED
-tests/integration/test_api_bookings.py::test_not_found_on_delete_booking PASSED
-tests/integration/test_api_guests.py::test_create_a_guest PASSED
-tests/integration/test_api_guests.py::test_list_all_guests PASSED
-tests/integration/test_api_guests.py::test_find_guest PASSED
-tests/integration/test_api_guests.py::test_update_guest PASSED
-tests/integration/test_api_guests.py::test_delete_guest PASSED
-tests/integration/test_db_accommodation.py::test_create_accommodation PASSED
-tests/integration/test_db_accommodation.py::test_select_all_accommodations PASSED
-tests/integration/test_db_accommodation.py::test_find_accommodation_by_name PASSED
-tests/integration/test_db_accommodation.py::test_update_accommodation PASSED
-tests/integration/test_db_accommodation.py::test_delete_accommodation PASSED
-tests/integration/test_db_booking.py::test_create_booking PASSED
-tests/integration/test_db_booking.py::test_select_all_bookings PASSED
-tests/integration/test_db_booking.py::test_find_booking_by_locator PASSED
-tests/integration/test_db_booking.py::test_update_booking PASSED
-tests/integration/test_db_booking.py::test_delete_accommodation PASSED
-tests/integration/test_db_guest.py::test_create_guest PASSED
-tests/integration/test_db_guest.py::test_select_all_guests PASSED
-tests/integration/test_db_guest.py::test_find_guest_by_name PASSED
-tests/integration/test_db_guest.py::test_update_guest PASSED
-tests/integration/test_db_guest.py::test_delete_guest PASSED
+tests/integration/test_api_accommodation.py sssss
+tests/integration/test_api_bookings.py ssssss
+tests/integration/test_api_guests.py sssss
+tests/integration/test_db.py ..
 
 ---------- coverage: platform linux, python 3.12.3-final-0 -----------
-Name                               Stmts   Miss  Cover
-------------------------------------------------------
-app/api/__init__.py                    0      0   100%
-app/api/main.py                        9      0   100%
-app/api/routers/accommodation.py      63      4    94%
-app/api/routers/amenities.py          12      2    83%
-app/api/routers/booking.py            67     11    84%
-app/api/routers/guests.py             47      4    91%
-app/database/db.py                    17      7    59%
-app/database/db_init.py               31      0   100%
-app/database/models.py                43      0   100%
-app/domain/Accommodation.py           39      0   100%
-app/domain/Amenitie.py                 9      0   100%
-app/domain/Booking.py                 37      3    92%
-app/domain/Guest.py                   13      0   100%
-app/utils/generate_locator.py          7      0   100%
-------------------------------------------------------
-TOTAL                                394     31    92%
+Name                            Stmts   Miss  Cover
+---------------------------------------------------
+app/__init__.py                     0      0   100%
+app/app.py                          9      0   100%
+app/infra/database/db.py            8      2    75%
+app/infra/database/models.py       52      0   100%
+app/routers/__init__.py             0      0   100%
+app/routers/accommodation.py       17      0   100%
+app/routers/amenities.py            8      0   100%
+app/routers/booking.py             17      0   100%
+app/routers/guests.py              22      0   100%
+app/schemas/Accommodation.py       17      0   100%
+app/schemas/Booking.py             20      0   100%
+app/schemas/Guest.py               13      0   100%
+app/utils/generate_locator.py       7      0   100%
+---------------------------------------------------
+TOTAL                             190      2    99%
 
 
-============================================================================================== 31 passed in 3.14s ===============================================================================================
+================================================== 2 passed, 16 skipped in 2.21s ==================================================
 Wrote HTML report to htmlcov/index.html
 ```
 
@@ -241,5 +211,3 @@ INFO:     Started server process [126394]
 INFO:     Waiting for application startup.
 INFO:     Application startup complete.
 ```
-
-Um dos principais motivos de Fastapi ter sido escolhido para este projeto é a criação automática de uma documentação seguindo a especificação do padrão openAPI que pode ser acessada (neste exemplo) em <http://127.0.0.1:8000/docs>.
