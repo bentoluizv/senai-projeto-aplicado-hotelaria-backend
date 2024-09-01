@@ -25,7 +25,6 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.ruff]
 line-length = 79
-extend-exclude = ['migrations']
 
 
 
@@ -47,6 +46,6 @@ lint = 'ruff check . && ruff check . --diff'
 format = 'ruff check . --fix && ruff format .'
 dev = 'fastapi dev app/api/main.py'
 pre_test = 'task lint'
-test = 'pytest -s -x --cov=app -vv'
+test = 'pytest -s -x --cov=app'
 post_test = 'coverage html'
 run = 'fastapi run app/api/main.py'
