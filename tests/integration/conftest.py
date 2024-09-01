@@ -1,6 +1,5 @@
 import json
 from datetime import datetime
-from uuid import UUID
 
 import pytest
 from fastapi.testclient import TestClient
@@ -35,6 +34,11 @@ def session(engine):
     Base.metadata.create_all(engine)
 
     with Session(engine) as session:
+<<<<<<< fix/database-model
+        new_user = UserDB(
+            email='teste@teste.com',
+            password='superhardpassword',
+=======
         sample = [
             UserDB(
                 uuid=UUID('6ab53765-3a8f-40a1-89e6-0b9834187f22'),
@@ -70,6 +74,7 @@ def session(engine):
                 accommodation=sample[4],
                 guest=sample[1],
             ),
+>>>>>>> main
         )
 
         yield session
