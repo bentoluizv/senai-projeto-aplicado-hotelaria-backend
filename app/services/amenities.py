@@ -21,3 +21,9 @@ def create(session: Session, amenitie: AmenitieCreateDTO):
     session.add(new_db_amenitie)
 
     session.commit()
+
+
+def list_all(session: Session):
+    amenities = session.scalars(select(AmenitieDB)).all()
+
+    return amenities

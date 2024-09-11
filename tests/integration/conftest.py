@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.pool import StaticPool
 
 from app.app import app
+from app.infra.database.db import get_database_session
 from app.infra.database.models import (
     AccommodationDB,
     AmenitieDB,
@@ -82,6 +83,12 @@ def session(engine):
 
 
 @pytest.fixture()
-def client():
+def client(session):
+    def get_session_override():
+        return session
+
     with TestClient(app) as client:
+        app.dependency_overrides[get_database_session] = get_session_override
         yield client
+
+    app.dependency_overrides.clear()
