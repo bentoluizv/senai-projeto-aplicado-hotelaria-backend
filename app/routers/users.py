@@ -2,23 +2,17 @@ from http import HTTPStatus
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
-from app.errors.AlreadyExistsError import AlreadyExistsError
-from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
+from app.errors.AlreadyExistsError import AlreadyExistsError
 from app.infra.database.db import get_database_session
-from app.infra.database.models import UserDB
+from app.schemas.Message import Message
 from app.schemas.User import UserCreateDTO
-
 from app.services.users import (
-    create,     
+    create,
 )
 
 router = APIRouter(tags=['Users'], prefix='/users')
-
-class Message(BaseModel):
-    content: str
-
 
 
 @router.post('/', status_code=HTTPStatus.CREATED, response_model=Message)

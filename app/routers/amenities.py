@@ -2,23 +2,19 @@ from http import HTTPStatus
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
-from app.errors.AlreadyExistsError import AlreadyExistsError
-from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
+from app.errors.AlreadyExistsError import AlreadyExistsError
 from app.infra.database.db import get_database_session
 from app.infra.database.models import AmenitieDB
 from app.schemas.Amenitie import AmenitieCreateDTO
-
+from app.schemas.Message import Message
 from app.services.amenities import (
-    create, 
+    create,
     list_all,
 )
 
 router = APIRouter(tags=['Amenidades'], prefix='/amenities')
-
-class Message(BaseModel):
-    content: str
 
 
 @router.get('/', status_code=HTTPStatus.OK, response_model=list[AmenitieDB])
