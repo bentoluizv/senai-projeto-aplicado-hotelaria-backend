@@ -2,7 +2,6 @@ from http import HTTPStatus
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from app.errors.AlreadyExistsError import AlreadyExistsError
@@ -13,7 +12,7 @@ from app.schemas.Accommodation import (
     AccommodationCreateDTO,
     AccommodationUpdateDTO,
 )
-from app.schemas.Accommodation import AccommodationCreateDTO
+from app.schemas.Message import Message
 from app.services.accommodations import (
     create,
     delete,
@@ -22,10 +21,7 @@ from app.services.accommodations import (
     update,
 )
 
-router = APIRouter(tags=['Acomodações'], prefix='/acomodacoes')
-
-class Message(BaseModel):
-    content: str
+router = APIRouter(tags=['Acomodações'], prefix='/accommodations')
 
 
 @router.get(
@@ -33,11 +29,10 @@ class Message(BaseModel):
 )
 async def list_all_accommodations(
     session: Annotated[Session, Depends(get_database_session)],
-): 
+):
     accommodation = list_all(session)
 
     return accommodation
-
 
 
 @router.post(
@@ -48,7 +43,7 @@ async def list_all_accommodations(
 async def create_accommodation(
     new_accommodation: AccommodationCreateDTO,
     session: Session = Depends(get_database_session),
-): 
+):
     try:
         create(session, new_accommodation)
         return Message(content='CREATED')
@@ -59,8 +54,6 @@ async def create_accommodation(
         )
 
 
-
-
 @router.get(
     '/{id}',
     status_code=HTTPStatus.OK,
@@ -68,7 +61,7 @@ async def create_accommodation(
 )
 async def find_accommodation(
     id: str, session: Session = Depends(get_database_session)
-): 
+):
     try:
         accommodation = find_by_id(session, id)
         return accommodation
@@ -88,7 +81,7 @@ async def update_accommodation(
     id: str,
     accommodation_dto: AccommodationUpdateDTO,
     session: Annotated[Session, Depends(get_database_session)],
-): 
+):
     try:
         accommodation = update(session, id, accommodation_dto)
         return accommodation
@@ -99,14 +92,14 @@ async def update_accommodation(
         )
 
 
-@router.delete('/{id}', status_code=HTTPStatus.NO_CONTENT)
+@router.delete('/{id}', status_code=HTTPStatus.OK)
 async def delete_accommodation(
-    id: int,
-       session: Annotated[
+    id: str,
+    session: Annotated[
         Session,
         Depends(get_database_session),
     ],
-): 
+):
     try:
         delete(session, id)
         return Message(content='DELETED')
