@@ -48,7 +48,7 @@ def create(session: Session, accommodation: AccommodationCreateDTO):
 
 
 def list_all(session: Session):
-    accommodations = tuple(session.scalars(select(AccommodationDB)).all())
+    accommodations = session.scalars(select(AccommodationDB)).all()
 
     return accommodations
 

@@ -27,7 +27,7 @@ async def list_all_amenities(
 
 
 @router.post('/', status_code=HTTPStatus.CREATED, response_model=Message)
-async def create_amenities(
+async def create_amenitie(
     new_amenitie: AmenitieCreateDTO,
     session: Annotated[Session, Depends(get_database_session)],
 ):
