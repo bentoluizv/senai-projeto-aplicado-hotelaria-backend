@@ -1,4 +1,5 @@
-import pytest
+from uuid import UUID
+
 from sqlalchemy import select
 
 from app.errors.NotFoundError import NotFoundError
@@ -29,23 +30,25 @@ def test_create_new_guest(session):
 
 
 def test_find_guest_by_id(session):
-    guest = find_by_id(session, 'b73e37e2-ddca-4bec-86a9-016b5341c36f')
+    guest = find_by_id(session, UUID('b73e37e2-ddca-4bec-86a9-016b5341c36f'))
+    assert isinstance(guest, GuestDB)
     assert guest.name == 'Bento'
 
 
 def test_update_guest(session):
     data = GuestUpdateDTO(phone='48974521254')
     updated_guest = update(
-        session, 'b73e37e2-ddca-4bec-86a9-016b5341c36f', data
+        session, UUID('b73e37e2-ddca-4bec-86a9-016b5341c36f'), data
     )
+    assert isinstance(updated_guest, GuestDB)
     assert updated_guest.phone == '48974521254'
 
 
 def test_delete_guest(session):
-    delete(session, 'b73e37e2-ddca-4bec-86a9-016b5341c36f')
+    delete(session, UUID('b73e37e2-ddca-4bec-86a9-016b5341c36f'))
 
-    with pytest.raises(NotFoundError):
-        delete(session, 'b73e37e2-ddca-4bec-86a9-016b5341c36f')
+    error = delete(session, UUID('b73e37e2-ddca-4bec-86a9-016b5341c36f'))
+    assert isinstance(error, NotFoundError)
 
 
 # TODO: Testar casos de erros
