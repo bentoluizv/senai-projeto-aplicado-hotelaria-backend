@@ -1,17 +1,16 @@
 from http import HTTPStatus
 from typing import Annotated
+from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
-from app.auth.token import get_current_user
 from app.errors.AlreadyExistsError import AlreadyExistsError
 from app.errors.NotFoundError import NotFoundError
 from app.infra.database.db import get_database_session
-from app.infra.database.models import GuestDB, UserDB
+from app.infra.database.models import GuestDB
 from app.schemas.Guest import GuestCreateDTO, GuestUpdateDTO
-from app.schemas.User import Role
+from app.schemas.Message import Message
 from app.services.guests import (
     create,
     delete,
@@ -20,15 +19,7 @@ from app.services.guests import (
     update,
 )
 
-router = APIRouter(
-    tags=['Hóspedes'],
-    prefix='/guests',
-    dependencies=[Depends(get_current_user)],
-)
-
-
-class Message(BaseModel):
-    content: str
+router = APIRouter(tags=['Hóspedes'], prefix='/hospedes')
 
 
 @router.get('/', status_code=HTTPStatus.OK, response_model=list[GuestDB])
@@ -45,14 +36,14 @@ async def create_guest(
     new_guest: GuestCreateDTO,
     session: Annotated[Session, Depends(get_database_session)],
 ):
-    try:
-        create(session, new_guest)
-        return Message(content='CREATED')
+    create_or_error = create(session, new_guest)
 
-    except AlreadyExistsError as err:
+    if isinstance(create_or_error, AlreadyExistsError):
         raise HTTPException(
-            status_code=HTTPStatus.BAD_REQUEST, detail=err.message
+            status_code=HTTPStatus.BAD_REQUEST, detail=create_or_error.message
         )
+
+    return Message(content='CREATED')
 
 
 @router.get(
@@ -61,16 +52,19 @@ async def create_guest(
     response_model=GuestDB,
 )
 async def find_guest(
-    id: str, session: Annotated[Session, Depends(get_database_session)]
+    uuid: str, session: Annotated[Session, Depends(get_database_session)]
 ):
-    try:
-        guest = find_by_id(session, id)
-        return guest
+    guest_or_error = find_by_id(
+        session,
+        UUID(uuid),
+    )
 
-    except NotFoundError as err:
+    if isinstance(guest_or_error, NotFoundError):
         raise HTTPException(
-            status_code=HTTPStatus.NOT_FOUND, detail=err.message
+            status_code=HTTPStatus.NOT_FOUND, detail=guest_or_error.message
         )
+
+    return guest_or_error
 
 
 @router.put(
@@ -83,14 +77,14 @@ async def update_guest(
     data: GuestUpdateDTO,
     session: Annotated[Session, Depends(get_database_session)],
 ):
-    try:
-        guest = update(session, uuid, data)
-        return guest
+    guest_or_error = update(session, UUID(uuid), data)
 
-    except NotFoundError as err:
+    if isinstance(guest_or_error, NotFoundError):
         raise HTTPException(
-            status_code=HTTPStatus.NOT_FOUND, detail=err.message
+            status_code=HTTPStatus.NOT_FOUND, detail=guest_or_error.message
         )
+
+    return guest_or_error
 
 
 @router.delete('/{uuid}', status_code=HTTPStatus.OK, response_model=Message)
@@ -100,19 +94,15 @@ async def delete_guest(
         Session,
         Depends(get_database_session),
     ],
-    user: Annotated[UserDB, Depends(get_current_user)],
 ):
-    if user.role != Role.ADMIN:
+    result = delete(
+        session,
+        UUID(uuid),
+    )
+
+    if isinstance(result, NotFoundError):
         raise HTTPException(
-            status_code=HTTPStatus.FORBIDDEN,
-            detail='Method not allowed',
+            status_code=HTTPStatus.NOT_FOUND, detail=result.message
         )
 
-    try:
-        delete(session, uuid)
-        return Message(content='DELETED')
-
-    except NotFoundError as err:
-        raise HTTPException(
-            status_code=HTTPStatus.NOT_FOUND, detail=err.message
-        )
+    return Message(content='DELETED')
