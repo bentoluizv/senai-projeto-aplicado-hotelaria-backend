@@ -25,7 +25,7 @@ router = APIRouter(tags=['Acomodações'], prefix='/accommodations')
 
 
 @router.get(
-    '/', status_code=HTTPStatus.OK, response_model=tuple[AccommodationDB]
+    '/', status_code=HTTPStatus.OK, response_model=list[AccommodationDB]
 )
 async def list_all_accommodations(
     session: Annotated[Session, Depends(get_database_session)],
@@ -79,11 +79,11 @@ async def find_accommodation(
 )
 async def update_accommodation(
     id: str,
-    accommodation_dto: AccommodationUpdateDTO,
+    data: AccommodationUpdateDTO,
     session: Annotated[Session, Depends(get_database_session)],
 ):
     try:
-        accommodation = update(session, id, accommodation_dto)
+        accommodation = update(session, id, data)
         return accommodation
 
     except NotFoundError as err:
