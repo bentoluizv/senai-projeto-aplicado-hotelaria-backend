@@ -15,7 +15,7 @@ def create(session: Session, guest: GuestCreateDTO):
     )
 
     if existing_guest:
-        raise AlreadyExistsError(guest.document)
+        return AlreadyExistsError(guest.document)
 
     new_db_guest = GuestDB(
         country=guest.country,
@@ -30,13 +30,11 @@ def create(session: Session, guest: GuestCreateDTO):
     session.commit()
 
 
-def find_by_id(session: Session, id: str):
-    uuid = UUID(id)
-
+def find_by_id(session: Session, uuid: UUID):
     existing_guest = session.get(GuestDB, uuid)
 
     if not existing_guest:
-        raise NotFoundError(uuid)
+        return NotFoundError(uuid)
 
     return existing_guest
 
@@ -47,13 +45,11 @@ def list_all(session: Session):
     return guests
 
 
-def update(session: Session, id: str, data: GuestUpdateDTO):
-    uuid = UUID(id)
-
+def update(session: Session, uuid: UUID, data: GuestUpdateDTO):
     existing_guest = session.get(GuestDB, uuid)
 
     if not existing_guest:
-        raise NotFoundError(uuid)
+        return NotFoundError(uuid)
 
     for key, value in data.model_dump().items():
         if value:
@@ -65,13 +61,11 @@ def update(session: Session, id: str, data: GuestUpdateDTO):
     return existing_guest
 
 
-def delete(session: Session, id: str):
-    uuid = UUID(id)
-
+def delete(session: Session, uuid: UUID):
     existing_guest = session.get(GuestDB, uuid)
 
     if not existing_guest:
-        raise NotFoundError(uuid)
+        return NotFoundError(uuid)
 
     session.delete(existing_guest)
     session.commit()

@@ -43,11 +43,11 @@ def session(engine):
         )
 
         new_guest = GuestDB(
-            document='00157624242',
+            document='1233454345',
             name='Bento',
             surname='Machado',
             country='Brasil',
-            phone='48992054211',
+            phone='4874523452',
         )
 
         new_guest.uuid = UUID('b73e37e2-ddca-4bec-86a9-016b5341c36f')
