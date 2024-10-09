@@ -1,5 +1,4 @@
 from datetime import datetime
-from uuid import UUID, uuid4
 
 from pydantic import EmailStr
 from sqlalchemy import (
@@ -11,8 +10,6 @@ from sqlalchemy import (
     Integer,
     String,
     Table,
-    Uuid,
-    func,
 )
 from sqlalchemy.orm import (
     DeclarativeBase,
@@ -21,6 +18,7 @@ from sqlalchemy.orm import (
     mapped_column,
     relationship,
 )
+from ulid import ULID
 
 from app.schemas.Booking import Status
 from app.schemas.User import Role
@@ -33,8 +31,8 @@ class Base(MappedAsDataclass, DeclarativeBase):
 
 class UserDB(Base):
     __tablename__ = 'users'
-    uuid: Mapped[UUID] = mapped_column(
-        Uuid, primary_key=True, default_factory=uuid4, init=False
+    ulid: Mapped[ULID] = mapped_column(
+        String, primary_key=True, default_factory=ULID, init=False
     )
     email: Mapped[EmailStr] = mapped_column(String, unique=True)
     password: Mapped[str] = mapped_column(String)
@@ -43,13 +41,10 @@ class UserDB(Base):
 
 class GuestDB(Base):
     __tablename__ = 'guests'
-    uuid: Mapped[UUID] = mapped_column(
-        Uuid, primary_key=True, default_factory=uuid4, init=False
+    ulid: Mapped[ULID] = mapped_column(
+        String, primary_key=True, default_factory=ULID, init=False
     )
     document: Mapped[str] = mapped_column(String, unique=True)
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime, default=func.now(), init=False
-    )
     name: Mapped[str] = mapped_column(String)
     surname: Mapped[str] = mapped_column(String)
     country: Mapped[str] = mapped_column(String)
@@ -69,11 +64,8 @@ amenities_per_accommodation = Table(
 class AccommodationDB(Base):
     __tablename__ = 'accommodations'
 
-    id: Mapped[int] = mapped_column(
-        Integer, primary_key=True, autoincrement=True, init=False
-    )
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime, default_factory=func.now, init=False
+    ulid: Mapped[ULID] = mapped_column(
+        String, primary_key=True, default_factory=ULID, init=False
     )
     name: Mapped[str] = mapped_column(String, unique=True)
     status: Mapped[str] = mapped_column(String)
@@ -98,11 +90,8 @@ class AmenitieDB(Base):
 class BookingDB(Base):
     __tablename__ = 'bookings'
 
-    uuid: Mapped[UUID] = mapped_column(
-        Uuid, primary_key=True, default_factory=uuid4, init=False
-    )
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime, default_factory=func.now, init=False
+    ulid: Mapped[ULID] = mapped_column(
+        String, primary_key=True, default_factory=ULID, init=False
     )
     locator: Mapped[str] = mapped_column(
         String, unique=True, default_factory=generate_locator, init=False
@@ -113,13 +102,13 @@ class BookingDB(Base):
     check_in: Mapped[datetime] = mapped_column(DateTime)
     check_out: Mapped[datetime] = mapped_column(DateTime)
     budget: Mapped[float] = mapped_column(Float)
+    guest: Mapped['GuestDB'] = relationship()
     guest_document: Mapped[str] = mapped_column(
         String, ForeignKey('guests.document', ondelete='RESTRICT'), init=False
     )
+    accommodation: Mapped['AccommodationDB'] = relationship()
     accommodation_id: Mapped[int] = mapped_column(
         Integer,
         ForeignKey('accommodations.id', ondelete='RESTRICT'),
         init=False,
     )
-    guest: Mapped['GuestDB'] = relationship()
-    accommodation: Mapped['AccommodationDB'] = relationship()
