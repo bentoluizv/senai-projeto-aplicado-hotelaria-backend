@@ -13,6 +13,7 @@ sqlalchemy = "^2.0.31"
 pwdlib = {extras = ["argon2"], version = "^0.2.1"}
 pyjwt = "^2.9.0"
 pydantic-settings = "^2.4.0"
+python-ulid = {extras = ["pydantic"], version = "^2.7.0"}
 
 
 [tool.poetry.group.dev.dependencies]
