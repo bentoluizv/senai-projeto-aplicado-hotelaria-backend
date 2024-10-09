@@ -1035,6 +1035,23 @@ files = [
 ]
 
 [[package]]
+name = "python-ulid"
+version = "2.7.0"
+description = "Universally unique lexicographically sortable identifier"
+optional = false
+python-versions = ">=3.9"
+files = [
+    {file = "python_ulid-2.7.0-py3-none-any.whl", hash = "sha256:c81658e382f69bad8c6d365155c4ae21843ae4226b94f72c12d7adcbb545a251"},
+    {file = "python_ulid-2.7.0.tar.gz", hash = "sha256:18eb595885140851a490a95b0da4447911ff69fa9f434732067b97f6956f9fe9"},
+]
+
+[package.dependencies]
+pydantic = {version = ">=2.0", optional = true, markers = "extra == \"pydantic\""}
+
+[package.extras]
+pydantic = ["pydantic (>=2.0)"]
+
+[[package]]
 name = "pyyaml"
 version = "6.0.2"
 description = "YAML parser and emitter for Python"
@@ -1584,4 +1601,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12.3"
-content-hash = "88e0badc10028c6f317c15c36b7a24b9926dea34fc7419bdf1dd7c0d47500a7f"
+content-hash = "0dafa399fbe3aad05dfaecd13168a97f0bbc3fa9eb45b5b18c6753bbcabf753f"
