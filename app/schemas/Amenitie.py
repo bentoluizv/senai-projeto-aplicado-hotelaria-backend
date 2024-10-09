@@ -7,3 +7,11 @@ class AmenitieUpdateDTO(BaseModel):
 
 class AmenitieCreateDTO(BaseModel):
     name: str
+
+
+class Amenitie(BaseModel):
+    name: str
+
+    @classmethod
+    def create(cls, dto: AmenitieCreateDTO):
+        return cls(name=dto.name)
