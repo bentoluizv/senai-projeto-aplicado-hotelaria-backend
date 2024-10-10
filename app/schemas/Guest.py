@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from ulid import ULID
 
 
 class GuestUpdateDTO(BaseModel):
@@ -18,6 +19,7 @@ class GuestCreateDTO(BaseModel):
 
 
 class Guest(BaseModel):
+    ulid: ULID | None = None
     document: str
     name: str
     surname: str
@@ -32,6 +34,17 @@ class Guest(BaseModel):
             surname=dto.surname,
             phone=dto.phone,
             country=dto.country,
+        )
+
+    @classmethod
+    def from_db(cls, db_guest):
+        return cls(
+            ulid=db_guest.ulid,
+            document=db_guest.document,
+            name=db_guest.name,
+            surname=db_guest.surname,
+            phone=db_guest.phone,
+            country=db_guest.country,
         )
 
     def update(self, dto: GuestUpdateDTO):

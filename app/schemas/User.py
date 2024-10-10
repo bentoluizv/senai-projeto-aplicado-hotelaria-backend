@@ -3,7 +3,7 @@ from typing import Self
 
 from pydantic import BaseModel, EmailStr, model_validator
 
-from app.security.hash import generate_password_hash
+from app.auth.hash import generate_password_hash
 
 
 class Role(enum.Enum):

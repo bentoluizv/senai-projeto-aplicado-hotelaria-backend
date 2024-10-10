@@ -45,5 +45,23 @@ class Accommodation(BaseModel):
             price=dto.price,
         )
 
+    @classmethod
+    def from_db(cls, db_accommodation):
+        amenities = [
+            Amenitie(name=amenitie.name)
+            for amenitie in db_accommodation.amenities
+        ]
+
+        return cls(
+            ulid=db_accommodation.ulid,
+            name=db_accommodation.name,
+            status=db_accommodation.status,
+            total_guests=db_accommodation.total_guests,
+            single_beds=db_accommodation.single_beds,
+            double_beds=db_accommodation.double_beds,
+            price=db_accommodation.price,
+            amenities=amenities,
+        )
+
     def add_amenitie(self, amenitie: Amenitie):
         self.amenities.append(amenitie)
