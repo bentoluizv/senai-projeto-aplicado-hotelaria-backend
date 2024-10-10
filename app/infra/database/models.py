@@ -18,7 +18,6 @@ from sqlalchemy.orm import (
     mapped_column,
     relationship,
 )
-from ulid import ULID
 
 from app.schemas.Booking import Status
 from app.schemas.User import Role
@@ -31,9 +30,7 @@ class Base(MappedAsDataclass, DeclarativeBase):
 
 class UserDB(Base):
     __tablename__ = 'users'
-    ulid: Mapped[ULID] = mapped_column(
-        String, primary_key=True, default_factory=ULID, init=False
-    )
+    ulid: Mapped[str] = mapped_column(String, primary_key=True)
     email: Mapped[EmailStr] = mapped_column(String, unique=True)
     password: Mapped[str] = mapped_column(String)
     role: Mapped[Role] = mapped_column(Enum(Role))
@@ -41,9 +38,7 @@ class UserDB(Base):
 
 class GuestDB(Base):
     __tablename__ = 'guests'
-    ulid: Mapped[ULID] = mapped_column(
-        String, primary_key=True, default_factory=ULID, init=False
-    )
+    ulid: Mapped[str] = mapped_column(String, primary_key=True)
     document: Mapped[str] = mapped_column(String, unique=True)
     name: Mapped[str] = mapped_column(String)
     surname: Mapped[str] = mapped_column(String)
@@ -55,7 +50,8 @@ amenities_per_accommodation = Table(
     'amenities_per_accommodation',
     Base.metadata,
     Column(
-        'accommodation_id', ForeignKey('accommodations.id', ondelete='CASCADE')
+        'accommodation_ulid',
+        ForeignKey('accommodations.ulid', ondelete='CASCADE'),
     ),
     Column('amenitie_id', ForeignKey('amenities.id', ondelete='CASCADE')),
 )
@@ -64,9 +60,7 @@ amenities_per_accommodation = Table(
 class AccommodationDB(Base):
     __tablename__ = 'accommodations'
 
-    ulid: Mapped[ULID] = mapped_column(
-        String, primary_key=True, default_factory=ULID, init=False
-    )
+    ulid: Mapped[str] = mapped_column(String, primary_key=True)
     name: Mapped[str] = mapped_column(String, unique=True)
     status: Mapped[str] = mapped_column(String)
     total_guests: Mapped[int] = mapped_column(Integer)
@@ -90,9 +84,7 @@ class AmenitieDB(Base):
 class BookingDB(Base):
     __tablename__ = 'bookings'
 
-    ulid: Mapped[ULID] = mapped_column(
-        String, primary_key=True, default_factory=ULID, init=False
-    )
+    ulid: Mapped[str] = mapped_column(String, primary_key=True)
     locator: Mapped[str] = mapped_column(
         String, unique=True, default_factory=generate_locator, init=False
     )
@@ -104,11 +96,11 @@ class BookingDB(Base):
     budget: Mapped[float] = mapped_column(Float)
     guest: Mapped['GuestDB'] = relationship()
     guest_document: Mapped[str] = mapped_column(
-        String, ForeignKey('guests.document', ondelete='RESTRICT'), init=False
+        String, ForeignKey('guests.ulid', ondelete='RESTRICT'), init=False
     )
     accommodation: Mapped['AccommodationDB'] = relationship()
     accommodation_id: Mapped[int] = mapped_column(
         Integer,
-        ForeignKey('accommodations.id', ondelete='RESTRICT'),
+        ForeignKey('accommodations.ulid', ondelete='RESTRICT'),
         init=False,
     )
