@@ -1,13 +1,14 @@
 from datetime import datetime
-from uuid import UUID
 
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 from sqlalchemy.pool import StaticPool
+from ulid import ULID
 
 from app.app import app
+from app.factory.RepositoryFactory import RepositoryFactory
 from app.infra.database.db import get_database_session
 from app.infra.database.models import (
     AccommodationDB,
@@ -37,12 +38,14 @@ def session(engine):
 
     with Session(engine) as session:
         new_user = UserDB(
+            ulid=str(ULID.from_str('01J9V6358SNSQKF3K2GM6N4G6F')),
             email='teste@teste.com',
             password='superhardpassword',
             role=Role.ADMIN,
         )
 
         new_guest = GuestDB(
+            ulid='01J9V645ZGN1JMCEFT9WVKQGBC',
             document='1233454345',
             name='Bento',
             surname='Machado',
@@ -50,11 +53,10 @@ def session(engine):
             phone='4874523452',
         )
 
-        new_guest.uuid = UUID('b73e37e2-ddca-4bec-86a9-016b5341c36f')
-
         new_amenities = [AmenitieDB(name='wifi'), AmenitieDB(name='ducha')]
 
         new_accommodation = AccommodationDB(
+            ulid='01J9V65AWQ1ME0J2SCYBD5S8B1',
             double_beds=2,
             name='Quarto de Teste',
             price=250,
@@ -65,12 +67,14 @@ def session(engine):
         )
 
         new_booking = BookingDB(
+            ulid='01J9V65YSN6Z27MZ3AFSB14G6N',
             budget=8000,
             check_in=datetime(2024, 12, 22),
             check_out=datetime(2025, 1, 7),
             accommodation=new_accommodation,
             guest=new_guest,
         )
+
         session.add(new_guest)
         session.add(new_user)
         session.add_all(new_amenities)
@@ -92,3 +96,8 @@ def client(session):
         yield client
 
     app.dependency_overrides.clear()
+
+
+@pytest.fixture()
+def repository_factory(session):
+    return RepositoryFactory(session)
