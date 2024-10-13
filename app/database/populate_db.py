@@ -7,9 +7,9 @@ from app.database.models import (
     AmenitieDB,
     BookingDB,
     GuestDB,
+    Role,
     UserDB,
 )
-from app.schemas.User import Role
 
 users = [
     UserDB(
