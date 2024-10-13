@@ -19,7 +19,8 @@ from sqlalchemy.orm import (
     relationship,
 )
 
-from app.schemas.Booking import Status
+from app.schemas.Accommodation import Status as AccommodationStatus
+from app.schemas.Booking import Status as BookingStatus
 from app.schemas.User import Role
 
 
@@ -61,7 +62,11 @@ class AccommodationDB(Base):
 
     ulid: Mapped[str] = mapped_column(String, primary_key=True)
     name: Mapped[str] = mapped_column(String, unique=True, index=True)
-    status: Mapped[str] = mapped_column(String)
+    status: Mapped[AccommodationStatus] = mapped_column(
+        Enum(AccommodationStatus),
+        default=AccommodationStatus.AVAIABLE,
+        init=False,
+    )
     total_guests: Mapped[int] = mapped_column(Integer)
     single_beds: Mapped[int] = mapped_column(Integer)
     double_beds: Mapped[int] = mapped_column(Integer)
@@ -84,19 +89,18 @@ class BookingDB(Base):
     __tablename__ = 'bookings'
 
     ulid: Mapped[str] = mapped_column(String, primary_key=True)
-    status: Mapped[Status] = mapped_column(
-        Enum(Status), default=Status.BOOKED, init=False
+    status: Mapped[BookingStatus] = mapped_column(
+        Enum(BookingStatus), default=BookingStatus.BOOKED, init=False
     )
     check_in: Mapped[datetime] = mapped_column(DateTime, index=True)
     check_out: Mapped[datetime] = mapped_column(DateTime, index=True)
     budget: Mapped[float] = mapped_column(Float)
-    guest: Mapped['GuestDB'] = relationship()
+    guest: Mapped['GuestDB'] = relationship(init=False)
     guest_ulid: Mapped[str] = mapped_column(
-        String, ForeignKey('guests.ulid', ondelete='RESTRICT'), init=False
+        String, ForeignKey('guests.ulid', ondelete='RESTRICT')
     )
-    accommodation: Mapped['AccommodationDB'] = relationship()
-    accommodation_ulid: Mapped[int] = mapped_column(
+    accommodation: Mapped['AccommodationDB'] = relationship(init=False)
+    accommodation_ulid: Mapped[str] = mapped_column(
         Integer,
         ForeignKey('accommodations.ulid', ondelete='RESTRICT'),
-        init=False,
     )
