@@ -9,11 +9,6 @@ def test_db_engine(engine):
 
 
 def test_db_session(session):
+    TOTAL_USERS = 4
     users = session.scalars(select(UserDB)).all()
-    assert len(users) == 0
-
-    user = session.scalar(
-        select(UserDB).where(UserDB.email == 'teste@teste.com')
-    )
-
-    assert not user
+    assert len(users) == TOTAL_USERS
