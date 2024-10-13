@@ -1,19 +1,13 @@
-import enum
-
 from pydantic import BaseModel
 from ulid import ULID
 
-from app.schemas.Amenitie import Amenitie
-
-
-class Status(enum.Enum):
-    AVAIABLE = 'avaiable'
-    OCUPIED = 'ocupied'
+from app.database.models import AccommodationDB, AccommodationStatus
+from app.entities.Amenitie import Amenitie
 
 
 class AccommodationUpdateDTO(BaseModel):
     name: str | None = None
-    status: Status | None = None
+    status: AccommodationStatus | None = None
     total_guests: int | None = None
     single_beds: int | None = None
     double_beds: int | None = None
@@ -33,7 +27,7 @@ class AccommodationCreateDTO(BaseModel):
 class Accommodation(BaseModel):
     ulid: ULID = ULID()
     name: str
-    status: Status = Status.AVAIABLE
+    status: AccommodationStatus = AccommodationStatus.AVAIABLE
     total_guests: int
     single_beds: int
     double_beds: int
@@ -51,14 +45,14 @@ class Accommodation(BaseModel):
         )
 
     @classmethod
-    def from_db(cls, db_accommodation):
+    def from_db(cls, db_accommodation: AccommodationDB):
         amenities = [
             Amenitie(name=amenitie.name)
             for amenitie in db_accommodation.amenities
         ]
 
         return cls(
-            ulid=db_accommodation.ulid,
+            ulid=ULID.from_str(db_accommodation.ulid),
             name=db_accommodation.name,
             status=db_accommodation.status,
             total_guests=db_accommodation.total_guests,

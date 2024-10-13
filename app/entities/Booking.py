@@ -5,8 +5,9 @@ from typing import Self
 from pydantic import BaseModel, model_validator
 from ulid import ULID
 
-from app.schemas.Accommodation import Accommodation
-from app.schemas.Guest import Guest
+from app.database.models import BookingDB
+from app.entities.Accommodation import Accommodation
+from app.entities.Guest import Guest
 
 
 class Status(enum.Enum):
@@ -62,7 +63,7 @@ class Booking(BaseModel):
         )
 
     @classmethod
-    def from_db(cls, db_booking):
+    def from_db(cls, db_booking: BookingDB):
         return cls(
             ulid=ULID.from_str(db_booking.ulid),
             check_in=db_booking.check_in,

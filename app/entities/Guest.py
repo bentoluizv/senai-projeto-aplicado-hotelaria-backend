@@ -1,6 +1,8 @@
 from pydantic import BaseModel
 from ulid import ULID
 
+from app.database.models import GuestDB
+
 
 class GuestUpdateDTO(BaseModel):
     document: str | None = None
@@ -37,19 +39,12 @@ class Guest(BaseModel):
         )
 
     @classmethod
-    def from_db(cls, db_guest):
+    def from_db(cls, db_guest: GuestDB):
         return cls(
-            ulid=db_guest.ulid,
+            ulid=ULID.from_str(db_guest.ulid),
             document=db_guest.document,
             name=db_guest.name,
             surname=db_guest.surname,
             phone=db_guest.phone,
             country=db_guest.country,
         )
-
-    def update(self, dto: GuestUpdateDTO):
-        dto_as_dict = dto.model_dump()
-
-        for field, value in dto_as_dict.items():
-            if value is not None:
-                setattr(self, field, value)
