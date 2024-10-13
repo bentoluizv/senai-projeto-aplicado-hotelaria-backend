@@ -1,19 +1,36 @@
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
-from ulid import ULID
 
-from app.infra.database.models import AccommodationDB, AmenitieDB
+from app.infra.models import AccommodationDB, AmenitieDB
 from app.schemas.Accommodation import (
     Accommodation,
     AccommodationUpdateDTO,
 )
+from app.schemas.Info import Info
+from app.schemas.RepositorySettings import RepositorySettings
 
 
 class AccommodationRepository:
     session: Session
+    info: Info = Info()
+    settings: RepositorySettings = RepositorySettings()
 
     def __init__(self, session: Session) -> None:
         self.session = session
+        self._set_info()
+
+    def _set_info(self):
+        total = self.count()
+        per_page = self.settings.pagination
+        pages = (total + per_page - 1) // per_page
+        self.info = Info(count=total, total_pages=pages)
+
+    def count(self) -> int:
+        total_accommodation = self.session.scalar(
+            select(func.count()).select_from(AccommodationDB)
+        )
+
+        return total_accommodation or 0
 
     def create(self, accommodation: Accommodation) -> None:
         db_amenities: list[AmenitieDB] = []
@@ -27,7 +44,7 @@ class AccommodationRepository:
                 db_amenities.append(existing_amenitie)
 
         db_accommodation = AccommodationDB(
-            ulid=str(ULID()),
+            ulid=str(accommodation.ulid),
             name=accommodation.name,
             amenities=db_amenities,
             double_beds=accommodation.double_beds,
@@ -40,9 +57,7 @@ class AccommodationRepository:
         self.session.add(db_accommodation)
         self.session.commit()
 
-    def list_all(
-        self, page: int = 1, per_page: int = 10
-    ) -> list[Accommodation]:
+    def list_all(self, page: int, per_page: int) -> list[Accommodation]:
         offset = (page - 1) * per_page
         db_accommodations = self.session.scalars(
             select(AccommodationDB).limit(per_page).offset(offset)
@@ -73,10 +88,10 @@ class AccommodationRepository:
         accommodation = Accommodation.from_db(db_accommodation)
         return accommodation
 
-    def update(self, id: str, data: AccommodationUpdateDTO):
+    def update(self, id: str, dto: AccommodationUpdateDTO):
         accommodation = self.session.get(AccommodationDB, id)
 
-        for key, value in data.model_dump().items():
+        for key, value in dto.model_dump().items():
             if value:
                 setattr(accommodation, key, value)
 

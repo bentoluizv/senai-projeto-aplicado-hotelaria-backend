@@ -1,13 +1,12 @@
 from sqlalchemy.orm import Session
 
-from app.infra.database.repositories.AccommodationRepository import (
+from app.infra.repositories.AccommodationRepository import (
     AccommodationRepository,
 )
-from app.infra.database.repositories.AmenitieRepository import (
-    AmenitieRepository,
-)
-from app.infra.database.repositories.BookingRepository import BookingRepository
-from app.infra.database.repositories.GuestRepository import GuestRepository
+from app.infra.repositories.AmenitieRepository import AmenitieRepository
+from app.infra.repositories.BookingRepository import BookingRepository
+from app.infra.repositories.GuestRepository import GuestRepository
+from app.infra.repositories.UserRepository import UserRepository
 
 
 class RepositoryFactory:
@@ -17,13 +16,16 @@ class RepositoryFactory:
         self.session = session
 
     def create_guest_repository(self):
-        return GuestRepository(self.session)
+        return GuestRepository(session=self.session)
 
     def create_accommodation_repository(self):
-        return AccommodationRepository(self.session)
+        return AccommodationRepository(session=self.session)
 
     def create_amenitie_repository(self):
-        return AmenitieRepository(self.session)
+        return AmenitieRepository(session=self.session)
 
     def create_booking_repository(self):
-        return BookingRepository(self.session)
+        return BookingRepository(session=self.session)
+
+    def create_user_repository(self):
+        return UserRepository(session=self.session)

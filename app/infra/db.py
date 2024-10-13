@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
-from app.infra.database.models import Base
+from app.infra.models import Base
 
 engine = create_engine('sqlite:///./database.db')
 

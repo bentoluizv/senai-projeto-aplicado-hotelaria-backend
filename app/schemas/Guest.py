@@ -19,7 +19,7 @@ class GuestCreateDTO(BaseModel):
 
 
 class Guest(BaseModel):
-    ulid: ULID | None = None
+    ulid: ULID = ULID()
     document: str
     name: str
     surname: str

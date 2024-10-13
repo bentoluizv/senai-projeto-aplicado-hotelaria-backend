@@ -1,7 +1,8 @@
 import enum
 from datetime import datetime
+from typing import Self
 
-from pydantic import BaseModel
+from pydantic import BaseModel, model_validator
 from ulid import ULID
 
 from app.schemas.Accommodation import Accommodation
@@ -18,7 +19,6 @@ class Status(enum.Enum):
 
 
 class BookingUpdateDTO(BaseModel):
-    status: Status | None = None
     check_in: datetime | None = None
     check_out: datetime | None = None
     budget: float | None = None
@@ -32,7 +32,7 @@ class BookingCreateDTO(BaseModel):
 
 
 class Booking(BaseModel):
-    ulid: ULID | None = None
+    ulid: ULID = ULID()
     status: Status = Status.BOOKED
     check_in: datetime
     check_out: datetime
@@ -54,14 +54,26 @@ class Booking(BaseModel):
             raise ValueError('guest/accommodation is diff from dto')
 
         return cls(
+            ulid=ULID(),
             check_in=dto.check_in,
             check_out=dto.check_out,
             guest=guest,
             accommodation=accommodation,
         )
 
-    def calculate_budget(self):
+    @classmethod
+    def from_db(cls, db_booking):
+        return cls(
+            ulid=ULID.from_str(db_booking.ulid),
+            check_in=db_booking.check_in,
+            check_out=db_booking.check_out,
+            guest=Guest.from_db(db_booking.guest),
+            accommodation=Accommodation.from_db(db_booking.accommodation),
+        )
+
+    @model_validator(mode='after')
+    def calculate_budget(self) -> Self:
         num_days = (self.check_out - self.check_in).days
         budget = num_days * self.accommodation.price
-
-        return budget
+        self.budget = budget
+        return self

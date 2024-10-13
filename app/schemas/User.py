@@ -2,6 +2,7 @@ import enum
 from typing import Self
 
 from pydantic import BaseModel, EmailStr, model_validator
+from ulid import ULID
 
 from app.auth.hash import generate_password_hash
 
@@ -31,6 +32,7 @@ class UserCreateDTO(BaseModel):
 
 
 class User(BaseModel):
+    ulid: ULID = ULID()
     email: EmailStr
     password: str
     role: Role
@@ -38,3 +40,12 @@ class User(BaseModel):
     @classmethod
     def create(cls, dto: UserCreateDTO):
         return cls(email=dto.email, password=dto.password, role=dto.role)
+
+    @classmethod
+    def from_db(cls, db_user):
+        return cls(
+            ulid=ULID.from_str(db_user.ulid),
+            email=db_user.email,
+            password=db_user.password,
+            role=db_user.role,
+        )

@@ -25,7 +25,7 @@ class AccommodationCreateDTO(BaseModel):
 
 
 class Accommodation(BaseModel):
-    ulid: ULID | None = None
+    ulid: ULID = ULID()
     name: str
     status: str
     total_guests: int

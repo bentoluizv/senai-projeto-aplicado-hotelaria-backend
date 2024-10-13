@@ -3,12 +3,9 @@ from http import HTTPStatus
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-from app.infra.database.db import get_database_session
-from app.infra.database.models import BookingDB
-from app.schemas.Booking import (
-    BookingCreateDTO,
-    BookingUpdateDTO,
-)
+from app.infra.db import get_database_session
+from app.infra.models import BookingDB
+from app.schemas.Booking import BookingCreateDTO, BookingUpdateDTO
 
 router = APIRouter(tags=['Reservas'], prefix='/reservas')
 
