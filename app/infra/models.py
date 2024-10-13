@@ -82,7 +82,7 @@ class AmenitieDB(Base):
     id: Mapped[int] = mapped_column(
         Integer, primary_key=True, autoincrement=True, init=False
     )
-    name: Mapped[str] = mapped_column(String, unique=True, index=True)
+    name: Mapped[str] = mapped_column(String, index=True)
 
 
 class BookingDB(Base):
