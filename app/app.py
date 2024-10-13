@@ -1,8 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from .routers import accommodation, amenities, booking, guests, users
-
 app = FastAPI()
 
 
@@ -14,9 +12,3 @@ app.add_middleware(
     allow_methods=['*'],
     allow_headers=['*'],
 )
-
-app.include_router(guests.router)
-app.include_router(accommodation.router)
-app.include_router(booking.router)
-app.include_router(amenities.router)
-app.include_router(users.router)

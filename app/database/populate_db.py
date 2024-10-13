@@ -2,7 +2,7 @@ from datetime import datetime
 
 from sqlalchemy.orm import Session
 
-from app.infra.models import (
+from app.database.models import (
     AccommodationDB,
     AmenitieDB,
     BookingDB,

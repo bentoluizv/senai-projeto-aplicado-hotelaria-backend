@@ -5,13 +5,11 @@ from sqlalchemy.orm import Session
 from sqlalchemy.pool import StaticPool
 
 from app.app import app
-from app.factory.RepositoryFactory import RepositoryFactory
-from app.infra.db import get_database_session
-from app.infra.models import (
+from app.database.db import get_database_session
+from app.database.models import (
     Base,
 )
-from app.infra.populate_db import populate_database
-from app.services.BookingService import BookingService
+from app.database.populate_db import populate_database
 
 
 @pytest.fixture(scope='session')
@@ -46,13 +44,3 @@ def client(session):
         yield client
 
     app.dependency_overrides.clear()
-
-
-@pytest.fixture()
-def repository_factory(session):
-    return RepositoryFactory(session=session)
-
-
-@pytest.fixture()
-def booking_service(repository_factory):
-    return BookingService(repository_factory)
