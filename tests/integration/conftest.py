@@ -10,6 +10,8 @@ from app.infra.db import get_database_session
 from app.infra.models import (
     Base,
 )
+from app.infra.populate_db import populate_database
+from app.services.BookingService import BookingService
 
 
 @pytest.fixture(scope='session')
@@ -28,6 +30,7 @@ def session(engine):
     Base.metadata.create_all(engine)
 
     with Session(engine) as session:
+        populate_database(session)
         yield session
 
     Base.metadata.drop_all(engine)
@@ -48,3 +51,8 @@ def client(session):
 @pytest.fixture()
 def repository_factory(session):
     return RepositoryFactory(session=session)
+
+
+@pytest.fixture()
+def booking_service(repository_factory):
+    return BookingService(repository_factory)
