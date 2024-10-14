@@ -1,7 +1,5 @@
 from http import HTTPStatus
 
-import pytest
-
 
 def test_list_all_bookings(client):
     TOTAL_BOOKINGS = 10
@@ -32,8 +30,7 @@ def test_list_all_out_range(client):
     )
 
 
-@pytest.mark.usefixtures('_db_booking')
-def test_find_booking_by_id(client):
+def test_find_booking_by_id(client, db_booking):
     response = client.get('/bookings/01JA5EZ0BBQRGDX69PNTVG3N5E')
     booking = response.json()
 
@@ -42,3 +39,15 @@ def test_find_booking_by_id(client):
     assert booking['guest']
     assert booking['accommodation']
     assert booking['budget'] > 0
+
+
+def test_not_found_booking_by_id(client):
+    response = client.get('/bookings/01JA5EZ0BBQRGDX69PNTVG3N5E')
+    booking = response.json()
+
+    assert response.status_code == HTTPStatus.NOT_FOUND
+    assert isinstance(response.json(), dict)
+    assert (
+        booking['detail']
+        == """Booking with ID '01JA5EZ0BBQRGDX69PNTVG3N5E' not found."""
+    )
