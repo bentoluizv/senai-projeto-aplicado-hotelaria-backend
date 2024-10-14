@@ -1,9 +1,11 @@
 from typing import Annotated
 
 from fastapi import Depends
+from sqlalchemy.exc import NoResultFound
 
 from app.database.repositories.BookingRepository import BookingRepository
 from app.entities.Booking import Booking
+from app.errors.NotFoundError import NotFoundError
 from app.errors.OutOfRangeError import OutOfRangeError
 from app.factory.RepositoryFactory import RepositoryFactory
 
@@ -31,3 +33,12 @@ class BookingController:
         bookings = self.booking_repository.list_all(page, per_page)
 
         return bookings
+
+    def find_by_id(self, id: str):
+        try:
+            existing_booking = self.booking_repository.find_by_id(id)
+
+            return existing_booking
+
+        except NoResultFound:
+            raise NotFoundError('Booking', id)
