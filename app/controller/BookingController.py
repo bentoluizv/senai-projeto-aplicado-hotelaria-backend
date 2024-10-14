@@ -1,3 +1,7 @@
+from typing import Annotated
+
+from fastapi import Depends
+
 from app.database.repositories.BookingRepository import BookingRepository
 from app.entities.Booking import Booking
 from app.errors.OutOfRangeError import OutOfRangeError
@@ -7,7 +11,12 @@ from app.factory.RepositoryFactory import RepositoryFactory
 class BookingController:
     booking_repository: BookingRepository
 
-    def __init__(self, repository_factory: RepositoryFactory) -> None:
+    def __init__(
+        self,
+        repository_factory: Annotated[
+            RepositoryFactory, Depends(RepositoryFactory)
+        ],
+    ) -> None:
         self.booking_repository = (
             repository_factory.create_booking_respository()
         )
