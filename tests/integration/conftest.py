@@ -7,8 +7,10 @@ from sqlalchemy.pool import StaticPool
 from app.app import app
 from app.database.db import get_database_session
 from app.database.models import (
+    AccommodationDB,
     Base,
     BookingDB,
+    GuestDB,
 )
 from app.factory.RepositoryFactory import RepositoryFactory
 from app.utils.populate_db import populate_db
@@ -53,9 +55,28 @@ def repository_factory(session):
     return RepositoryFactory(session=session)
 
 
-@pytest.fixture(autouse=True)
-def _db_booking(session):
+@pytest.fixture()
+def db_booking(session):
     query = select(BookingDB)
     db_booking = session.scalars(query).first()
     db_booking.ulid = '01JA5EZ0BBQRGDX69PNTVG3N5E'
     session.commit()
+    return db_booking
+
+
+@pytest.fixture()
+def db_guest(session):
+    query = select(GuestDB)
+    db_guest = session.scalars(query).first()
+    db_guest.ulid = '01JA5EZ0BBQRGDX69PNTVG3N5E'
+    session.commit()
+    return db_guest
+
+
+@pytest.fixture()
+def db_accommodation(session):
+    query = select(AccommodationDB)
+    db_accommodation = session.scalars(query).first()
+    db_accommodation.ulid = '01JA5EZ0BBQRGDX69PNTVG3N5E'
+    session.commit()
+    return db_accommodation
