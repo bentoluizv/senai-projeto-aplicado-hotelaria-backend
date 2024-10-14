@@ -1,6 +1,6 @@
 import pytest
 from fastapi.testclient import TestClient
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, select
 from sqlalchemy.orm import Session
 from sqlalchemy.pool import StaticPool
 
@@ -8,6 +8,7 @@ from app.app import app
 from app.database.db import get_database_session
 from app.database.models import (
     Base,
+    BookingDB,
 )
 from app.factory.RepositoryFactory import RepositoryFactory
 from app.utils.populate_db import populate_db
@@ -50,3 +51,11 @@ def client(session):
 @pytest.fixture()
 def repository_factory(session):
     return RepositoryFactory(session=session)
+
+
+@pytest.fixture(autouse=True)
+def _db_booking(session):
+    query = select(BookingDB)
+    db_booking = session.scalars(query).first()
+    db_booking.ulid = '01JA5EZ0BBQRGDX69PNTVG3N5E'
+    session.commit()
