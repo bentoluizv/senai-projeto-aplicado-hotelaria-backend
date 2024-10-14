@@ -9,7 +9,8 @@ from app.database.db import get_database_session
 from app.database.models import (
     Base,
 )
-from app.database.populate_db import populate_database
+from app.factory.RepositoryFactory import RepositoryFactory
+from app.utils.populate_db import populate_db
 
 
 @pytest.fixture(scope='session')
@@ -28,7 +29,7 @@ def session(engine):
     Base.metadata.create_all(engine)
 
     with Session(engine) as session:
-        populate_database(session)
+        populate_db(session)
         yield session
 
     Base.metadata.drop_all(engine)
@@ -44,3 +45,8 @@ def client(session):
         yield client
 
     app.dependency_overrides.clear()
+
+
+@pytest.fixture()
+def repository_factory(session):
+    return RepositoryFactory(session=session)
