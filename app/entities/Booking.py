@@ -1,22 +1,12 @@
-import enum
 from datetime import datetime
 from typing import Self
 
 from pydantic import BaseModel, model_validator
 from ulid import ULID
 
-from app.database.models import BookingDB
+from app.database.models import BookingDB, BookingStatus
 from app.entities.Accommodation import Accommodation
 from app.entities.Guest import Guest
-
-
-class Status(enum.Enum):
-    BOOKED = 'booked'
-    WAITING_CHECK_IN = 'waiting check in'
-    ACTIVE = 'active'
-    WAITING_CHECK_OUT = 'waiting check out'
-    COMPLETED = 'completed'
-    CANCELED = 'canceled'
 
 
 class BookingUpdateDTO(BaseModel):
@@ -34,12 +24,12 @@ class BookingCreateDTO(BaseModel):
 
 class Booking(BaseModel):
     ulid: ULID = ULID()
-    status: Status = Status.BOOKED
+    status: BookingStatus = BookingStatus.BOOKED
     check_in: datetime
     check_out: datetime
     guest: Guest
     accommodation: Accommodation
-    budget: float | None = None
+    budget: float = 0
 
     @classmethod
     def create(
