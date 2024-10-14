@@ -49,23 +49,21 @@ class BookingRepository:
     def list_all(self, page: int = 1, per_page: int = 10) -> list[Booking]:
         offset = (page - 1) * per_page
 
-        db_bookings = self.session.scalars(
+        query = (
             select(BookingDB)
             .order_by(BookingDB.check_in)
             .limit(per_page)
             .offset(offset)
-        ).all()
+        )
+
+        db_bookings = self.session.scalars(query).all()
 
         bookings = [Booking.from_db(db_booking) for db_booking in db_bookings]
 
         return bookings
 
     def find_by_id(self, id: str) -> Booking | None:
-        db_booking = self.session.get(BookingDB, id)
-
-        if not db_booking:
-            return None
-
+        db_booking = self.session.get_one(BookingDB, id)
         booking = Booking.from_db(db_booking)
 
         return booking
