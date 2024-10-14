@@ -89,7 +89,7 @@ class AccommodationDB(Base):
     double_beds: Mapped[int] = mapped_column(Integer)
     price: Mapped[float] = mapped_column(Float)
     amenities: Mapped[list['AmenitieDB']] = relationship(
-        secondary=amenities_per_accommodation
+        secondary=amenities_per_accommodation, default=[], init=False
     )
 
 
@@ -106,17 +106,15 @@ class BookingDB(Base):
     __tablename__ = 'bookings'
 
     ulid: Mapped[str] = mapped_column(String, primary_key=True)
-    status: Mapped[BookingStatus] = mapped_column(
-        Enum(BookingStatus), default=BookingStatus.BOOKED, init=False
-    )
+    status: Mapped[BookingStatus] = mapped_column(Enum(BookingStatus))
     check_in: Mapped[datetime] = mapped_column(DateTime, index=True)
     check_out: Mapped[datetime] = mapped_column(DateTime, index=True)
     budget: Mapped[float] = mapped_column(Float)
-    guest: Mapped['GuestDB'] = relationship(init=False)
+    guest: Mapped['GuestDB'] = relationship()
     guest_ulid: Mapped[str] = mapped_column(
         String, ForeignKey('guests.ulid', ondelete='RESTRICT')
     )
-    accommodation: Mapped['AccommodationDB'] = relationship(init=False)
+    accommodation: Mapped['AccommodationDB'] = relationship()
     accommodation_ulid: Mapped[str] = mapped_column(
         Integer,
         ForeignKey('accommodations.ulid', ondelete='RESTRICT'),
