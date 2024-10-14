@@ -1,4 +1,5 @@
 import pytest
+from sqlalchemy.exc import NoResultFound
 
 
 @pytest.fixture()
@@ -25,7 +26,11 @@ def test_list_all_out_range_return_0(booking_repository):
     assert len(bookings) == TOTAL_BOOKINGS
 
 
-@pytest.mark.usefixtures('_db_booking')
-def test_find_booking_by_id(booking_repository):
+def test_not_found_booking_by_id(booking_repository):
+    with pytest.raises(NoResultFound):
+        booking_repository.find_by_id('01JA5EZ0BBQRGDX69PNTVG3N5E')
+
+
+def test_find_booking_by_id(booking_repository, db_booking):
     booking = booking_repository.find_by_id('01JA5EZ0BBQRGDX69PNTVG3N5E')
     assert booking
