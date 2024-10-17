@@ -5,7 +5,8 @@ from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 
 from app.controller.BookingController import BookingController
-from app.entities.Booking import Booking
+from app.entities.Booking import Booking, BookingCreateDTO
+from app.schemas.Message import Message
 
 router = APIRouter(
     prefix='/bookings',
@@ -34,3 +35,16 @@ def list_all_bookings(
 def find_by_id(booking_controller: BookingController, id: str):  # type: ignore
     booking = booking_controller.find_by_id(id)
     return booking
+
+
+@router.post(
+    '/',
+    status_code=HTTPStatus.CREATED,
+    response_model=Message,
+)
+def create_new_booking(
+    data: BookingCreateDTO,
+    booking_controller: BookingController,  # type: ignore
+):
+    booking_controller.create(data)
+    return Message(message='CREATED')
