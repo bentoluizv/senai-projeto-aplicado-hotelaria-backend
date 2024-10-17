@@ -157,3 +157,8 @@ def test_conflicting_booking(
 ):
     conflict = booking_repository.is_in_conflict(check_in, check_out)
     assert conflict == expected_result
+
+
+def test_delete_non_existent_booking(booking_repository):
+    with pytest.raises(NoResultFound):
+        booking_repository.delete('non_existent_ulid')

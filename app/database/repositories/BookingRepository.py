@@ -93,10 +93,7 @@ class BookingRepository:
         return db_booking
 
     def delete(self, id: str):
-        db_booking = self.session.get(BookingDB, id)
-
-        if not db_booking:
-            return None
+        db_booking = self.session.get_one(BookingDB, id)
 
         self.session.delete(db_booking)
         self.session.commit()
