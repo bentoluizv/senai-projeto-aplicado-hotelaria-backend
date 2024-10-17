@@ -69,6 +69,7 @@ def db_guest(session):
     query = select(GuestDB)
     db_guest = session.scalars(query).first()
     db_guest.ulid = '01JA5EZ0BBQRGDX69PNTVG3N5E'
+    db_guest.document = '2672713987'
     session.commit()
     return db_guest
 
