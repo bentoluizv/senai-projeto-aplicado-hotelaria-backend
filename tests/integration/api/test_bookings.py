@@ -1,4 +1,7 @@
+from datetime import datetime
 from http import HTTPStatus
+
+from app.entities.Booking import BookingCreateDTO
 
 
 def test_list_all_bookings(client):
@@ -51,3 +54,16 @@ def test_not_found_booking_by_id(client):
         booking['detail']
         == """Booking with ID '01JA5EZ0BBQRGDX69PNTVG3N5E' not found."""
     )
+
+
+def test_create_new_booking(client, db_guest, db_accommodation):
+    dto = BookingCreateDTO(
+        check_in=datetime(2026, 1, 1),
+        check_out=datetime(2026, 1, 12),
+        guest_document='2672713987',
+        accommodation_ulid='01JA5EZ0BBQRGDX69PNTVG3N5E',
+    )
+
+    data = dto.model_dump_json()
+    response = client.post('/bookings', data=data)
+    assert response.status_code == HTTPStatus.CREATED
