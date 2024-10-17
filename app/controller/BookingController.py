@@ -8,7 +8,7 @@ from app.database.repositories.AccommodationRepository import (
 )
 from app.database.repositories.BookingRepository import BookingRepository
 from app.database.repositories.GuestRepository import GuestRepository
-from app.entities.Booking import Booking, BookingCreateDTO
+from app.entities.Booking import Booking, BookingCreateDTO, BookingUpdateDTO
 from app.errors.AlreadyExistsError import AlreadyExistsError
 from app.errors.NotFoundError import NotFoundError
 from app.errors.OutOfRangeError import OutOfRangeError
@@ -68,3 +68,11 @@ class BookingController:
 
         except AlreadyExistsError as err:
             raise err
+
+    def update(self, id: str, dto: BookingUpdateDTO):
+        try:
+            self.booking_repository.find_by_id(id)
+            self.booking_repository.update(id, dto)
+
+        except NoResultFound:
+            raise NotFoundError('Booking', id)
