@@ -63,7 +63,7 @@ class BookingRepository:
 
         return bookings
 
-    def find_by_id(self, id: str) -> Booking | None:
+    def find_by_id(self, id: str) -> Booking:
         db_booking = self.session.get_one(BookingDB, id)
 
         booking = Booking.from_db(db_booking)
