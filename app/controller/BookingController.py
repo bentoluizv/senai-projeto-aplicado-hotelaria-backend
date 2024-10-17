@@ -10,6 +10,7 @@ from app.database.repositories.BookingRepository import BookingRepository
 from app.database.repositories.GuestRepository import GuestRepository
 from app.entities.Booking import Booking, BookingCreateDTO, BookingUpdateDTO
 from app.errors.AlreadyExistsError import AlreadyExistsError
+from app.errors.ConflictBookingError import ConflictBookingError
 from app.errors.NotFoundError import NotFoundError
 from app.errors.OutOfRangeError import OutOfRangeError
 from app.factory.RepositoryFactory import RepositoryFactory
@@ -61,6 +62,14 @@ class BookingController:
                 dto.accommodation_ulid
             )
             booking = Booking.create(dto, guest, accommodation)
+            is_in_conflict = self.booking_repository.is_in_conflict(
+                booking.check_in, booking.check_out
+            )
+
+            if is_in_conflict:
+                raise ConflictBookingError(
+                    'Booking', booking.check_in, booking.check_out
+                )
             self.booking_repository.create(booking)
 
         except NotFoundError as err:
