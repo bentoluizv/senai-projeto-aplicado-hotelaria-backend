@@ -78,3 +78,8 @@ def test_update_booking(client, db_booking):
     data = dto.model_dump_json()
     response = client.put('/bookings/01JA5EZ0BBQRGDX69PNTVG3N5E', data=data)
     assert response.status_code == HTTPStatus.OK
+
+
+def test_delete_booking(client, db_booking):
+    response = client.delete('/bookings/01JA5EZ0BBQRGDX69PNTVG3N5E')
+    assert response.status_code == HTTPStatus.OK
