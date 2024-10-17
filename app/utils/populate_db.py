@@ -1,5 +1,5 @@
-from datetime import datetime, timedelta
-from random import choice, randint
+from datetime import datetime
+from random import choice
 
 from sqlalchemy.orm import Session
 from ulid import ULID
@@ -10,24 +10,6 @@ from app.database.models import (
     BookingStatus,
     GuestDB,
 )
-
-
-def generate_random_checkin_checkout():
-    """Gera check-in e check-out aleatórios sem parâmetros."""
-    # Definindo uma data de início fixa
-    start_date = datetime(2024, 1, 1)
-
-    # Gera um número aleatório de dias até o check-in
-    days_until_checkin = randint(
-        0, 365
-    )  # até 1 ano a partir da data de início
-    checkin_date = start_date + timedelta(days=days_until_checkin)
-
-    # Gera um número aleatório de noites para o check-out
-    nights = randint(1, 7)  # entre 1 e 7 noites
-    checkout_date = checkin_date + timedelta(days=nights)
-
-    return checkin_date, checkout_date
 
 
 def populate_db(session: Session):
@@ -200,9 +182,17 @@ def populate_db(session: Session):
     session.add_all(guests)
     session.add_all(accommodations)
 
+    fixed_dates = [
+        (datetime(2023, 5, 1), datetime(2023, 5, 10)),
+        (datetime(2023, 6, 15), datetime(2023, 6, 20)),
+        (datetime(2023, 7, 1), datetime(2023, 7, 5)),
+        (datetime(2024, 1, 1), datetime(2024, 1, 10)),
+        (datetime(2024, 12, 1), datetime(2024, 12, 15)),
+    ]
+
     bookings = []
-    for i in range(30):
-        check_in, check_out = generate_random_checkin_checkout()
+
+    for check_in, check_out in fixed_dates:
         guest = choice(guests)
         accommodation = choice(accommodations)
         budget = (check_out - check_in).days * accommodation.price
