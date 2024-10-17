@@ -27,6 +27,7 @@ class BookingRepository:
 
     def create(self, booking: Booking):
         db_guest = self.session.get_one(GuestDB, str(booking.guest.ulid))
+
         db_accommodation = self.session.get_one(
             AccommodationDB, str(booking.accommodation.ulid)
         )
@@ -64,31 +65,32 @@ class BookingRepository:
 
     def find_by_id(self, id: str) -> Booking | None:
         db_booking = self.session.get_one(BookingDB, id)
+
         booking = Booking.from_db(db_booking)
 
         return booking
 
-    def update(self, id: str, dto: BookingUpdateDTO):
-        db_booking = self.session.get(BookingDB, id)
+    def update(self, id: str, dto: BookingUpdateDTO) -> BookingDB:
+        db_booking = self.session.get_one(BookingDB, id)
 
-        if not db_booking:
-            return None
-
-        for key, value in dto.model_dump().items():
+        for key, value in dto.model_dump(exclude_unset=True).items():
             if value:
                 setattr(db_booking, key, value)
 
+        self.session.add(db_booking)
         self.session.commit()
+        self.session.refresh(db_booking)
+        return db_booking
 
-    def update_status(self, id: str, status: BookingStatus):
-        db_booking = self.session.get(BookingDB, id)
+    def update_status(self, id: str, new_status: BookingStatus) -> BookingDB:
+        db_booking = self.session.get_one(BookingDB, id)
 
-        if not db_booking:
-            return None
+        db_booking.status = new_status
 
-        db_booking.status = status
-
+        self.session.add(db_booking)
         self.session.commit()
+        self.session.refresh(db_booking)
+        return db_booking
 
     def delete(self, id: str):
         db_booking = self.session.get(BookingDB, id)
