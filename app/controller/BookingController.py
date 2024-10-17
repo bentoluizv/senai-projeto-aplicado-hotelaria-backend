@@ -3,8 +3,13 @@ from typing import Annotated
 from fastapi import Depends
 from sqlalchemy.exc import NoResultFound
 
+from app.database.repositories.AccommodationRepository import (
+    AccommodationRepository,
+)
 from app.database.repositories.BookingRepository import BookingRepository
-from app.entities.Booking import Booking
+from app.database.repositories.GuestRepository import GuestRepository
+from app.entities.Booking import Booking, BookingCreateDTO
+from app.errors.AlreadyExistsError import AlreadyExistsError
 from app.errors.NotFoundError import NotFoundError
 from app.errors.OutOfRangeError import OutOfRangeError
 from app.factory.RepositoryFactory import RepositoryFactory
@@ -12,6 +17,8 @@ from app.factory.RepositoryFactory import RepositoryFactory
 
 class BookingController:
     booking_repository: BookingRepository
+    guest_repository: GuestRepository
+    accommodation_repository: AccommodationRepository
 
     def __init__(
         self,
@@ -21,6 +28,10 @@ class BookingController:
     ) -> None:
         self.booking_repository = (
             repository_factory.create_booking_respository()
+        )
+        self.guest_repository = repository_factory.create_guest_respository()
+        self.accommodation_repository = (
+            repository_factory.create_accommodation_respository()
         )
 
     def list_all(self, page: int = 1, per_page: int = 10) -> list[Booking]:
@@ -42,3 +53,18 @@ class BookingController:
 
         except NoResultFound:
             raise NotFoundError('Booking', id)
+
+    def create(self, dto: BookingCreateDTO):
+        try:
+            guest = self.guest_repository.find_by_document(dto.guest_document)
+            accommodation = self.accommodation_repository.find_by_id(
+                dto.accommodation_ulid
+            )
+            booking = Booking.create(dto, guest, accommodation)
+            self.booking_repository.create(booking)
+
+        except NotFoundError as err:
+            raise err
+
+        except AlreadyExistsError as err:
+            raise err
