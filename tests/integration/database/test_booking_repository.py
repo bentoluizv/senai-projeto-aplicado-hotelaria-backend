@@ -17,20 +17,20 @@ def booking_repository(repository_factory):
 
 
 def test_list_all_bookings(booking_repository):
-    TOTAL_BOOKINGS = 10
+    TOTAL_BOOKINGS = 5
     bookings = booking_repository.list_all()
     assert len(bookings) == TOTAL_BOOKINGS
 
 
 def test_list_all_bookings_20_per_page(booking_repository):
-    TOTAL_BOOKINGS = 20
-    bookings = booking_repository.list_all(per_page=20)
+    TOTAL_BOOKINGS = 2
+    bookings = booking_repository.list_all(per_page=2)
     assert len(bookings) == TOTAL_BOOKINGS
 
 
 def test_list_all_out_range_return_0(booking_repository):
     TOTAL_BOOKINGS = 0
-    bookings = booking_repository.list_all(page=60, per_page=5)
+    bookings = booking_repository.list_all(page=60, per_page=1)
     assert len(bookings) == TOTAL_BOOKINGS
 
 
@@ -93,11 +93,9 @@ def test_update_status_booking(booking_repository, db_booking):
     assert updated_booking.status == new_status
 
 
-@pytest.mark.skip()
 def test_delete_booking(booking_repository, db_booking, session):
     booking_repository.delete(str(db_booking.ulid))
 
-    # Verifica se a reserva foi deletada
     deleted_booking = (
         session.query(BookingDB)
         .filter_by(ulid=str(db_booking.ulid))
@@ -106,19 +104,56 @@ def test_delete_booking(booking_repository, db_booking, session):
     assert deleted_booking is None
 
 
-@pytest.mark.skip()
-def test_conflicting_booking_true(booking_repository, db_booking):
-    # Teste para verificar conflito de datas
-    conflict = booking_repository.is_in_conflict(
-        db_booking.check_in, db_booking.check_out
-    )
-    assert conflict is True
-
-
-@pytest.mark.skip()
-def test_conflicting_booking_false(booking_repository):
-    # Teste para verificar que não há conflito quando datas não colidem
-    no_conflict = booking_repository.is_in_conflict(
-        datetime(2025, 1, 1), datetime(2025, 1, 10)
-    )
-    assert no_conflict is False
+@pytest.mark.parametrize(
+    ('check_in', 'check_out', 'expected_result'),
+    [
+        # Testes sem conflito
+        (
+            datetime(2023, 5, 11),
+            datetime(2023, 5, 20),
+            False,
+        ),  # Fora do período da primeira reserva
+        (
+            datetime(2023, 6, 21),
+            datetime(2023, 6, 25),
+            False,
+        ),  # Fora do período da segunda reserva
+        (
+            datetime(2024, 12, 16),
+            datetime(2024, 12, 20),
+            False,
+        ),  # Fora do período da quinta reserva
+        # Testes com conflito completo
+        (
+            datetime(2023, 5, 2),
+            datetime(2023, 5, 5),
+            True,
+        ),  # Dentro da primeira reserva
+        (
+            datetime(2024, 12, 2),
+            datetime(2024, 12, 14),
+            True,
+        ),  # Dentro da quinta reserva
+        # Testes com conflito parcial
+        (
+            datetime(2023, 5, 9),
+            datetime(2023, 5, 15),
+            True,
+        ),  # Sobreposição no final da primeira reserva
+        (
+            datetime(2023, 6, 14),
+            datetime(2023, 6, 16),
+            True,
+        ),  # Sobreposição no início da segunda reserva
+        (
+            datetime(2024, 12, 10),
+            datetime(2024, 12, 20),
+            True,
+        ),  # Sobreposição no final da quinta reserva
+    ],
+)
+def test_conflicting_booking(
+    booking_repository, check_in, check_out, expected_result
+):
+    conflict = booking_repository.is_in_conflict(check_in, check_out)
+    assert conflict == expected_result

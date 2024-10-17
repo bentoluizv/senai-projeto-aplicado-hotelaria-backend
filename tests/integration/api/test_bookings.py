@@ -5,7 +5,7 @@ from app.entities.Booking import BookingCreateDTO
 
 
 def test_list_all_bookings(client):
-    TOTAL_BOOKINGS = 10
+    TOTAL_BOOKINGS = 5
     response = client.get('/bookings/')
     assert response.status_code == HTTPStatus.OK
     assert isinstance(response.json(), dict)
@@ -14,8 +14,8 @@ def test_list_all_bookings(client):
 
 
 def test_list_all_bookings_20_per_page(client):
-    TOTAL_BOOKINGS = 20
-    response = client.get('/bookings/?page=1&per_page=20')
+    TOTAL_BOOKINGS = 2
+    response = client.get('/bookings/?page=1&per_page=2')
     assert response.status_code == HTTPStatus.OK
     assert isinstance(response.json(), dict)
     assert 'bookings' in response.json()
@@ -29,7 +29,7 @@ def test_list_all_out_range(client):
     assert 'detail' in response.json()
     assert (
         response.json()['detail']
-        == 'Page 8 is out of range. There are only 6 pages.'
+        == 'Page 8 is out of range. There are only 1 pages.'
     )
 
 
