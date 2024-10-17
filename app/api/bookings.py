@@ -58,3 +58,12 @@ def update_booking(
 ):
     booking_controller.update(id, data)
     return Message(message='UPDATED')
+
+
+@router.delete('/{id}', status_code=HTTPStatus.OK, response_model=Message)
+def delete_booking(
+    booking_controller: BookingController,  # type: ignore
+    id: str,
+):
+    booking_controller.delete(id)
+    return Message(message='DELETED')
