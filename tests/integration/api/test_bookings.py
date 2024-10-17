@@ -1,7 +1,7 @@
 from datetime import datetime
 from http import HTTPStatus
 
-from app.entities.Booking import BookingCreateDTO
+from app.entities.Booking import BookingCreateDTO, BookingUpdateDTO
 
 
 def test_list_all_bookings(client):
@@ -67,3 +67,14 @@ def test_create_new_booking(client, db_guest, db_accommodation):
     data = dto.model_dump_json()
     response = client.post('/bookings', data=data)
     assert response.status_code == HTTPStatus.CREATED
+
+
+def test_update_booking(client, db_booking):
+    dto = BookingUpdateDTO(
+        check_in=datetime(2026, 1, 1),
+        check_out=datetime(2026, 1, 12),
+    )
+
+    data = dto.model_dump_json()
+    response = client.put('/bookings/01JA5EZ0BBQRGDX69PNTVG3N5E', data=data)
+    assert response.status_code == HTTPStatus.OK
