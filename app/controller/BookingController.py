@@ -76,3 +76,11 @@ class BookingController:
 
         except NoResultFound:
             raise NotFoundError('Booking', id)
+
+    def delete(self, id: str):
+        try:
+            self.booking_repository.find_by_id(id)
+            self.booking_repository.delete(id)
+
+        except NoResultFound:
+            raise NotFoundError('Booking', id)
