@@ -7,6 +7,7 @@ from app.database.db import get_database_session
 from app.database.repositories.AccommodationRepository import (
     AccommodationRepository,
 )
+from app.database.repositories.AmenitieRepository import AmenitieRepository
 from app.database.repositories.BookingRepository import BookingRepository
 from app.database.repositories.GuestRepository import GuestRepository
 from app.database.repositories.UserRepository import UserRepository
@@ -31,3 +32,6 @@ class RepositoryFactory:
 
     def create_user_respository(self):
         return UserRepository(self.session)
+
+    def create_amenitie_respository(self):
+        return AmenitieRepository(self.session)
