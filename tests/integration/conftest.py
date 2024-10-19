@@ -11,7 +11,10 @@ from app.database.models import (
     Base,
     BookingDB,
     GuestDB,
+    Role,
+    UserDB,
 )
+from app.entities.User import User, UserCreateDTO
 from app.factory.RepositoryFactory import RepositoryFactory
 from app.utils.populate_db import populate_db
 
@@ -81,3 +84,23 @@ def db_accommodation(session):
     db_accommodation.ulid = '01JA5EZ0BBQRGDX69PNTVG3N5E'
     session.commit()
     return db_accommodation
+
+
+@pytest.fixture()
+def db_user(session):
+    dto = UserCreateDTO(
+        email='bentoluizv@gmail.com',
+        password='12334',
+        password2='12334',
+        role=Role.ADMIN,
+    )
+    user = User.create(dto)
+    db_user = UserDB(
+        ulid=str(user.ulid),
+        email=user.email,
+        password=user.password,
+        role=user.role,
+    )
+    session.add(db_user)
+    session.commit()
+    return db_user
