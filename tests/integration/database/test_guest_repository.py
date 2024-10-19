@@ -31,13 +31,23 @@ def test_list_all_out_range_return_0(guest_repository):
 
 
 def test_not_found_guests_by_id(guest_repository):
-    with pytest.raises(NoResultFound):
-        guest_repository.find_by_id('01JA5EZ0BBQRGDX69PNTVG3N5E')
+    existing = guest_repository.find_by_id('<nonexistentid>')
+    assert not existing
 
 
 def test_find_guest_by_id(guest_repository):
-    booking = guest_repository.find_by_id('01JAFQSB29MRH1AH1J6Z8GR8KR')
-    assert booking
+    guest = guest_repository.find_by_id('01JAFQTH6ETC71168EYY8JX4WE')
+    assert guest.name == 'Alice'
+
+
+def test_find_guest_by_document(guest_repository):
+    guest = guest_repository.find_by_document('3456547')
+    assert guest.name == 'Alice'
+
+
+def test_not_found_guests_by_document(guest_repository):
+    existing = guest_repository.find_by_document('<document>')
+    assert not existing
 
 
 def test_create_guest(guest_repository, session):

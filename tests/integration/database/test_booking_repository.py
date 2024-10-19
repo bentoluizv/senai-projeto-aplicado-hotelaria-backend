@@ -35,8 +35,8 @@ def test_list_all_out_range_return_0(booking_repository):
 
 
 def test_not_found_booking_by_id(booking_repository):
-    with pytest.raises(NoResultFound):
-        booking_repository.find_by_id('01JA5EZ0BBQRGDX69PNTVG3N5E')
+    existing = booking_repository.find_by_id('01JA5EZ0BBQRGDX69PNTVG3N5E')
+    assert not existing
 
 
 def test_find_booking_by_id(booking_repository, db_booking):

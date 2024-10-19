@@ -36,8 +36,11 @@ def test_list_all_out_range_return_0(accommodation_repository):
 
 
 def test_not_found_accommodation_by_id(accommodation_repository):
-    with pytest.raises(NoResultFound):
-        accommodation_repository.find_by_id('01JA5EZ0BBQRGDX69PNTVG3N5E')
+    existing = accommodation_repository.find_by_id(
+        '01JA5EZ0BBQRGDX69PNTVG3N5E'
+    )
+
+    assert not existing
 
 
 def test_find_accommodation_by_id(accommodation_repository):
@@ -48,8 +51,8 @@ def test_find_accommodation_by_id(accommodation_repository):
 
 
 def test_not_found_accommodation_by_name(accommodation_repository):
-    with pytest.raises(NoResultFound):
-        accommodation_repository.find_by_name('Luxur')
+    existing = accommodation_repository.find_by_name('Luxur')
+    assert not existing
 
 
 def test_find_accommodation_by_name(accommodation_repository):

@@ -1,6 +1,5 @@
 import pytest
 from sqlalchemy import select
-from sqlalchemy.exc import NoResultFound
 
 from app.database.models import Role, UserDB
 from app.entities.User import User, UserCreateDTO
@@ -13,8 +12,8 @@ def user_repository(repository_factory):
 
 
 def test_not_found_user_by_name(user_repository):
-    with pytest.raises(NoResultFound):
-        user_repository.find_by_email('user@user.com')
+    existing = user_repository.find_by_email('user@user.com')
+    assert not existing
 
 
 def test_find_user_by_email(user_repository, db_user):

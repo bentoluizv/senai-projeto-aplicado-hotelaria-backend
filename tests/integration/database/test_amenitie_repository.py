@@ -1,6 +1,5 @@
 import pytest
 from sqlalchemy import select
-from sqlalchemy.exc import NoResultFound
 
 from app.database.models import AmenitieDB
 from app.entities.Amenitie import Amenitie, AmenitieCreateDTO
@@ -31,8 +30,8 @@ def test_list_all_out_range_return_0(amenitie_repository):
 
 
 def test_not_found_amenitie_by_name(amenitie_repository):
-    with pytest.raises(NoResultFound):
-        amenitie_repository.find_by_name('<amenitie>')
+    existing = amenitie_repository.find_by_name('<amenitie>')
+    assert not existing
 
 
 def test_find_amenitie_by_name(amenitie_repository):
