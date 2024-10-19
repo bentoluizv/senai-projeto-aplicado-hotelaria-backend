@@ -41,3 +41,13 @@ class UserRepository:
         user = User.from_db(db_user)
 
         return user
+
+    def find_by_id(self, id: str) -> User | None:
+        db_user = self.session.scalar(select(UserDB).where(UserDB.ulid == id))
+
+        if not db_user:
+            return None
+
+        user = User.from_db(db_user)
+
+        return user
