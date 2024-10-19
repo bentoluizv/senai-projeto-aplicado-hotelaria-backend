@@ -1,9 +1,8 @@
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
-from ulid import ULID
 
 from app.database.models import GuestDB
-from app.entities.Guest import Guest, GuestCreateDTO, GuestUpdateDTO
+from app.entities.Guest import Guest, GuestUpdateDTO
 from app.errors.NotFoundError import NotFoundError
 
 
@@ -23,25 +22,21 @@ class GuestRepository:
 
         return total_accommodation or 0
 
-    def create(self, dto: GuestCreateDTO) -> None:
+    def create(self, guest: Guest) -> None:
         db_guest = GuestDB(
-            ulid=str(ULID()),
-            country=dto.country,
-            document=dto.document,
-            name=dto.name,
-            phone=dto.phone,
-            surname=dto.surname,
+            ulid=str(guest.ulid),
+            country=guest.country,
+            document=guest.document,
+            name=guest.name,
+            phone=guest.phone,
+            surname=guest.surname,
         )
 
         self.session.add(db_guest)
         self.session.commit()
 
     def find_by_id(self, ulid: str) -> Guest | None:
-        db_guest = self.session.get(GuestDB, ulid)
-
-        if not db_guest:
-            raise NotFoundError('Guest', ulid)
-
+        db_guest = self.session.get_one(GuestDB, ulid)
         guest = Guest.from_db(db_guest)
         return guest
 
@@ -66,20 +61,20 @@ class GuestRepository:
 
         return guests
 
-    def update(self, ulid: str, data: GuestUpdateDTO) -> None:
-        db_guest = self.session.get(GuestDB, ulid)
+    def update(self, ulid: str, data: GuestUpdateDTO) -> Guest:
+        db_guest = self.session.get_one(GuestDB, ulid)
 
         for key, value in data.model_dump().items():
             if value:
                 setattr(db_guest, key, value)
 
         self.session.commit()
+        self.session.refresh(db_guest)
+        guest = Guest.from_db(db_guest)
+        return guest
 
     def delete(self, ulid: str):
-        db_guest = self.session.get(GuestDB, ulid)
-
-        if not db_guest:
-            raise NotFoundError('Guest', ulid)
+        db_guest = self.session.get_one(GuestDB, ulid)
 
         self.session.delete(db_guest)
         self.session.commit()
