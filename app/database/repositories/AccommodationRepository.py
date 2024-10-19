@@ -1,5 +1,4 @@
 from sqlalchemy import func, select
-from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import Session
 
 from app.database.models import AccommodationDB, AmenitieDB
@@ -16,9 +15,6 @@ class AccommodationRepository:
         self.session = session
 
     def count(self) -> int:
-        if not self.session.is_active:
-            raise Exception('A sessão do banco de dados está inativa.')
-
         total_accommodation = self.session.scalar(
             select(func.count()).select_from(AccommodationDB)
         )
@@ -65,17 +61,21 @@ class AccommodationRepository:
 
         return accommodations
 
-    def find_by_id(self, id: str) -> Accommodation:
-        db_accommodation = self.session.get_one(AccommodationDB, id)
+    def find_by_id(self, id: str) -> Accommodation | None:
+        db_accommodation = self.session.get(AccommodationDB, id)
+
+        if not db_accommodation:
+            return None
+
         accommodation = Accommodation.from_db(db_accommodation)
         return accommodation
 
-    def find_by_name(self, name: str) -> Accommodation:
+    def find_by_name(self, name: str) -> Accommodation | None:
         db_accommodation = self.session.scalar(
             select(AccommodationDB).where(AccommodationDB.name == name)
         )
         if not db_accommodation:
-            raise NoResultFound()
+            return None
 
         accommodation = Accommodation.from_db(db_accommodation)
         return accommodation

@@ -3,7 +3,6 @@ from sqlalchemy.orm import Session
 
 from app.database.models import GuestDB
 from app.entities.Guest import Guest, GuestUpdateDTO
-from app.errors.NotFoundError import NotFoundError
 
 
 class GuestRepository:
@@ -36,17 +35,21 @@ class GuestRepository:
         self.session.commit()
 
     def find_by_id(self, ulid: str) -> Guest | None:
-        db_guest = self.session.get_one(GuestDB, ulid)
+        db_guest = self.session.get(GuestDB, ulid)
+
+        if not db_guest:
+            return None
+
         guest = Guest.from_db(db_guest)
         return guest
 
-    def find_by_document(self, document: str) -> Guest:
+    def find_by_document(self, document: str) -> Guest | None:
         db_guest = self.session.scalar(
             select(GuestDB).where(GuestDB.document == document)
         )
 
         if not db_guest:
-            raise NotFoundError('Guest', document)
+            return None
 
         guest = Guest.from_db(db_guest)
         return guest

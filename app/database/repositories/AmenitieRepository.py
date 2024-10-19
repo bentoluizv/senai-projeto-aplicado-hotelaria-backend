@@ -1,5 +1,4 @@
 from sqlalchemy import func, select
-from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import Session
 
 from app.database.models import AmenitieDB
@@ -36,13 +35,13 @@ class AmenitieRepository:
         ]
         return amenities
 
-    def find_by_name(self, name: str):
+    def find_by_name(self, name: str) -> Amenitie | None:
         db_amenitie = self.session.scalar(
             select(AmenitieDB).where(AmenitieDB.name == name)
         )
 
         if not db_amenitie:
-            raise NoResultFound()
+            return None
 
         amenitie = Amenitie(name=db_amenitie.name)
 

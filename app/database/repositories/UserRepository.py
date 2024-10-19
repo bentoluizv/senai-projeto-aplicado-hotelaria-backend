@@ -1,6 +1,5 @@
 from pydantic import EmailStr
 from sqlalchemy import func, select
-from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import Session
 
 from app.database.models import UserDB
@@ -37,7 +36,7 @@ class UserRepository:
         )
 
         if not db_user:
-            raise NoResultFound()
+            return None
 
         user = User.from_db(db_user)
 
