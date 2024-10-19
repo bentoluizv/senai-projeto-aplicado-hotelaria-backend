@@ -11,7 +11,7 @@ class UserCreateDTO(BaseModel):
     email: EmailStr
     password: str
     password2: str
-    role: Role
+    role: str
 
     @model_validator(mode='after')
     def check_passwords_match(self) -> Self:
@@ -33,7 +33,7 @@ class User(BaseModel):
 
     @classmethod
     def create(cls, dto: UserCreateDTO):
-        return cls(email=dto.email, password=dto.password, role=dto.role)
+        return cls(email=dto.email, password=dto.password, role=Role(dto.role))
 
     @classmethod
     def from_db(cls, db_user: UserDB):
