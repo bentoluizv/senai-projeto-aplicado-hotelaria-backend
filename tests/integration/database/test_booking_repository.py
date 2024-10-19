@@ -96,12 +96,8 @@ def test_update_status_booking(booking_repository, db_booking):
 def test_delete_booking(booking_repository, db_booking, session):
     booking_repository.delete(str(db_booking.ulid))
 
-    deleted_booking = (
-        session.query(BookingDB)
-        .filter_by(ulid=str(db_booking.ulid))
-        .one_or_none()
-    )
-    assert deleted_booking is None
+    with pytest.raises(NoResultFound):
+        booking_repository.delete(str(db_booking.ulid))
 
 
 @pytest.mark.parametrize(
@@ -157,8 +153,3 @@ def test_conflicting_booking(
 ):
     conflict = booking_repository.is_in_conflict(check_in, check_out)
     assert conflict == expected_result
-
-
-def test_delete_non_existent_booking(booking_repository):
-    with pytest.raises(NoResultFound):
-        booking_repository.delete('non_existent_ulid')
