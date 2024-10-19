@@ -1,7 +1,6 @@
 from typing import Annotated
 
 from fastapi import Depends
-from sqlalchemy.exc import NoResultFound
 
 from app.database.repositories.AccommodationRepository import (
     AccommodationRepository,
@@ -9,7 +8,6 @@ from app.database.repositories.AccommodationRepository import (
 from app.database.repositories.BookingRepository import BookingRepository
 from app.database.repositories.GuestRepository import GuestRepository
 from app.entities.Booking import Booking, BookingCreateDTO, BookingUpdateDTO
-from app.errors.AlreadyExistsError import AlreadyExistsError
 from app.errors.ConflictBookingError import ConflictBookingError
 from app.errors.NotFoundError import NotFoundError
 from app.errors.OutOfRangeError import OutOfRangeError
@@ -47,49 +45,48 @@ class BookingController:
         return bookings
 
     def find_by_id(self, id: str):
-        try:
-            existing_booking = self.booking_repository.find_by_id(id)
+        booking = self.booking_repository.find_by_id(id)
 
-            return existing_booking
-
-        except NoResultFound:
+        if not booking:
             raise NotFoundError('Booking', id)
+
+        return booking
 
     def create(self, dto: BookingCreateDTO):
-        try:
-            guest = self.guest_repository.find_by_document(dto.guest_document)
-            accommodation = self.accommodation_repository.find_by_id(
-                dto.accommodation_ulid
-            )
-            booking = Booking.create(dto, guest, accommodation)
-            is_in_conflict = self.booking_repository.is_in_conflict(
-                booking.check_in, booking.check_out
-            )
+        guest = self.guest_repository.find_by_document(dto.guest_document)
+        accommodation = self.accommodation_repository.find_by_id(
+            dto.accommodation_ulid
+        )
 
-            if is_in_conflict:
-                raise ConflictBookingError(
-                    'Booking', booking.check_in, booking.check_out
-                )
-            self.booking_repository.create(booking)
+        if not accommodation:
+            raise NotFoundError('Accommodtion', dto.accommodation_ulid)
 
-        except NotFoundError as err:
-            raise err
+        if not guest:
+            raise NotFoundError('Guest', dto.guest_document)
 
-        except AlreadyExistsError as err:
-            raise err
+        is_in_conflict = self.booking_repository.is_in_conflict(
+            dto.check_in, dto.check_out
+        )
+
+        if is_in_conflict:
+            raise ConflictBookingError('Booking', dto.check_in, dto.check_out)
+
+        booking = Booking.create(dto, guest, accommodation)
+
+        self.booking_repository.create(booking)
 
     def update(self, id: str, dto: BookingUpdateDTO):
-        try:
-            self.booking_repository.find_by_id(id)
-            self.booking_repository.update(id, dto)
+        existing = self.booking_repository.find_by_id(id)
 
-        except NoResultFound:
+        if not existing:
             raise NotFoundError('Booking', id)
+
+        self.booking_repository.update(id, dto)
 
     def delete(self, id: str):
-        try:
-            self.booking_repository.find_by_id(id)
-            self.booking_repository.delete(id)
+        existing = self.booking_repository.find_by_id(id)
 
-        except NoResultFound:
+        if not existing:
             raise NotFoundError('Booking', id)
+
+        self.booking_repository.delete(id)
