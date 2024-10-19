@@ -1,4 +1,5 @@
 from sqlalchemy import func, select
+from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import Session
 
 from app.database.models import AmenitieDB
@@ -41,7 +42,7 @@ class AmenitieRepository:
         )
 
         if not db_amenitie:
-            return None
+            raise NoResultFound()
 
         amenitie = Amenitie(name=db_amenitie.name)
 
