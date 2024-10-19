@@ -1,7 +1,7 @@
 import pytest
 from sqlalchemy import select
 
-from app.database.models import Role, UserDB
+from app.database.models import UserDB
 from app.entities.User import User, UserCreateDTO
 
 
@@ -26,7 +26,7 @@ def test_create_user(user_repository, session):
         email='bentoluizv@gmail.com',
         password='12334',
         password2='12334',
-        role=Role.ADMIN,
+        role='admin',
     )
     user = User.create(dto)
 

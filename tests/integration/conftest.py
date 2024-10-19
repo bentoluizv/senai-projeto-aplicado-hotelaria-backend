@@ -11,7 +11,6 @@ from app.database.models import (
     Base,
     BookingDB,
     GuestDB,
-    Role,
     UserDB,
 )
 from app.entities.User import User, UserCreateDTO
@@ -92,7 +91,7 @@ def db_user(session):
         email='bentoluizv@gmail.com',
         password='12334',
         password2='12334',
-        role=Role.ADMIN,
+        role='admin',
     )
     user = User.create(dto)
     db_user = UserDB(
@@ -101,6 +100,8 @@ def db_user(session):
         password=user.password,
         role=user.role,
     )
+
+    db_user.ulid = '01JAKF4V6FMQ7BEB62XVCA9KZH'
     session.add(db_user)
     session.commit()
     return db_user
