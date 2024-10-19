@@ -1,6 +1,6 @@
-from sqlalchemy import select
+from ulid import ULID
 
-from app.infra.database.models import UserDB
+from app.database.models import Role, UserDB
 
 
 def test_db_engine(engine):
@@ -9,18 +9,15 @@ def test_db_engine(engine):
 
 
 def test_db_session(session):
-    users = session.scalars(select(UserDB)).all()
-    assert len(users) == 1
-
-    user = session.scalar(
-        select(UserDB).where(UserDB.email == 'teste@teste.com')
+    assert session.is_active
+    db_user = UserDB(
+        str(ULID()),
+        email='bentoluizv@gmail.com',
+        password='anreoa23',
+        role=Role.ADMIN,
     )
-
-    assert user
-
-    session.delete(user)
+    session.add(db_user)
+    assert session.is_modified
     session.commit()
-
-    _user = session.get(UserDB, user.uuid)
-
-    assert not _user
+    user = session.get_one(UserDB, db_user.ulid)
+    assert user is db_user

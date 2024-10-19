@@ -9,8 +9,8 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 from zoneinfo import ZoneInfo
 
-from app.infra.database.db import get_database_session
-from app.infra.database.models import UserDB
+from app.database.db import get_database_session
+from app.database.models import UserDB
 from app.schemas.Token import TokenData
 from app.settings.Settings import Settings
 

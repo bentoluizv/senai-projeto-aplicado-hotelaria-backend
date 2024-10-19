@@ -1,23 +1,21 @@
-from datetime import datetime
-from uuid import UUID
-
 import pytest
 from fastapi.testclient import TestClient
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, select
 from sqlalchemy.orm import Session
 from sqlalchemy.pool import StaticPool
 
 from app.app import app
-from app.infra.database.db import get_database_session
-from app.infra.database.models import (
+from app.database.db import get_database_session
+from app.database.models import (
     AccommodationDB,
-    AmenitieDB,
     Base,
     BookingDB,
     GuestDB,
     UserDB,
 )
-from app.schemas.User import Role
+from app.entities.User import User, UserCreateDTO
+from app.factory.RepositoryFactory import RepositoryFactory
+from app.utils.populate_db import populate_db
 
 
 @pytest.fixture(scope='session')
@@ -36,47 +34,7 @@ def session(engine):
     Base.metadata.create_all(engine)
 
     with Session(engine) as session:
-        new_user = UserDB(
-            email='teste@teste.com',
-            password='superhardpassword',
-            role=Role.ADMIN,
-        )
-
-        new_guest = GuestDB(
-            document='1233454345',
-            name='Bento',
-            surname='Machado',
-            country='Brasil',
-            phone='4874523452',
-        )
-
-        new_guest.uuid = UUID('b73e37e2-ddca-4bec-86a9-016b5341c36f')
-
-        new_amenities = [AmenitieDB(name='wifi'), AmenitieDB(name='ducha')]
-
-        new_accommodation = AccommodationDB(
-            double_beds=2,
-            name='Quarto de Teste',
-            price=250,
-            single_beds=0,
-            status='Disponível',
-            total_guests=2,
-            amenities=[],
-        )
-
-        new_booking = BookingDB(
-            budget=8000,
-            check_in=datetime(2024, 12, 22),
-            check_out=datetime(2025, 1, 7),
-            accommodation=new_accommodation,
-            guest=new_guest,
-        )
-        session.add(new_guest)
-        session.add(new_user)
-        session.add_all(new_amenities)
-        session.add(new_accommodation)
-        session.add(new_booking)
-
+        populate_db(session)
         yield session
 
     Base.metadata.drop_all(engine)
@@ -92,3 +50,58 @@ def client(session):
         yield client
 
     app.dependency_overrides.clear()
+
+
+@pytest.fixture()
+def repository_factory(session):
+    return RepositoryFactory(session=session)
+
+
+@pytest.fixture()
+def db_booking(session):
+    query = select(BookingDB)
+    db_booking = session.scalars(query).first()
+    db_booking.ulid = '01JA5EZ0BBQRGDX69PNTVG3N5E'
+    session.commit()
+    return db_booking
+
+
+@pytest.fixture()
+def db_guest(session):
+    query = select(GuestDB)
+    db_guest = session.scalars(query).first()
+    db_guest.ulid = '01JA5EZ0BBQRGDX69PNTVG3N5E'
+    db_guest.document = '2672713987'
+    session.commit()
+    return db_guest
+
+
+@pytest.fixture()
+def db_accommodation(session):
+    query = select(AccommodationDB)
+    db_accommodation = session.scalars(query).first()
+    db_accommodation.ulid = '01JA5EZ0BBQRGDX69PNTVG3N5E'
+    session.commit()
+    return db_accommodation
+
+
+@pytest.fixture()
+def db_user(session):
+    dto = UserCreateDTO(
+        email='bentoluizv@gmail.com',
+        password='12334',
+        password2='12334',
+        role='admin',
+    )
+    user = User.create(dto)
+    db_user = UserDB(
+        ulid=str(user.ulid),
+        email=user.email,
+        password=user.password,
+        role=user.role,
+    )
+
+    db_user.ulid = '01JAKF4V6FMQ7BEB62XVCA9KZH'
+    session.add(db_user)
+    session.commit()
+    return db_user
