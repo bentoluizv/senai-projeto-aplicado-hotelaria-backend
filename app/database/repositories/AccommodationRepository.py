@@ -1,13 +1,12 @@
 from sqlalchemy import func, select
+from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import Session
-from ulid import ULID
 
 from app.database.models import AccommodationDB, AmenitieDB
 from app.entities.Accommodation import (
     Accommodation,
     AccommodationUpdateDTO,
 )
-from app.errors.NotFoundError import NotFoundError
 
 
 class AccommodationRepository:
@@ -38,7 +37,7 @@ class AccommodationRepository:
                 db_amenities.append(existing_amenitie)
 
         db_accommodation = AccommodationDB(
-            ulid=str(ULID()),
+            ulid=str(accommodation.ulid),
             name=accommodation.name,
             double_beds=accommodation.double_beds,
             price=accommodation.price,
@@ -46,10 +45,14 @@ class AccommodationRepository:
             total_guests=accommodation.total_guests,
         )
 
+        db_accommodation.amenities = db_amenities
+
         self.session.add(db_accommodation)
         self.session.commit()
 
-    def list_all(self, page: int, per_page: int) -> list[Accommodation]:
+    def list_all(
+        self, page: int = 1, per_page: int = 10
+    ) -> list[Accommodation]:
         offset = (page - 1) * per_page
         db_accommodations = self.session.scalars(
             select(AccommodationDB).limit(per_page).offset(offset)
@@ -63,38 +66,34 @@ class AccommodationRepository:
         return accommodations
 
     def find_by_id(self, id: str) -> Accommodation:
-        db_accommodation = self.session.get(AccommodationDB, id)
-
-        if not db_accommodation:
-            raise NotFoundError('Accommodation', id)
-
+        db_accommodation = self.session.get_one(AccommodationDB, id)
         accommodation = Accommodation.from_db(db_accommodation)
         return accommodation
 
-    def find_by_name(self, name: str) -> Accommodation | None:
+    def find_by_name(self, name: str) -> Accommodation:
         db_accommodation = self.session.scalar(
             select(AccommodationDB).where(AccommodationDB.name == name)
         )
         if not db_accommodation:
-            raise NotFoundError('Accommodation', name)
+            raise NoResultFound()
 
         accommodation = Accommodation.from_db(db_accommodation)
         return accommodation
 
-    def update(self, id: str, dto: AccommodationUpdateDTO):
-        accommodation = self.session.get(AccommodationDB, id)
+    def update(self, id: str, dto: AccommodationUpdateDTO) -> Accommodation:
+        db_accommodation = self.session.get_one(AccommodationDB, id)
 
         for key, value in dto.model_dump().items():
             if value:
-                setattr(accommodation, key, value)
+                setattr(db_accommodation, key, value)
 
         self.session.commit()
+        self.session.refresh(db_accommodation)
+        accommodation = Accommodation.from_db(db_accommodation)
+        return accommodation
 
     def delete(self, id: str):
-        db_accommodation = self.session.get(AccommodationDB, id)
-
-        if not db_accommodation:
-            raise NotFoundError('Accommodation', id)
+        db_accommodation = self.session.get_one(AccommodationDB, id)
 
         self.session.delete(db_accommodation)
         self.session.commit()
