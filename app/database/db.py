@@ -2,8 +2,9 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
 from app.database.models import Base
+from app.settings.Settings import Settings
 
-engine = create_engine('sqlite:///./database.db')
+engine = create_engine(Settings().DATABASE_URL)  # type: ignore
 
 Base.metadata.create_all(engine)
 
