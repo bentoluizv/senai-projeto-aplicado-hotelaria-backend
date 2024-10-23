@@ -17,44 +17,12 @@ jobs:
           ref: main
           token: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
 
-      - name: Create GitHub deployment
-        uses: chrnorm/deployment-action@v2
-        id: deployment
-        with:
-          token: '${{ secrets.PERSONAL_GITHUB_TOKEN }}'
-          environment-url: ${{ vars.MY_APP }}
-          environment: production
-
-      - name: Set up SSH Key and Deploy my App on Server
-        uses: appleboy/ssh-action@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
+      - name: executing remote ssh commands using password
+        uses: appleboy/ssh-action@v1.1.0
         with:
           host: ${{ secrets.VPS_IP }}
           username: ${{ secrets.VPS_USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          passphrase: ${{ secrets.SSH_PASSPHRASE }}
-          port: 22
+          password: ${{ secrets.VPS_PASSWORD }}
           script: |
-            cd /caminho/para/seu/projeto
-            git pull origin main
-            docker compose down
-            docker compose up --force-recreate --build -d
-
-      - name: Update deployment Status (success)
-        if: success()
-        uses: chrnorm/deployment-status@v2
-        with:
-          token: '${{ secrets.PERSONAL_GITHUB_TOKEN }}'
-          environment-url: ${{ vars.MY_APP }}
-          state: 'success'
-          deployment-id: ${{ steps.deployment.outputs.deployment_id }}
-
-      - name: Update deployment status (failure)
-        if: failure()
-        uses: chrnorm/deployment-status@v2
-        with:
-          token: '${{ secrets.PERSONAL_GITHUB_TOKEN }}'
-          environment-url: ${{ vars.MY_APP }}
-          state: 'failure'
-          deployment-id: ${{ steps.deployment.outputs.deployment_id }}
+            whoami
+            pwd
