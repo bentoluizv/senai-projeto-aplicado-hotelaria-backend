@@ -16,7 +16,6 @@ jobs:
         with:
           ref: main
           token: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
-
       - name: executing remote ssh commands using password
         uses: appleboy/ssh-action@v1.1.0
         with:
@@ -25,4 +24,3 @@ jobs:
           password: ${{ secrets.VPS_PASSWORD }}
           script: |
             whoami
-            pwd
