@@ -4,9 +4,10 @@ from typing import Self
 from pydantic import BaseModel, model_validator
 from ulid import ULID
 
-from app.database.models import BookingDB, BookingStatus
+from app.database.models import BookingDB
 from app.entities.Accommodation import Accommodation
 from app.entities.Guest import Guest
+from app.schemas.Enums import BookingStatus
 
 
 class BookingUpdateDTO(BaseModel):
@@ -24,7 +25,7 @@ class BookingCreateDTO(BaseModel):
 
 class Booking(BaseModel):
     ulid: ULID = ULID()
-    status: BookingStatus = BookingStatus.BOOKED
+    status: BookingStatus = BookingStatus.PRE_BOOKED
     check_in: datetime
     check_out: datetime
     guest: Guest
@@ -60,6 +61,7 @@ class Booking(BaseModel):
             check_out=db_booking.check_out,
             guest=Guest.from_db(db_booking.guest),
             accommodation=Accommodation.from_db(db_booking.accommodation),
+            status=BookingStatus(db_booking.status),
         )
 
     @model_validator(mode='after')

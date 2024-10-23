@@ -98,7 +98,7 @@ def db_user(session):
         ulid=str(user.ulid),
         email=user.email,
         password=user.password,
-        role=user.role,
+        role=user.role.value,
     )
 
     db_user.ulid = '01JAKF4V6FMQ7BEB62XVCA9KZH'

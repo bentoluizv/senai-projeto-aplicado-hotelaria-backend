@@ -4,10 +4,11 @@ import pytest
 from sqlalchemy import select
 from sqlalchemy.exc import NoResultFound
 
-from app.database.models import BookingDB, BookingStatus
+from app.database.models import BookingDB
 from app.entities.Accommodation import Accommodation
 from app.entities.Booking import Booking, BookingCreateDTO, BookingUpdateDTO
 from app.entities.Guest import Guest
+from app.schemas.Enums import BookingStatus
 
 
 @pytest.fixture()
@@ -90,7 +91,7 @@ def test_update_status_booking(booking_repository, db_booking):
         str(db_booking.ulid), new_status
     )
 
-    assert updated_booking.status == new_status
+    assert updated_booking.status == new_status.value
 
 
 def test_delete_booking(booking_repository, db_booking, session):

@@ -1,8 +1,9 @@
 from pydantic import BaseModel
 from ulid import ULID
 
-from app.database.models import AccommodationDB, AccommodationStatus
+from app.database.models import AccommodationDB
 from app.entities.Amenitie import Amenitie
+from app.schemas.Enums import AccommodationStatus
 
 
 class AccommodationUpdateDTO(BaseModel):
@@ -54,7 +55,7 @@ class Accommodation(BaseModel):
         return cls(
             ulid=ULID.from_str(db_accommodation.ulid),
             name=db_accommodation.name,
-            status=db_accommodation.status,
+            status=AccommodationStatus(db_accommodation.status),
             total_guests=db_accommodation.total_guests,
             single_beds=db_accommodation.single_beds,
             double_beds=db_accommodation.double_beds,

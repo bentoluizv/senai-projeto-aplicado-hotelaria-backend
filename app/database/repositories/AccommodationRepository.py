@@ -39,6 +39,7 @@ class AccommodationRepository:
             price=accommodation.price,
             single_beds=accommodation.single_beds,
             total_guests=accommodation.total_guests,
+            status=accommodation.status.value,
         )
 
         db_accommodation.amenities = db_amenities
