@@ -6,13 +6,11 @@ RUN pip install poetry
 
 WORKDIR /app
 
-COPY ./pyproject.toml .
+COPY ./pyproject.toml /app/pyproject.toml
 
 RUN poetry install --without dev
 
-COPY ./app ./app
-
-COPY .env .
+COPY ./app /app/app
 
 EXPOSE 8000
 
