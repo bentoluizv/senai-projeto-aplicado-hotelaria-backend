@@ -1,0 +1,26 @@
+name: VPS Deploy
+
+on:
+  push:
+    branches:
+      - main
+jobs:
+  deploy:
+    name: Projeto Aplicado CD
+    permissions:
+      deployments: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: 'actions/checkout@v2'
+        with:
+          ref: main
+          token: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
+      - name: executing remote ssh commands using password
+        uses: appleboy/ssh-action@v1.1.0
+        with:
+          host: ${{ secrets.VPS_IP }}
+          username: ${{ secrets.VPS_USERNAME }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          script: |
+            whoami
