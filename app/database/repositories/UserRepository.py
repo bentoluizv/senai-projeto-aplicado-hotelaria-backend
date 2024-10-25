@@ -24,7 +24,7 @@ class UserRepository:
             ulid=str(user.ulid),
             email=user.email,
             password=user.password,
-            role=user.role,
+            role=user.role.value,
         )
 
         self.session.add(db_user)

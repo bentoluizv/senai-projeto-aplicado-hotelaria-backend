@@ -4,7 +4,8 @@ from pydantic import BaseModel, EmailStr, model_validator
 from ulid import ULID
 
 from app.auth.hash import generate_password_hash
-from app.database.models import Role, UserDB
+from app.database.models import UserDB
+from app.schemas.Enums import Role
 
 
 class UserCreateDTO(BaseModel):
@@ -41,5 +42,5 @@ class User(BaseModel):
             ulid=ULID.from_str(db_user.ulid),
             email=db_user.email,
             password=db_user.password,
-            role=db_user.role,
+            role=Role(db_user.role),
         )

@@ -8,7 +8,6 @@ from app.database.models import (
     AccommodationDB,
     AmenitieDB,
     BookingDB,
-    BookingStatus,
     GuestDB,
 )
 
@@ -118,6 +117,7 @@ def populate_db(session: Session):
             single_beds=2,
             double_beds=2,
             price=250.0,
+            status='avaiable',
         ),
         AccommodationDB(
             ulid='01JAFQWRHH5BA96R43F0TEBQM3',
@@ -126,6 +126,7 @@ def populate_db(session: Session):
             single_beds=1,
             double_beds=1,
             price=180.0,
+            status='avaiable',
         ),
         AccommodationDB(
             ulid='01JAFQWZ7FFJFMD0406F29YQRZ',
@@ -134,6 +135,7 @@ def populate_db(session: Session):
             single_beds=0,
             double_beds=1,
             price=120.0,
+            status='avaiable',
         ),
         AccommodationDB(
             ulid='01JAFQX8E203Y0CNK1KYPPV5RK',
@@ -142,6 +144,7 @@ def populate_db(session: Session):
             single_beds=2,
             double_beds=3,
             price=500.0,
+            status='avaiable',
         ),
         AccommodationDB(
             ulid='01JAFQXR26049VNR64PJE3J1W4',
@@ -150,6 +153,7 @@ def populate_db(session: Session):
             single_beds=1,
             double_beds=1,
             price=150.0,
+            status='avaiable',
         ),
         AccommodationDB(
             ulid='01JAFQY09Z7ABD18R5MHWTPWJS',
@@ -158,6 +162,7 @@ def populate_db(session: Session):
             single_beds=3,
             double_beds=4,
             price=300.0,
+            status='avaiable',
         ),
         AccommodationDB(
             ulid='01JAFQY731PWBTCC9CW7B2AVTJ',
@@ -166,6 +171,7 @@ def populate_db(session: Session):
             single_beds=0,
             double_beds=1,
             price=200.0,
+            status='avaiable',
         ),
         AccommodationDB(
             ulid='01JAFQYSG41JAFWYT1SF9E8W6Y',
@@ -174,6 +180,7 @@ def populate_db(session: Session):
             single_beds=2,
             double_beds=1,
             price=170.0,
+            status='avaiable',
         ),
         AccommodationDB(
             ulid='01JAFQZ30EFSA1JHMKF1QYW67K',
@@ -182,6 +189,7 @@ def populate_db(session: Session):
             single_beds=2,
             double_beds=0,
             price=140.0,
+            status='avaiable',
         ),
         AccommodationDB(
             ulid='01JAFR5W4HAZYDFV4300P9CE7T',
@@ -190,6 +198,7 @@ def populate_db(session: Session):
             single_beds=3,
             double_beds=1,
             price=220.0,
+            status='avaiable',
         ),
     ]
 
@@ -212,7 +221,7 @@ def populate_db(session: Session):
 
         booking = BookingDB(
             ulid=str(ULID()),
-            status=BookingStatus.BOOKED,
+            status='booked',
             check_in=check_in,
             check_out=check_out,
             budget=budget,

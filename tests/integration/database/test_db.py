@@ -1,6 +1,6 @@
 from ulid import ULID
 
-from app.database.models import Role, UserDB
+from app.database.models import UserDB
 
 
 def test_db_engine(engine):
@@ -14,7 +14,7 @@ def test_db_session(session):
         str(ULID()),
         email='bentoluizv@gmail.com',
         password='anreoa23',
-        role=Role.ADMIN,
+        role='admin',
     )
     session.add(db_user)
     assert session.is_modified

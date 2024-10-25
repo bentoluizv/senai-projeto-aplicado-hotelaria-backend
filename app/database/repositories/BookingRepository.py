@@ -6,10 +6,10 @@ from sqlalchemy.orm import Session
 from app.database.models import (
     AccommodationDB,
     BookingDB,
-    BookingStatus,
     GuestDB,
 )
 from app.entities.Booking import Booking, BookingUpdateDTO
+from app.schemas.Enums import BookingStatus
 
 
 class BookingRepository:
@@ -34,7 +34,7 @@ class BookingRepository:
 
         db_booking = BookingDB(
             ulid=str(booking.ulid),
-            status=booking.status,
+            status=booking.status.value,
             check_in=booking.check_in,
             check_out=booking.check_out,
             budget=booking.budget,
@@ -88,7 +88,7 @@ class BookingRepository:
     def update_status(self, id: str, new_status: BookingStatus) -> BookingDB:
         db_booking = self.session.get_one(BookingDB, id)
 
-        db_booking.status = new_status
+        db_booking.status = new_status.value
 
         self.session.add(db_booking)
         self.session.commit()

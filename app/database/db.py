@@ -6,7 +6,7 @@ from app.settings.Settings import Settings
 
 engine = create_engine(Settings().DATABASE_URL)  # type: ignore
 
-Base.metadata.create_all(engine)
+Base.metadata.create_all(bind=engine, checkfirst=True)
 
 
 def get_database_session():
