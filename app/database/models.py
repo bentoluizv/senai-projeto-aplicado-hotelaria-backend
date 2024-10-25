@@ -18,6 +18,8 @@ from sqlalchemy.orm import (
     relationship,
 )
 
+from app.utils.generate_ulid import generate_ulid
+
 
 class Base(MappedAsDataclass, DeclarativeBase):
     pass
@@ -57,7 +59,9 @@ amenities_per_accommodation = Table(
 class AccommodationDB(Base):
     __tablename__ = 'accommodations'
 
-    ulid: Mapped[str] = mapped_column(String, primary_key=True)
+    ulid: Mapped[str] = mapped_column(
+        String, primary_key=True, init=False, default_factory=generate_ulid
+    )
     name: Mapped[str] = mapped_column(
         String, unique=True, index=True, nullable=False
     )
