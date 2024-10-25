@@ -111,7 +111,6 @@ def populate_db(session: Session):
 
     accommodations = [
         AccommodationDB(
-            ulid='01JAFQWJ3C8F7E0M2T5FHKY3YB',
             name='Beachfront Villa',
             total_guests=6,
             single_beds=2,
@@ -120,7 +119,6 @@ def populate_db(session: Session):
             status='avaiable',
         ),
         AccommodationDB(
-            ulid='01JAFQWRHH5BA96R43F0TEBQM3',
             name='Mountain Retreat',
             total_guests=4,
             single_beds=1,
@@ -129,7 +127,6 @@ def populate_db(session: Session):
             status='avaiable',
         ),
         AccommodationDB(
-            ulid='01JAFQWZ7FFJFMD0406F29YQRZ',
             name='City Center Apartment',
             total_guests=2,
             single_beds=0,
@@ -138,7 +135,6 @@ def populate_db(session: Session):
             status='avaiable',
         ),
         AccommodationDB(
-            ulid='01JAFQX8E203Y0CNK1KYPPV5RK',
             name='Luxury Penthouse',
             total_guests=8,
             single_beds=2,
@@ -147,7 +143,6 @@ def populate_db(session: Session):
             status='avaiable',
         ),
         AccommodationDB(
-            ulid='01JAFQXR26049VNR64PJE3J1W4',
             name='Cozy Cottage',
             total_guests=3,
             single_beds=1,
@@ -156,7 +151,6 @@ def populate_db(session: Session):
             status='avaiable',
         ),
         AccommodationDB(
-            ulid='01JAFQY09Z7ABD18R5MHWTPWJS',
             name='Suburban Family Home',
             total_guests=10,
             single_beds=3,
@@ -165,7 +159,6 @@ def populate_db(session: Session):
             status='avaiable',
         ),
         AccommodationDB(
-            ulid='01JAFQY731PWBTCC9CW7B2AVTJ',
             name='Modern Loft',
             total_guests=2,
             single_beds=0,
@@ -174,7 +167,6 @@ def populate_db(session: Session):
             status='avaiable',
         ),
         AccommodationDB(
-            ulid='01JAFQYSG41JAFWYT1SF9E8W6Y',
             name='Country Inn',
             total_guests=5,
             single_beds=2,
@@ -183,7 +175,6 @@ def populate_db(session: Session):
             status='avaiable',
         ),
         AccommodationDB(
-            ulid='01JAFQZ30EFSA1JHMKF1QYW67K',
             name='Charming Bungalow',
             total_guests=4,
             single_beds=2,
@@ -192,7 +183,6 @@ def populate_db(session: Session):
             status='avaiable',
         ),
         AccommodationDB(
-            ulid='01JAFR5W4HAZYDFV4300P9CE7T',
             name='Seaside Cabin',
             total_guests=6,
             single_beds=3,
@@ -201,6 +191,8 @@ def populate_db(session: Session):
             status='avaiable',
         ),
     ]
+
+    accommodations[0].ulid = '01JAFQXR26049VNR64PJE3J1W4'
 
     session.add_all(accommodations)
 
