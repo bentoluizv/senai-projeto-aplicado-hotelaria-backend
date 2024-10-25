@@ -73,6 +73,36 @@ def test_create_new_accommodations(
     assert response.status_code == HTTPStatus.CREATED
 
 
+def test_create_2_new_accommodations_in_a_row(
+    client,
+):
+    dto = AccommodationCreateDTO(
+        name='Teste Acomodação',
+        total_guests=1,
+        single_beds=1,
+        double_beds=0,
+        price=120,
+        amenities=[],
+    )
+
+    dto2 = AccommodationCreateDTO(
+        name='Teste Acomodação 2',
+        total_guests=1,
+        single_beds=1,
+        double_beds=0,
+        price=120,
+        amenities=[],
+    )
+
+    data = dto.model_dump_json()
+    data2 = dto2.model_dump_json()
+    response = client.post('/accommodations', data=data)
+    response2 = client.post('/accommodations', data=data2)
+
+    assert response.status_code == HTTPStatus.CREATED
+    assert response2.status_code == HTTPStatus.CREATED
+
+
 def test_update_accommodation(client, db_accommodation):
     dto = AccommodationUpdateDTO(name='Super Teste')
 
