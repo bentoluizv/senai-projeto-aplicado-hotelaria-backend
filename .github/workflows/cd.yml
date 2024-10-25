@@ -13,6 +13,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Create .env file
+          run: |
+          echo DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }} >> .env
+          echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> .env
+          echo ALGORITHM=${{ secrets.ALGORITHM }} >> .env
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
