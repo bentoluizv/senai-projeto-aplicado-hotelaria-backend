@@ -21,7 +21,6 @@ class UserRepository:
 
     def create(self, user: User) -> None:
         db_user = UserDB(
-            ulid=str(user.ulid),
             email=user.email,
             password=user.password,
             role=user.role.value,
