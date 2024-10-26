@@ -35,8 +35,8 @@ def test_list_all_out_range(client):
     )
 
 
-def test_find_accommodation_by_id(client, db_accommodation):
-    response = client.get(f'/accommodations/{db_accommodation.ulid}')
+def test_find_accommodation_by_id(client):
+    response = client.get('/accommodations/01JAFQXR26049VNR64PJE3J1W4')
     accommodation = response.json()
 
     assert response.status_code == HTTPStatus.OK
@@ -103,12 +103,12 @@ def test_create_2_new_accommodations_in_a_row(
     assert response2.status_code == HTTPStatus.CREATED
 
 
-def test_update_accommodation(client, db_accommodation):
+def test_update_accommodation(client):
     dto = AccommodationUpdateDTO(name='Super Teste')
 
     data = dto.model_dump_json()
     response = client.put(
-        f'/accommodations/{db_accommodation.ulid}', data=data
+        '/accommodations/01JAFQXR26049VNR64PJE3J1W4', data=data
     )
     assert response.status_code == HTTPStatus.OK
 
@@ -123,8 +123,8 @@ def test_update_non_existent_accommodation(client):
     assert response.status_code == HTTPStatus.NOT_FOUND
 
 
-def test_delete_accommodation(client, db_accommodation):
-    response = client.delete(f'/accommodations/{db_accommodation.ulid}')
+def test_delete_accommodation(client):
+    response = client.delete('/accommodations/01JAFQXR26049VNR64PJE3J1W4')
     assert response.status_code == HTTPStatus.OK
 
 

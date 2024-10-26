@@ -32,13 +32,13 @@ def test_list_all_out_range(client):
     )
 
 
-def test_find_guest_by_id(client, db_guest):
-    response = client.get(f'/guests/{db_guest.ulid}')
+def test_find_guest_by_id(client):
+    response = client.get('/guests/01JB3HNWQ2D7XPPJ181G3YTH8T')
     guest = response.json()
 
     assert response.status_code == HTTPStatus.OK
     assert isinstance(response.json(), dict)
-    assert guest['document'] == '2672713987'
+    assert guest['document'] == '1234325'
 
 
 def test_not_found_guest_by_id(client):
@@ -69,11 +69,11 @@ def test_create_new_guest(
     assert response.status_code == HTTPStatus.CREATED
 
 
-def test_update_guest(client, db_guest):
+def test_update_guest(client):
     dto = GuestUpdateDTO(name='Super Teste')
 
     data = dto.model_dump_json()
-    response = client.put(f'/guests/{db_guest.ulid}', data=data)
+    response = client.put('/guests/01JB3HNWQ2D7XPPJ181G3YTH8T', data=data)
     assert response.status_code == HTTPStatus.OK
 
 
@@ -85,8 +85,8 @@ def test_update_non_existent_guest(client):
     assert response.status_code == HTTPStatus.NOT_FOUND
 
 
-def test_delete_guest(client, db_guest):
-    response = client.delete(f'/guests/{db_guest.ulid}')
+def test_delete_guest(client):
+    response = client.delete('/guests/01JB3HNWQ2D7XPPJ181G3YTH8T')
     assert response.status_code == HTTPStatus.OK
 
 

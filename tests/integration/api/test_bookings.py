@@ -35,8 +35,8 @@ def test_list_all_out_range(client):
     )
 
 
-def test_find_booking_by_id(client, db_booking):
-    response = client.get(f'/bookings/{db_booking.ulid}')
+def test_find_booking_by_id(client):
+    response = client.get('/bookings/01JB3HNXD570W7V12DSQWS2XMJ')
     booking = response.json()
 
     assert response.status_code == HTTPStatus.OK
@@ -106,14 +106,12 @@ def test_not_found_booking_by_id(client):
         ),  # Sobreposição no final da quinta reserva
     ],
 )
-def test_create_new_booking(  # noqa: PLR0913, PLR0917
-    client, db_guest, db_accommodation, check_in, check_out, expected_status
-):
+def test_create_new_booking(client, check_in, check_out, expected_status):
     dto = BookingCreateDTO(
         check_in=check_in,
         check_out=check_out,
-        guest_document=db_guest.document,
-        accommodation_ulid=db_accommodation.ulid,
+        guest_document='1234325',
+        accommodation_ulid='01JAFQXR26049VNR64PJE3J1W4',
     )
 
     data = dto.model_dump_json()
@@ -121,14 +119,14 @@ def test_create_new_booking(  # noqa: PLR0913, PLR0917
     assert response.status_code == expected_status
 
 
-def test_update_booking(client, db_booking):
+def test_update_booking(client):
     dto = BookingUpdateDTO(
         check_in=datetime(2026, 1, 1),
         check_out=datetime(2026, 1, 12),
     )
 
     data = dto.model_dump_json()
-    response = client.put(f'/bookings/{db_booking.ulid}', data=data)
+    response = client.put('/bookings/01JB3HNXD570W7V12DSQWS2XMJ', data=data)
     assert response.status_code == HTTPStatus.OK
 
 
@@ -143,8 +141,8 @@ def test_update_non_existent_booking(client):
     assert response.status_code == HTTPStatus.NOT_FOUND
 
 
-def test_delete_booking(client, db_booking):
-    response = client.delete(f'/bookings/{db_booking.ulid}')
+def test_delete_booking(client):
+    response = client.delete('/bookings/01JB3HNXD570W7V12DSQWS2XMJ')
     assert response.status_code == HTTPStatus.OK
 
 

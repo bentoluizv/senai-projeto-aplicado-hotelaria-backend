@@ -4,7 +4,7 @@ import pytest
 from sqlalchemy import select
 from sqlalchemy.exc import NoResultFound
 
-from app.database.models import BookingDB
+from app.database.models import AccommodationDB, BookingDB, GuestDB
 from app.entities.Accommodation import Accommodation
 from app.entities.Booking import Booking, BookingCreateDTO, BookingUpdateDTO
 from app.entities.Guest import Guest
@@ -40,19 +40,22 @@ def test_not_found_booking_by_id(booking_repository):
     assert not existing
 
 
-def test_find_booking_by_id(booking_repository, db_booking):
-    booking = booking_repository.find_by_id('01JA5EZ0BBQRGDX69PNTVG3N5E')
+def test_find_booking_by_id(booking_repository):
+    booking = booking_repository.find_by_id('01JB3HNXD570W7V12DSQWS2XMJ')
     assert booking
 
 
-def test_create_booking(
-    booking_repository, session, db_guest, db_accommodation
-):
+def test_create_booking(booking_repository, session):
     dto = BookingCreateDTO(
         check_in=datetime(2024, 10, 20),
         check_out=datetime(2024, 10, 25),
-        guest_document=db_guest.document,
-        accommodation_ulid=db_accommodation.ulid,
+        guest_document='1234325',
+        accommodation_ulid='01JAFQXR26049VNR64PJE3J1W4',
+    )
+
+    db_guest = session.get_one(GuestDB, '01JB3HNWQ2D7XPPJ181G3YTH8T')
+    db_accommodation = session.get_one(
+        AccommodationDB, '01JAFQXR26049VNR64PJE3J1W4'
     )
 
     booking = Booking.create(
@@ -64,41 +67,40 @@ def test_create_booking(
     booking_repository.create(booking)
 
     booking_created = session.scalar(
-        select(BookingDB).where(BookingDB.ulid == str(booking.ulid))
+        select(BookingDB).where(BookingDB.locator == booking.locator)
     )
     assert booking_created is not None
-    assert booking_created.ulid == str(booking.ulid)
     assert booking_created.check_in == booking.check_in
     assert booking_created.check_out == booking.check_out
 
 
-def test_update_booking(booking_repository, db_booking):
+def test_update_booking(booking_repository):
     update_data = BookingUpdateDTO(
         check_in=datetime(2024, 10, 20), check_out=datetime(2024, 10, 25)
     )
 
     updated_booking = booking_repository.update(
-        str(db_booking.ulid), update_data
+        '01JB3HNXD570W7V12DSQWS2XMJ', update_data
     )
 
     assert updated_booking.check_in == update_data.check_in
     assert updated_booking.check_out == update_data.check_out
 
 
-def test_update_status_booking(booking_repository, db_booking):
+def test_update_status_booking(booking_repository):
     new_status = BookingStatus.ACTIVE
     updated_booking = booking_repository.update_status(
-        str(db_booking.ulid), new_status
+        '01JB3HNXD570W7V12DSQWS2XMJ', new_status
     )
 
     assert updated_booking.status == new_status.value
 
 
-def test_delete_booking(booking_repository, db_booking, session):
-    booking_repository.delete(str(db_booking.ulid))
+def test_delete_booking(booking_repository):
+    booking_repository.delete('01JB3HNXD570W7V12DSQWS2XMJ')
 
     with pytest.raises(NoResultFound):
-        booking_repository.delete(str(db_booking.ulid))
+        booking_repository.delete('01JB3HNXD570W7V12DSQWS2XMJ')
 
 
 @pytest.mark.parametrize(
