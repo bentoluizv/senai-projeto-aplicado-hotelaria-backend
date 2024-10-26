@@ -26,6 +26,9 @@ class AmenitieController:
     def list_all(self, page: int = 1, per_page: int = 10) -> list[Amenitie]:
         total_amenities = self.amenitie_repository.count()
 
+        if total_amenities == 0:
+            return []
+
         total_pages = (total_amenities + per_page - 1) // per_page
 
         if page < 1 or page > total_pages:

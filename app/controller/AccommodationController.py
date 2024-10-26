@@ -34,6 +34,9 @@ class AccommodationController:
     ) -> list[Accommodation]:
         total_accommodations = self.accommodation_repository.count()
 
+        if total_accommodations == 0:
+            return []
+
         total_pages = (total_accommodations + per_page - 1) // per_page
 
         if page < 1 or page > total_pages:
