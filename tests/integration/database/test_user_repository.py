@@ -37,3 +37,34 @@ def test_create_user(user_repository, session):
     )
     assert user_created is not None
     assert user.password.startswith('$argon2')
+
+
+def test_create_2_users_in_a_row(user_repository, session):
+    dtos = [
+        UserCreateDTO(
+            email='bentoluizv@gmail.com',
+            password='12334',
+            password2='12334',
+            role='admin',
+        ),
+        UserCreateDTO(
+            email='bentoluizv@hotmail.com',
+            password='12334',
+            password2='12334',
+            role='admin',
+        ),
+    ]
+
+    users = [User.create(dto) for dto in dtos]
+
+    for user in users:
+        user_repository.create(user)
+
+    db_user_1 = session.scalar(
+        select(UserDB).where(UserDB.email == user.email)
+    )
+    db_user_2 = session.scalar(
+        select(UserDB).where(UserDB.email == user.email)
+    )
+    assert db_user_1
+    assert db_user_2
