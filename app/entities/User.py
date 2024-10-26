@@ -27,7 +27,7 @@ class UserCreateDTO(BaseModel):
 
 
 class User(BaseModel):
-    ulid: ULID = ULID()
+    ulid: ULID | None = None
     email: EmailStr
     password: str
     role: Role

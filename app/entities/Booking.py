@@ -8,6 +8,7 @@ from app.database.models import BookingDB
 from app.entities.Accommodation import Accommodation
 from app.entities.Guest import Guest
 from app.schemas.Enums import BookingStatus
+from app.utils.generate_locator import generate_locator
 
 
 class BookingUpdateDTO(BaseModel):
@@ -24,7 +25,8 @@ class BookingCreateDTO(BaseModel):
 
 
 class Booking(BaseModel):
-    ulid: ULID = ULID()
+    ulid: ULID | None = None
+    locator: str = generate_locator()
     status: BookingStatus = BookingStatus.PRE_BOOKED
     check_in: datetime
     check_out: datetime
@@ -46,7 +48,6 @@ class Booking(BaseModel):
             raise ValueError('guest/accommodation is diff from dto')
 
         return cls(
-            ulid=ULID(),
             check_in=dto.check_in,
             check_out=dto.check_out,
             guest=guest,
@@ -57,6 +58,7 @@ class Booking(BaseModel):
     def from_db(cls, db_booking: BookingDB):
         return cls(
             ulid=ULID.from_str(db_booking.ulid),
+            locator=db_booking.locator,
             check_in=db_booking.check_in,
             check_out=db_booking.check_out,
             guest=Guest.from_db(db_booking.guest),
