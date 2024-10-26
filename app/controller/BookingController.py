@@ -36,6 +36,9 @@ class BookingController:
     def list_all(self, page: int = 1, per_page: int = 10) -> list[Booking]:
         total_bookings = self.booking_repository.count()
 
+        if total_bookings == 0:
+            return []
+
         total_pages = (total_bookings + per_page - 1) // per_page
 
         if page < 1 or page > total_pages:
