@@ -1,4 +1,5 @@
 import pytest
+from sqlalchemy import select
 from sqlalchemy.exc import NoResultFound
 
 from app.database.models import AccommodationDB
@@ -72,13 +73,59 @@ def test_create_accommodation(accommodation_repository, session):
 
     accommodation = Accommodation.create(dto)
 
+    assert not accommodation.ulid
+
     accommodation_repository.create(accommodation)
 
-    accommodation_created = session.get(
-        AccommodationDB, str(accommodation.ulid)
+    accommodation_created = session.scalar(
+        select(AccommodationDB).where(
+            AccommodationDB.name == accommodation.name
+        )
     )
     assert accommodation_created is not None
-    assert accommodation_created.ulid == str(accommodation.ulid)
+
+
+def test_create_2_accommodation_in_a_row(accommodation_repository, session):
+    dto = AccommodationCreateDTO(
+        name='Teste Acomodação',
+        total_guests=1,
+        single_beds=1,
+        double_beds=0,
+        price=120,
+        amenities=[],
+    )
+
+    dto2 = AccommodationCreateDTO(
+        name='Teste Acomodação 2',
+        total_guests=1,
+        single_beds=1,
+        double_beds=0,
+        price=120,
+        amenities=[],
+    )
+
+    accommodation = Accommodation.create(dto)
+    accommodation2 = Accommodation.create(dto2)
+
+    assert not accommodation.ulid
+    assert not accommodation2.ulid
+
+    accommodation_repository.create(accommodation)
+    accommodation_repository.create(accommodation2)
+
+    created_accommodation = session.scalar(
+        select(AccommodationDB).where(
+            AccommodationDB.name == accommodation.name
+        )
+    )
+
+    created_accommodation2 = session.scalar(
+        select(AccommodationDB).where(
+            AccommodationDB.name == accommodation2.name
+        )
+    )
+    assert created_accommodation is not None
+    assert created_accommodation2 is not None
 
 
 def test_update_accommodation(accommodation_repository):
@@ -92,7 +139,7 @@ def test_update_accommodation(accommodation_repository):
 
 
 def test_delete_accommodation(accommodation_repository):
-    accommodation_repository.delete('01JAFQY09Z7ABD18R5MHWTPWJS')
+    accommodation_repository.delete('01JAFQXR26049VNR64PJE3J1W4')
 
     with pytest.raises(NoResultFound):
-        accommodation_repository.delete('01JAFQY09Z7ABD18R5MHWTPWJS')
+        accommodation_repository.delete('01JAFQXR26049VNR64PJE3J1W4')

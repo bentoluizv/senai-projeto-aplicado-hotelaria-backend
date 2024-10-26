@@ -33,7 +33,6 @@ class AccommodationRepository:
                 db_amenities.append(existing_amenitie)
 
         db_accommodation = AccommodationDB(
-            ulid=str(accommodation.ulid),
             name=accommodation.name,
             double_beds=accommodation.double_beds,
             price=accommodation.price,

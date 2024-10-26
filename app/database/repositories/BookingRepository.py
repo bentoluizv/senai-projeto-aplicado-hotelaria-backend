@@ -33,7 +33,7 @@ class BookingRepository:
         )
 
         db_booking = BookingDB(
-            ulid=str(booking.ulid),
+            locator=booking.locator,
             status=booking.status.value,
             check_in=booking.check_in,
             check_out=booking.check_out,

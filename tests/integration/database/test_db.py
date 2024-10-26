@@ -1,5 +1,3 @@
-from ulid import ULID
-
 from app.database.models import UserDB
 
 
@@ -11,7 +9,6 @@ def test_db_engine(engine):
 def test_db_session(session):
     assert session.is_active
     db_user = UserDB(
-        str(ULID()),
         email='bentoluizv@gmail.com',
         password='anreoa23',
         role='admin',

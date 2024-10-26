@@ -39,7 +39,7 @@ def test_find_amenitie_by_name(amenitie_repository):
     assert amenitie
 
 
-def test_create_guest(amenitie_repository, session):
+def test_create_amenitie(amenitie_repository, session):
     dto = AmenitieCreateDTO(
         name='Teste amenitie',
     )
@@ -53,3 +53,28 @@ def test_create_guest(amenitie_repository, session):
     )
     assert amenitie_created is not None
     assert amenitie_created.id
+
+
+def test_create_2_amenities_in_a_row(amenitie_repository, session):
+    dtos = [
+        AmenitieCreateDTO(
+            name='Teste amenitie',
+        ),
+        AmenitieCreateDTO(
+            name='Teste amenitie 2',
+        ),
+    ]
+
+    amenities = [Amenitie.create(dto) for dto in dtos]
+
+    for amenitie in amenities:
+        amenitie_repository.create(amenitie)
+
+    db_amenitie_1 = session.scalar(
+        select(AmenitieDB).where(AmenitieDB.name == amenitie.name)
+    )
+    db_amenitie_2 = session.scalar(
+        select(AmenitieDB).where(AmenitieDB.name == amenitie.name)
+    )
+    assert db_amenitie_1
+    assert db_amenitie_2

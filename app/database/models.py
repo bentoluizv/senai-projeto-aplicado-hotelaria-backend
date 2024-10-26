@@ -18,6 +18,8 @@ from sqlalchemy.orm import (
     relationship,
 )
 
+from app.utils.generate_ulid import generate_ulid
+
 
 class Base(MappedAsDataclass, DeclarativeBase):
     pass
@@ -25,7 +27,9 @@ class Base(MappedAsDataclass, DeclarativeBase):
 
 class UserDB(Base):
     __tablename__ = 'users'
-    ulid: Mapped[str] = mapped_column(String, primary_key=True)
+    ulid: Mapped[str] = mapped_column(
+        String, primary_key=True, init=False, default_factory=generate_ulid
+    )
     email: Mapped[EmailStr] = mapped_column(String, unique=True, index=True)
     password: Mapped[str] = mapped_column(String, nullable=False)
     role: Mapped[str] = mapped_column(String, nullable=False)
@@ -33,7 +37,9 @@ class UserDB(Base):
 
 class GuestDB(Base):
     __tablename__ = 'guests'
-    ulid: Mapped[str] = mapped_column(String, primary_key=True)
+    ulid: Mapped[str] = mapped_column(
+        String, primary_key=True, init=False, default_factory=generate_ulid
+    )
     document: Mapped[str] = mapped_column(
         String, unique=True, index=True, nullable=False
     )
@@ -57,7 +63,9 @@ amenities_per_accommodation = Table(
 class AccommodationDB(Base):
     __tablename__ = 'accommodations'
 
-    ulid: Mapped[str] = mapped_column(String, primary_key=True)
+    ulid: Mapped[str] = mapped_column(
+        String, primary_key=True, init=False, default_factory=generate_ulid
+    )
     name: Mapped[str] = mapped_column(
         String, unique=True, index=True, nullable=False
     )
@@ -83,7 +91,14 @@ class AmenitieDB(Base):
 class BookingDB(Base):
     __tablename__ = 'bookings'
 
-    ulid: Mapped[str] = mapped_column(String, primary_key=True)
+    ulid: Mapped[str] = mapped_column(
+        String, primary_key=True, init=False, default_factory=generate_ulid
+    )
+    locator: Mapped[str] = mapped_column(
+        String,
+        index=True,
+        unique=True,
+    )
     status: Mapped[str] = mapped_column(String, nullable=False)
     check_in: Mapped[datetime] = mapped_column(
         DateTime, index=True, nullable=False

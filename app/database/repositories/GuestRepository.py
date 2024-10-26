@@ -23,7 +23,6 @@ class GuestRepository:
 
     def create(self, guest: Guest) -> None:
         db_guest = GuestDB(
-            ulid=str(guest.ulid),
             country=guest.country,
             document=guest.document,
             name=guest.name,

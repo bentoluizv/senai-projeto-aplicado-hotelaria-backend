@@ -2,7 +2,6 @@ from datetime import datetime
 from random import choice
 
 from sqlalchemy.orm import Session
-from ulid import ULID
 
 from app.database.models import (
     AccommodationDB,
@@ -10,12 +9,12 @@ from app.database.models import (
     BookingDB,
     GuestDB,
 )
+from app.utils.generate_locator import generate_locator
 
 
 def populate_db(session: Session):
     guests = [
         GuestDB(
-            ulid='01JAFQSB29MRH1AH1J6Z8GR8KR',
             document='1234325',
             name='John',
             surname='Doe',
@@ -23,7 +22,6 @@ def populate_db(session: Session):
             phone='389201212',
         ),
         GuestDB(
-            ulid='01JAFQT8BNX2K4SXH1TH6ESQFX',
             document='2345436',
             name='Jane',
             surname='Smith',
@@ -31,7 +29,6 @@ def populate_db(session: Session):
             phone='389201213',
         ),
         GuestDB(
-            ulid='01JAFQTH6ETC71168EYY8JX4WE',
             document='3456547',
             name='Alice',
             surname='Johnson',
@@ -39,7 +36,6 @@ def populate_db(session: Session):
             phone='389201214',
         ),
         GuestDB(
-            ulid='01JAFQTXX5RXZ83NVKXVGTVQTM',
             document='4567658',
             name='Bob',
             surname='Brown',
@@ -47,7 +43,6 @@ def populate_db(session: Session):
             phone='389201215',
         ),
         GuestDB(
-            ulid='01JAFQV5SFYNHFP2CTT5WY727M',
             document='5678769',
             name='Charlie',
             surname='Davis',
@@ -55,7 +50,6 @@ def populate_db(session: Session):
             phone='389201216',
         ),
         GuestDB(
-            ulid='01JAFQVDY5RXWRXJ17C23NM6QK',
             document='6789870',
             name='David',
             surname='Miller',
@@ -63,7 +57,6 @@ def populate_db(session: Session):
             phone='389201217',
         ),
         GuestDB(
-            ulid='01JAFQVNWESMWR4WZ1P49ZEJ7Z',
             document='7890981',
             name='Eve',
             surname='Wilson',
@@ -71,7 +64,6 @@ def populate_db(session: Session):
             phone='389201218',
         ),
         GuestDB(
-            ulid='01JAFQVWY54SDCAQQ7Y1JDBD8Y',
             document='8901092',
             name='Frank',
             surname='Moore',
@@ -79,7 +71,6 @@ def populate_db(session: Session):
             phone='389201219',
         ),
         GuestDB(
-            ulid='01JAFQW49ZQTK6AH73HYFP9AQE',
             document='9012103',
             name='Grace',
             surname='Taylor',
@@ -87,7 +78,6 @@ def populate_db(session: Session):
             phone='389201220',
         ),
         GuestDB(
-            ulid='01JAFQWATY7XHSFGFJQV1SYDB4',
             document='0123214',
             name='Hank',
             surname='Anderson',
@@ -111,7 +101,6 @@ def populate_db(session: Session):
 
     accommodations = [
         AccommodationDB(
-            ulid='01JAFQWJ3C8F7E0M2T5FHKY3YB',
             name='Beachfront Villa',
             total_guests=6,
             single_beds=2,
@@ -120,7 +109,6 @@ def populate_db(session: Session):
             status='avaiable',
         ),
         AccommodationDB(
-            ulid='01JAFQWRHH5BA96R43F0TEBQM3',
             name='Mountain Retreat',
             total_guests=4,
             single_beds=1,
@@ -129,7 +117,6 @@ def populate_db(session: Session):
             status='avaiable',
         ),
         AccommodationDB(
-            ulid='01JAFQWZ7FFJFMD0406F29YQRZ',
             name='City Center Apartment',
             total_guests=2,
             single_beds=0,
@@ -138,7 +125,6 @@ def populate_db(session: Session):
             status='avaiable',
         ),
         AccommodationDB(
-            ulid='01JAFQX8E203Y0CNK1KYPPV5RK',
             name='Luxury Penthouse',
             total_guests=8,
             single_beds=2,
@@ -147,7 +133,6 @@ def populate_db(session: Session):
             status='avaiable',
         ),
         AccommodationDB(
-            ulid='01JAFQXR26049VNR64PJE3J1W4',
             name='Cozy Cottage',
             total_guests=3,
             single_beds=1,
@@ -156,7 +141,6 @@ def populate_db(session: Session):
             status='avaiable',
         ),
         AccommodationDB(
-            ulid='01JAFQY09Z7ABD18R5MHWTPWJS',
             name='Suburban Family Home',
             total_guests=10,
             single_beds=3,
@@ -165,7 +149,6 @@ def populate_db(session: Session):
             status='avaiable',
         ),
         AccommodationDB(
-            ulid='01JAFQY731PWBTCC9CW7B2AVTJ',
             name='Modern Loft',
             total_guests=2,
             single_beds=0,
@@ -174,7 +157,6 @@ def populate_db(session: Session):
             status='avaiable',
         ),
         AccommodationDB(
-            ulid='01JAFQYSG41JAFWYT1SF9E8W6Y',
             name='Country Inn',
             total_guests=5,
             single_beds=2,
@@ -183,7 +165,6 @@ def populate_db(session: Session):
             status='avaiable',
         ),
         AccommodationDB(
-            ulid='01JAFQZ30EFSA1JHMKF1QYW67K',
             name='Charming Bungalow',
             total_guests=4,
             single_beds=2,
@@ -192,7 +173,6 @@ def populate_db(session: Session):
             status='avaiable',
         ),
         AccommodationDB(
-            ulid='01JAFR5W4HAZYDFV4300P9CE7T',
             name='Seaside Cabin',
             total_guests=6,
             single_beds=3,
@@ -201,6 +181,9 @@ def populate_db(session: Session):
             status='avaiable',
         ),
     ]
+
+    accommodations[0].ulid = '01JAFQXR26049VNR64PJE3J1W4'
+    guests[0].ulid = '01JB3HNWQ2D7XPPJ181G3YTH8T'
 
     session.add_all(accommodations)
 
@@ -212,7 +195,7 @@ def populate_db(session: Session):
         (datetime(2024, 12, 1), datetime(2024, 12, 15)),
     ]
 
-    bookings = []
+    bookings: list[BookingDB] = []
 
     for check_in, check_out in fixed_dates:
         guest = choice(guests)
@@ -220,7 +203,7 @@ def populate_db(session: Session):
         budget = (check_out - check_in).days * accommodation.price
 
         booking = BookingDB(
-            ulid=str(ULID()),
+            locator=generate_locator(),
             status='booked',
             check_in=check_in,
             check_out=check_out,
@@ -232,5 +215,7 @@ def populate_db(session: Session):
         )
         bookings.append(booking)
 
+    bookings[0].ulid = '01JB3HNXD570W7V12DSQWS2XMJ'
+    bookings[0].locator = 'AD934934'
     session.add_all(bookings)
     session.commit()
