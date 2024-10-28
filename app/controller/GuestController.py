@@ -44,6 +44,14 @@ class GuestController:
 
         return guest
 
+    def find_by_document(self, document: str):
+        guest = self.guest_repository.find_by_document(document)
+
+        if not guest:
+            raise NotFoundError('Guest', document)
+
+        return guest
+
     def create(self, dto: GuestCreateDTO):
         guest = self.guest_repository.find_by_document(dto.document)
 
