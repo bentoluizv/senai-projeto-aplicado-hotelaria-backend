@@ -41,6 +41,15 @@ def test_find_guest_by_id(client):
     assert guest['document'] == '1234325'
 
 
+def test_find_guest_by_document(client):
+    response = client.get('/guests/1234325')
+    guest = response.json()
+
+    assert response.status_code == HTTPStatus.OK
+    assert isinstance(response.json(), dict)
+    assert guest['ulid'] == '01JB3HNWQ2D7XPPJ181G3YTH8T'
+
+
 def test_not_found_guest_by_id(client):
     response = client.get('/guests/01JA5EZ0BBQRGDX69PNTVG3N5E')
     guest = response.json()
@@ -51,6 +60,15 @@ def test_not_found_guest_by_id(client):
         guest['detail']
         == """Guest with ID '01JA5EZ0BBQRGDX69PNTVG3N5E' not found."""
     )
+
+
+def test_not_found_guest_by_document(client):
+    response = client.get('/guests/99999999')
+    guest = response.json()
+
+    assert response.status_code == HTTPStatus.NOT_FOUND
+    assert isinstance(response.json(), dict)
+    assert guest['detail'] == """Guest with ID '99999999' not found."""
 
 
 def test_create_new_guest(
