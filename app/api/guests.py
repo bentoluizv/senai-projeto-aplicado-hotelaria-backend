@@ -7,6 +7,7 @@ from pydantic import BaseModel
 from app.controller.GuestController import GuestController
 from app.entities.Guest import Guest, GuestCreateDTO, GuestUpdateDTO
 from app.schemas.Message import Message
+from app.utils.is_ulid import is_ulid
 
 router = APIRouter(
     prefix='/guests',
@@ -33,8 +34,13 @@ def list_all_guests(
 
 @router.get('/{id}', status_code=HTTPStatus.OK, response_model=Guest)
 def find_by_id(guest_controller: GuestController, id: str):  # type: ignore
-    guest = guest_controller.find_by_id(id)
-    return guest
+    if is_ulid(id):
+        guest = guest_controller.find_by_id(id)
+        return guest
+
+    else:
+        guest = guest_controller.find_by_document(id)
+        return guest
 
 
 @router.post(
