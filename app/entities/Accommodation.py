@@ -8,7 +8,6 @@ from app.schemas.Enums import AccommodationStatus
 
 class AccommodationUpdateDTO(BaseModel):
     name: str | None = None
-    status: AccommodationStatus | None = None
     total_guests: int | None = None
     single_beds: int | None = None
     double_beds: int | None = None
