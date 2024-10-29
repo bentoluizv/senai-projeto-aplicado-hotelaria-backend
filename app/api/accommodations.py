@@ -53,7 +53,7 @@ def find_accommodation_by_id(
     status_code=HTTPStatus.CREATED,
     response_model=Message,
 )
-def create_new_booking(
+def create_new_accommodation(
     data: AccommodationCreateDTO,
     accommodation_controller: AccommodationController,  # type: ignore
 ):
@@ -62,7 +62,7 @@ def create_new_booking(
 
 
 @router.put('/{id}', status_code=HTTPStatus.OK, response_model=Message)
-def update_booking(
+def update_accommodation(
     data: AccommodationUpdateDTO,
     accommodation_controller: AccommodationController,  # type: ignore
     id: str,
@@ -72,7 +72,7 @@ def update_booking(
 
 
 @router.delete('/{id}', status_code=HTTPStatus.OK, response_model=Message)
-def delete_booking(
+def delete_accommodation(
     accommodation_controller: AccommodationController,  # type: ignore
     id: str,
 ):
