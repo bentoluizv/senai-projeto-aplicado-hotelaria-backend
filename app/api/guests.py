@@ -57,7 +57,7 @@ def create_new_guests(
 
 
 @router.put('/{id}', status_code=HTTPStatus.OK, response_model=Message)
-def update_guest(
+def update_guests(
     data: GuestUpdateDTO,
     guest_controller: GuestController,  # type: ignore
     id: str,
@@ -67,7 +67,7 @@ def update_guest(
 
 
 @router.delete('/{id}', status_code=HTTPStatus.OK, response_model=Message)
-def delete_guest(
+def delete_guests(
     guest_controller: GuestController,  # type: ignore
     id: str,
 ):
