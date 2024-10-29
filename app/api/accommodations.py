@@ -72,7 +72,7 @@ def update_accommodation(
 
 
 @router.delete('/{id}', status_code=HTTPStatus.OK, response_model=Message)
-def delete_booking(
+def delete_accommodation(
     accommodation_controller: AccommodationController,  # type: ignore
     id: str,
 ):

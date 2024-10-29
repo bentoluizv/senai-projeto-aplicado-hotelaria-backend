@@ -48,7 +48,7 @@ def find_by_id(guest_controller: GuestController, id: str):  # type: ignore
     status_code=HTTPStatus.CREATED,
     response_model=Message,
 )
-def create_new_booking(
+def create_new_guests(
     data: GuestCreateDTO,
     guest_controller: GuestController,  # type: ignore
 ):
