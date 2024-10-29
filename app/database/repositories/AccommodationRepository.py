@@ -26,7 +26,7 @@ class AccommodationRepository:
 
         for amenitie in accommodation.amenities:
             existing_amenitie = self.session.scalar(
-                select(AmenitieDB).where(AmenitieDB.name == amenitie)
+                select(AmenitieDB).where(AmenitieDB.name == amenitie.name)
             )
 
             if existing_amenitie:
