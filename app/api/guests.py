@@ -57,7 +57,7 @@ def create_new_booking(
 
 
 @router.put('/{id}', status_code=HTTPStatus.OK, response_model=Message)
-def update_booking(
+def update_guest(
     data: GuestUpdateDTO,
     guest_controller: GuestController,  # type: ignore
     id: str,
@@ -67,7 +67,7 @@ def update_booking(
 
 
 @router.delete('/{id}', status_code=HTTPStatus.OK, response_model=Message)
-def delete_booking(
+def delete_guest(
     guest_controller: GuestController,  # type: ignore
     id: str,
 ):
