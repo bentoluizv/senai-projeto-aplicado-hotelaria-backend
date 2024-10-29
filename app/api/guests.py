@@ -48,7 +48,7 @@ def find_by_id(guest_controller: GuestController, id: str):  # type: ignore
     status_code=HTTPStatus.CREATED,
     response_model=Message,
 )
-def create_new_booking(
+def create_new_guests(
     data: GuestCreateDTO,
     guest_controller: GuestController,  # type: ignore
 ):
@@ -57,7 +57,7 @@ def create_new_booking(
 
 
 @router.put('/{id}', status_code=HTTPStatus.OK, response_model=Message)
-def update_booking(
+def update_guests(
     data: GuestUpdateDTO,
     guest_controller: GuestController,  # type: ignore
     id: str,
@@ -67,7 +67,7 @@ def update_booking(
 
 
 @router.delete('/{id}', status_code=HTTPStatus.OK, response_model=Message)
-def delete_booking(
+def delete_guests(
     guest_controller: GuestController,  # type: ignore
     id: str,
 ):
