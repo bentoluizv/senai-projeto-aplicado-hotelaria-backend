@@ -8,7 +8,6 @@ from app.schemas.Enums import AccommodationStatus
 
 class AccommodationUpdateDTO(BaseModel):
     name: str | None = None
-    status: AccommodationStatus | None = None
     total_guests: int | None = None
     single_beds: int | None = None
     double_beds: int | None = None
@@ -43,12 +42,13 @@ class Accommodation(BaseModel):
             single_beds=dto.single_beds,
             double_beds=dto.double_beds,
             price=dto.price,
+            amenities=[Amenitie(name=name) for name in dto.amenities],
         )
 
     @classmethod
     def from_db(cls, db_accommodation: AccommodationDB):
         amenities = [
-            Amenitie(name=amenitie.name)
+            Amenitie(id=amenitie.id, name=amenitie.name)
             for amenitie in db_accommodation.amenities
         ]
 

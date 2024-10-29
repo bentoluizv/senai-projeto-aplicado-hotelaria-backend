@@ -26,7 +26,7 @@ class AccommodationRepository:
 
         for amenitie in accommodation.amenities:
             existing_amenitie = self.session.scalar(
-                select(AmenitieDB).where(AmenitieDB.name == amenitie)
+                select(AmenitieDB).where(AmenitieDB.name == amenitie.name)
             )
 
             if existing_amenitie:
@@ -81,11 +81,25 @@ class AccommodationRepository:
         return accommodation
 
     def update(self, id: str, dto: AccommodationUpdateDTO) -> Accommodation:
+        db_amenities: list[AmenitieDB] = []
+
+        if dto.amenities:
+            for amenitie in dto.amenities:
+                existing_amenitie = self.session.scalar(
+                    select(AmenitieDB).where(AmenitieDB.name == amenitie)
+                )
+
+                if existing_amenitie:
+                    db_amenities.append(existing_amenitie)
+
         db_accommodation = self.session.get_one(AccommodationDB, id)
 
         for key, value in dto.model_dump().items():
             if value:
-                setattr(db_accommodation, key, value)
+                if key == 'amenities':
+                    setattr(db_accommodation, key, db_amenities)
+                else:
+                    setattr(db_accommodation, key, value)
 
         self.session.commit()
         self.session.refresh(db_accommodation)
