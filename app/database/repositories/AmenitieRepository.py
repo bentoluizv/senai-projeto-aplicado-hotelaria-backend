@@ -31,7 +31,7 @@ class AmenitieRepository:
             select(AmenitieDB).limit(per_page).offset(offset)
         )
         amenities = [
-            Amenitie(name=db_amenitie.name) for db_amenitie in db_amenities
+            Amenitie.from_db(db_amenitie) for db_amenitie in db_amenities
         ]
         return amenities
 
