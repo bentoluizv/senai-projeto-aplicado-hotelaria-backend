@@ -67,6 +67,7 @@ def update_guest(
 
 
 @router.delete('/{id}', status_code=HTTPStatus.OK, response_model=Message)
+
 def delete_guest(
     guest_controller: GuestController,  # type: ignore
     id: str,
