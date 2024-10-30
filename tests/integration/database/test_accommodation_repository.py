@@ -6,8 +6,8 @@ from app.database.models import AccommodationDB
 from app.entities.Accommodation import (
     Accommodation,
     AccommodationCreateDTO,
-    AccommodationUpdateDTO,
 )
+from app.entities.Amenitie import Amenitie
 
 
 @pytest.fixture()
@@ -128,14 +128,38 @@ def test_create_2_accommodation_in_a_row(accommodation_repository, session):
     assert created_accommodation2 is not None
 
 
-def test_update_accommodation(accommodation_repository):
-    update_data = AccommodationUpdateDTO(name='Super Acomodação Teste')
-
-    updated_guest = accommodation_repository.update(
-        '01JAFQXR26049VNR64PJE3J1W4', update_data
+def test_update_accommodation_name(accommodation_repository, session):
+    existing_db_accommodation = session.get_one(
+        AccommodationDB, '01JAFQXR26049VNR64PJE3J1W4'
     )
 
-    assert updated_guest.name == 'Super Acomodação Teste'
+    accommodation = Accommodation.from_db(existing_db_accommodation)
+
+    accommodation.name = 'Super Acomodação Teste'
+
+    updated_accommodation = accommodation_repository.update(accommodation)
+
+    assert updated_accommodation.name == 'Super Acomodação Teste'
+
+
+def test_update_accommodation_amenities(accommodation_repository, session):
+    TOTAL_AMENITIES = 3
+    existing_db_accommodation = session.get_one(
+        AccommodationDB, '01JAFQXR26049VNR64PJE3J1W4'
+    )
+
+    accommodation = Accommodation.from_db(existing_db_accommodation)
+
+    accommodation.amenities = [
+        Amenitie(name='WiFi'),
+        Amenitie(name='Toalhas'),
+        Amenitie(name='Ducha'),
+    ]
+
+    updated_accommodation = accommodation_repository.update(accommodation)
+
+    assert updated_accommodation.amenities[0].name == 'WiFi'
+    assert len(updated_accommodation.amenities) == TOTAL_AMENITIES
 
 
 def test_delete_accommodation(accommodation_repository):
