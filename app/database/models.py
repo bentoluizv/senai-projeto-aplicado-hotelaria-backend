@@ -52,9 +52,10 @@ class GuestDB(Base):
 amenities_per_accommodation = Table(
     'amenities_per_accommodation',
     Base.metadata,
+    Column('id', Integer, primary_key=True, autoincrement=True),
     Column(
         'accommodation_ulid',
-        ForeignKey('accommodations.ulid', ondelete='RESTRICT'),
+        ForeignKey('accommodations.ulid', ondelete='CASCADE'),
     ),
     Column('amenitie_id', ForeignKey('amenities.id', ondelete='RESTRICT')),
 )
