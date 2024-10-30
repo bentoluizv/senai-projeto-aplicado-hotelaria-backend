@@ -13,6 +13,7 @@ class AccommodationUpdateDTO(BaseModel):
     double_beds: int | None = None
     price: float | None = None
     amenities: list[str] | None = None
+    status: str | None = None
 
 
 class AccommodationCreateDTO(BaseModel):
@@ -27,17 +28,18 @@ class AccommodationCreateDTO(BaseModel):
 class Accommodation(BaseModel):
     ulid: ULID | None = None
     name: str
-    status: AccommodationStatus = AccommodationStatus.AVAIABLE
+    status: AccommodationStatus
     total_guests: int
     single_beds: int
     double_beds: int
     price: float
-    amenities: list[Amenitie] = []
+    amenities: list[Amenitie]
 
     @classmethod
     def create(cls, dto: AccommodationCreateDTO):
         return cls(
             name=dto.name,
+            status=AccommodationStatus.AVAIABLE,
             total_guests=dto.total_guests,
             single_beds=dto.single_beds,
             double_beds=dto.double_beds,
@@ -65,3 +67,7 @@ class Accommodation(BaseModel):
 
     def add_amenitie(self, amenitie: Amenitie):
         self.amenities.append(amenitie)
+
+    def set_status(self, status: str):
+        accommodation_status = AccommodationStatus(value=status.lower())
+        self.status = accommodation_status
