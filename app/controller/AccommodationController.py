@@ -10,6 +10,7 @@ from app.entities.Accommodation import (
     AccommodationCreateDTO,
     AccommodationUpdateDTO,
 )
+from app.entities.Amenitie import Amenitie
 from app.errors.AlreadyExistsError import AlreadyExistsError
 from app.errors.NotFoundError import NotFoundError
 from app.errors.OutOfRangeError import OutOfRangeError
@@ -68,13 +69,24 @@ class AccommodationController:
 
         self.accommodation_repository.create(accommodation)
 
-    def update(self, id: str, dto: AccommodationUpdateDTO):
-        accommodation = self.accommodation_repository.find_by_id(id)
+    def update(self, ulid: str, dto: AccommodationUpdateDTO):
+        accommodation = self.accommodation_repository.find_by_id(ulid)
 
         if not accommodation:
-            raise NotFoundError('Accommodation', id)
+            raise NotFoundError('Accommodation', ulid)
 
-        self.accommodation_repository.update(id, dto)
+        for field in dto.model_fields_set:
+            if field != 'amenities':
+                value = getattr(dto, field)
+                if value is not None:
+                    setattr(accommodation, field, value)
+
+        if dto.amenities:
+            accommodation.amenities = [
+                Amenitie(name=amenitie) for amenitie in dto.amenities
+            ]
+
+        self.accommodation_repository.update(accommodation)
 
     def delete(self, id: str):
         accommodation = self.accommodation_repository.find_by_id(id)

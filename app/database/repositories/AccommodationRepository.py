@@ -4,8 +4,8 @@ from sqlalchemy.orm import Session
 from app.database.models import AccommodationDB, AmenitieDB
 from app.entities.Accommodation import (
     Accommodation,
-    AccommodationUpdateDTO,
 )
+from app.utils.get_amenities_from_db import get_amenities_from_db
 
 
 class AccommodationRepository:
@@ -68,6 +68,7 @@ class AccommodationRepository:
             return None
 
         accommodation = Accommodation.from_db(db_accommodation)
+
         return accommodation
 
     def find_by_name(self, name: str) -> Accommodation | None:
@@ -80,30 +81,31 @@ class AccommodationRepository:
         accommodation = Accommodation.from_db(db_accommodation)
         return accommodation
 
-    def update(self, id: str, dto: AccommodationUpdateDTO) -> Accommodation:
-        db_amenities: list[AmenitieDB] = []
+    def update(self, accommodation: Accommodation) -> Accommodation:
+        db_accommodation = self.session.get_one(
+            AccommodationDB, str(accommodation.ulid)
+        )
 
-        if dto.amenities:
-            for amenitie in dto.amenities:
-                existing_amenitie = self.session.scalar(
-                    select(AmenitieDB).where(AmenitieDB.name == amenitie)
-                )
+        db_amenities = []
 
-                if existing_amenitie:
-                    db_amenities.append(existing_amenitie)
+        if accommodation.amenities:
+            db_amenities = get_amenities_from_db(
+                amenities=accommodation.amenities, session=self.session
+            )
 
-        db_accommodation = self.session.get_one(AccommodationDB, id)
-
-        for key, value in dto.model_dump().items():
-            if value:
-                if key == 'amenities':
-                    setattr(db_accommodation, key, db_amenities)
-                else:
-                    setattr(db_accommodation, key, value)
+        db_accommodation.name = accommodation.name
+        db_accommodation.status = accommodation.status.value
+        db_accommodation.total_guests = accommodation.total_guests
+        db_accommodation.single_beds = accommodation.single_beds
+        db_accommodation.double_beds = accommodation.double_beds
+        db_accommodation.price = accommodation.price
+        db_accommodation.amenities = db_amenities
 
         self.session.commit()
         self.session.refresh(db_accommodation)
+
         accommodation = Accommodation.from_db(db_accommodation)
+
         return accommodation
 
     def delete(self, id: str):
