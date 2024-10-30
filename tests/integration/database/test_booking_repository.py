@@ -8,7 +8,7 @@ from app.database.models import AccommodationDB, BookingDB, GuestDB
 from app.entities.Accommodation import Accommodation
 from app.entities.Booking import Booking, BookingCreateDTO, BookingUpdateDTO
 from app.entities.Guest import Guest
-from app.schemas.Enums import BookingStatus
+from app.entities.schemas.Enums import BookingStatus
 
 
 @pytest.fixture()

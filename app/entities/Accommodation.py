@@ -3,7 +3,7 @@ from ulid import ULID
 
 from app.database.models import AccommodationDB
 from app.entities.Amenitie import Amenitie
-from app.schemas.Enums import AccommodationStatus
+from app.entities.schemas.Enums import AccommodationStatus
 
 
 class AccommodationUpdateDTO(BaseModel):

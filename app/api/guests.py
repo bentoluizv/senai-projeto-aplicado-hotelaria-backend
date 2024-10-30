@@ -6,7 +6,7 @@ from pydantic import BaseModel
 
 from app.controller.GuestController import GuestController
 from app.entities.Guest import Guest, GuestCreateDTO, GuestUpdateDTO
-from app.schemas.Message import Message
+from app.entities.schemas.Message import Message
 from app.utils.is_ulid import is_ulid
 
 router = APIRouter(

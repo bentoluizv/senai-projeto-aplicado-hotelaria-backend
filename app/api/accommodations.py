@@ -10,7 +10,7 @@ from app.entities.Accommodation import (
     AccommodationCreateDTO,
     AccommodationUpdateDTO,
 )
-from app.schemas.Message import Message
+from app.entities.schemas.Message import Message
 
 router = APIRouter(
     prefix='/accommodations',

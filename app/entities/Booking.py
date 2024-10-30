@@ -7,7 +7,7 @@ from ulid import ULID
 from app.database.models import BookingDB
 from app.entities.Accommodation import Accommodation
 from app.entities.Guest import Guest
-from app.schemas.Enums import BookingStatus
+from app.entities.schemas.Enums import BookingStatus
 from app.utils.generate_locator import generate_locator
 
 

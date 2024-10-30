@@ -5,7 +5,7 @@ from ulid import ULID
 
 from app.auth.hash import generate_password_hash
 from app.database.models import UserDB
-from app.schemas.Enums import Role
+from app.entities.schemas.Enums import Role
 
 
 class UserCreateDTO(BaseModel):

@@ -6,7 +6,7 @@ from pydantic import BaseModel
 
 from app.controller.BookingController import BookingController
 from app.entities.Booking import Booking, BookingCreateDTO, BookingUpdateDTO
-from app.schemas.Message import Message
+from app.entities.schemas.Message import Message
 
 router = APIRouter(
     prefix='/bookings',

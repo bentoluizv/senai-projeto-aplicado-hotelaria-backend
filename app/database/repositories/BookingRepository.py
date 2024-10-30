@@ -9,7 +9,7 @@ from app.database.models import (
     GuestDB,
 )
 from app.entities.Booking import Booking, BookingUpdateDTO
-from app.schemas.Enums import BookingStatus
+from app.entities.schemas.Enums import BookingStatus
 
 
 class BookingRepository:
