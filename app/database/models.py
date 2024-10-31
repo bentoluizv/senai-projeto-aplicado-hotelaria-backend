@@ -18,6 +18,7 @@ from sqlalchemy.orm import (
     relationship,
 )
 
+from app.utils.generate_locator import generate_locator
 from app.utils.generate_ulid import generate_ulid
 
 
@@ -96,9 +97,7 @@ class BookingDB(Base):
         String, primary_key=True, init=False, default_factory=generate_ulid
     )
     locator: Mapped[str] = mapped_column(
-        String,
-        index=True,
-        unique=True,
+        String, index=True, unique=True, init=False, default=generate_locator
     )
     status: Mapped[str] = mapped_column(String, nullable=False)
     check_in: Mapped[datetime] = mapped_column(
