@@ -43,6 +43,6 @@ class AmenitieRepository:
         if not db_amenitie:
             return None
 
-        amenitie = Amenitie(name=db_amenitie.name)
+        amenitie = Amenitie(id=db_amenitie.id, name=db_amenitie.name)
 
         return amenitie
