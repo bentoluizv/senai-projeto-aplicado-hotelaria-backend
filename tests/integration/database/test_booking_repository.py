@@ -1,10 +1,9 @@
 from datetime import datetime
 
 import pytest
-from sqlalchemy import select
 from sqlalchemy.exc import NoResultFound
 
-from app.database.models import AccommodationDB, BookingDB, GuestDB
+from app.database.models import AccommodationDB, GuestDB
 from app.entities.Accommodation import Accommodation
 from app.entities.Booking import Booking, BookingCreateDTO, BookingUpdateDTO
 from app.entities.Guest import Guest
@@ -64,12 +63,10 @@ def test_create_booking(booking_repository, session):
         accommodation=Accommodation.from_db(db_accommodation),
     )
 
-    booking_repository.create(booking)
+    booking_created = booking_repository.create(booking)
 
-    booking_created = session.scalar(
-        select(BookingDB).where(BookingDB.locator == booking.locator)
-    )
     assert booking_created is not None
+    assert booking_created.locator
     assert booking_created.check_in == booking.check_in
     assert booking_created.check_out == booking.check_out
 
