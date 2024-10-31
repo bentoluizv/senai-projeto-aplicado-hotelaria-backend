@@ -3,11 +3,10 @@ from datetime import datetime
 import pytest
 from sqlalchemy.exc import NoResultFound
 
-from app.database.models import AccommodationDB, GuestDB
+from app.database.models import AccommodationDB, BookingDB, GuestDB
 from app.entities.Accommodation import Accommodation
-from app.entities.Booking import Booking, BookingCreateDTO, BookingUpdateDTO
+from app.entities.Booking import Booking, BookingCreateDTO
 from app.entities.Guest import Guest
-from app.entities.schemas.Enums import BookingStatus
 
 
 @pytest.fixture()
@@ -71,26 +70,14 @@ def test_create_booking(booking_repository, session):
     assert booking_created.check_out == booking.check_out
 
 
-def test_update_booking(booking_repository):
-    update_data = BookingUpdateDTO(
-        check_in=datetime(2024, 10, 20), check_out=datetime(2024, 10, 25)
-    )
+def test_update_booking(booking_repository, session):
+    db_booking = session.get_one(BookingDB, '01JB3HNXD570W7V12DSQWS2XMJ')
+    booking = Booking.from_db(db_booking)
+    booking.set_status('booked')
 
-    updated_booking = booking_repository.update(
-        '01JB3HNXD570W7V12DSQWS2XMJ', update_data
-    )
+    updated_booking = booking_repository.update(booking)
 
-    assert updated_booking.check_in == update_data.check_in
-    assert updated_booking.check_out == update_data.check_out
-
-
-def test_update_status_booking(booking_repository):
-    new_status = BookingStatus.ACTIVE
-    updated_booking = booking_repository.update_status(
-        '01JB3HNXD570W7V12DSQWS2XMJ', new_status
-    )
-
-    assert updated_booking.status == new_status.value
+    assert updated_booking.status == booking.status
 
 
 def test_delete_booking(booking_repository):

@@ -120,10 +120,7 @@ def test_create_new_booking(client, check_in, check_out, expected_status):
 
 
 def test_update_booking(client):
-    dto = BookingUpdateDTO(
-        check_in=datetime(2026, 1, 1),
-        check_out=datetime(2026, 1, 12),
-    )
+    dto = BookingUpdateDTO(status='booked')
 
     data = dto.model_dump_json()
     response = client.put('/bookings/01JB3HNXD570W7V12DSQWS2XMJ', data=data)
@@ -131,10 +128,7 @@ def test_update_booking(client):
 
 
 def test_update_non_existent_booking(client):
-    dto = BookingUpdateDTO(
-        check_in=datetime(2026, 1, 1),
-        check_out=datetime(2026, 1, 12),
-    )
+    dto = BookingUpdateDTO(status='booked')
 
     data = dto.model_dump_json()
     response = client.put('/bookings/01JA5EZ0BBQRGDX69PNTVG3N5E', data=data)
