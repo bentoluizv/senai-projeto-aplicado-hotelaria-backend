@@ -11,9 +11,7 @@ from app.entities.schemas.Enums import BookingStatus
 
 
 class BookingUpdateDTO(BaseModel):
-    check_in: datetime | None = None
-    check_out: datetime | None = None
-    budget: float | None = None
+    status: str | None = None
 
 
 class BookingCreateDTO(BaseModel):
@@ -71,3 +69,6 @@ class Booking(BaseModel):
         budget = num_days * self.accommodation.price
         self.budget = budget
         return self
+
+    def set_status(self, status: str):
+        self.status = BookingStatus(status)
