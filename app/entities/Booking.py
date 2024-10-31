@@ -8,7 +8,6 @@ from app.database.models import BookingDB
 from app.entities.Accommodation import Accommodation
 from app.entities.Guest import Guest
 from app.entities.schemas.Enums import BookingStatus
-from app.utils.generate_locator import generate_locator
 
 
 class BookingUpdateDTO(BaseModel):
@@ -26,7 +25,7 @@ class BookingCreateDTO(BaseModel):
 
 class Booking(BaseModel):
     ulid: ULID | None = None
-    locator: str = generate_locator()
+    locator: str | None = None
     status: BookingStatus = BookingStatus.PRE_BOOKED
     check_in: datetime
     check_out: datetime
