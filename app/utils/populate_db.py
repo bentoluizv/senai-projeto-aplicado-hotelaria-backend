@@ -9,7 +9,6 @@ from app.database.models import (
     BookingDB,
     GuestDB,
 )
-from app.utils.generate_locator import generate_locator
 
 
 def populate_db(session: Session):
@@ -203,7 +202,6 @@ def populate_db(session: Session):
         budget = (check_out - check_in).days * accommodation.price
 
         booking = BookingDB(
-            locator=generate_locator(),
             status='booked',
             check_in=check_in,
             check_out=check_out,
