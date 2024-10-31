@@ -79,12 +79,15 @@ class BookingController:
         self.booking_repository.create(booking)
 
     def update(self, id: str, dto: BookingUpdateDTO):
-        existing = self.booking_repository.find_by_id(id)
+        booking = self.booking_repository.find_by_id(id)
 
-        if not existing:
+        if not booking:
             raise NotFoundError('Booking', id)
 
-        self.booking_repository.update(id, dto)
+        if dto.status:
+            booking.set_status(dto.status)
+
+        self.booking_repository.update(booking)
 
     def delete(self, id: str):
         existing = self.booking_repository.find_by_id(id)
