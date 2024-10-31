@@ -8,8 +8,7 @@ from app.database.models import (
     BookingDB,
     GuestDB,
 )
-from app.entities.Booking import Booking, BookingUpdateDTO
-from app.entities.schemas.Enums import BookingStatus
+from app.entities.Booking import Booking
 
 
 class BookingRepository:
@@ -75,27 +74,14 @@ class BookingRepository:
 
         return booking
 
-    def update(self, id: str, dto: BookingUpdateDTO) -> BookingDB:
-        db_booking = self.session.get_one(BookingDB, id)
-
-        for key, value in dto.model_dump(exclude_unset=True).items():
-            if value:
-                setattr(db_booking, key, value)
-
+    def update(self, booking: Booking) -> Booking:
+        db_booking = self.session.get_one(BookingDB, str(booking.ulid))
+        db_booking.status = booking.status.value
         self.session.add(db_booking)
         self.session.commit()
         self.session.refresh(db_booking)
-        return db_booking
-
-    def update_status(self, id: str, new_status: BookingStatus) -> BookingDB:
-        db_booking = self.session.get_one(BookingDB, id)
-
-        db_booking.status = new_status.value
-
-        self.session.add(db_booking)
-        self.session.commit()
-        self.session.refresh(db_booking)
-        return db_booking
+        booking = Booking.from_db(db_booking)
+        return booking
 
     def delete(self, id: str):
         db_booking = self.session.get_one(BookingDB, id)
