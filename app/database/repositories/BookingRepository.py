@@ -25,7 +25,7 @@ class BookingRepository:
 
         return total_bookings or 0
 
-    def create(self, booking: Booking):
+    def create(self, booking: Booking) -> Booking:
         db_guest = self.session.get_one(GuestDB, str(booking.guest.ulid))
 
         db_accommodation = self.session.get_one(
@@ -33,7 +33,6 @@ class BookingRepository:
         )
 
         db_booking = BookingDB(
-            locator=booking.locator,
             status=booking.status.value,
             check_in=booking.check_in,
             check_out=booking.check_out,
@@ -46,6 +45,9 @@ class BookingRepository:
 
         self.session.add(db_booking)
         self.session.commit()
+
+        created_booking = Booking.from_db(db_booking)
+        return created_booking
 
     def list_all(self, page: int = 1, per_page: int = 10) -> list[Booking]:
         offset = (page - 1) * per_page
