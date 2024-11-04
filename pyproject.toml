@@ -16,6 +16,7 @@ pydantic-settings = "^2.4.0"
 python-ulid = {extras = ["pydantic"], version = "^2.7.0"}
 psycopg2-binary = "^2.9.10"
 alembic = "^1.13.3"
+jinja2 = "^3.1.4"
 
 
 [tool.poetry.group.dev.dependencies]
