@@ -7,6 +7,9 @@ services:
     expose:
       - "8000"
 
+    volumes:
+      - ./database.db:/app/database.db
+
     env_file:
       - .env
 
