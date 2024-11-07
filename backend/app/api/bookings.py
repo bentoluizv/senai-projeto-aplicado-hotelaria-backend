@@ -1,3 +1,4 @@
+from datetime import datetime
 from http import HTTPStatus
 from typing import Annotated
 
@@ -6,6 +7,11 @@ from pydantic import BaseModel
 
 from app.controller.BookingController import BookingController
 from app.entities.Booking import Booking, BookingCreateDTO, BookingUpdateDTO
+from app.entities.schemas.ListSettings import (
+    ListFilter,
+    ListSettings,
+    Pagination,
+)
 from app.entities.schemas.Message import Message
 
 router = APIRouter(
@@ -24,10 +30,23 @@ class BookingList(BaseModel):
 @router.get('/', response_model=BookingList, status_code=HTTPStatus.OK)
 def list_all_bookings(
     booking_controller: BookingController,  # type: ignore
+    check_in: datetime | None = None,
+    check_out: datetime | None = None,
     page: int = 1,
     per_page: int = 10,
 ):
-    bookings = booking_controller.list_all(page=page, per_page=per_page)
+    if check_in and check_out:
+        settings = ListSettings(
+            pagination=Pagination(page=page, per_page=per_page),
+            filter=ListFilter(check_in=check_in, check_out=check_out),
+        )
+        bookings = booking_controller.list_all(settings)
+        return BookingList(bookings=bookings)
+
+    settings = ListSettings(
+        pagination=Pagination(page=page, per_page=per_page),
+    )
+    bookings = booking_controller.list_all(settings)
     return BookingList(bookings=bookings)
 
 
