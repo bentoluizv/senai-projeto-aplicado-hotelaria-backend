@@ -9,6 +9,7 @@ from app.database.models import (
     GuestDB,
 )
 from app.entities.Booking import Booking
+from app.entities.schemas.ListSettings import ListSettings, Pagination
 
 
 class BookingRepository:
@@ -48,15 +49,27 @@ class BookingRepository:
         created_booking = Booking.from_db(db_booking)
         return created_booking
 
-    def list_all(self, page: int = 1, per_page: int = 10) -> list[Booking]:
-        offset = (page - 1) * per_page
+    def list_all(
+        self, settings: ListSettings = ListSettings(pagination=Pagination())
+    ) -> list[Booking]:
+        offset = (settings.pagination.page - 1) * settings.pagination.per_page
 
         query = (
             select(BookingDB)
             .order_by(BookingDB.check_in)
-            .limit(per_page)
+            .limit(settings.pagination.per_page)
             .offset(offset)
         )
+
+        if settings.filter:
+            query = (
+                select(BookingDB)
+                .where(BookingDB.check_in <= settings.filter.check_in)
+                .where(BookingDB.check_out <= settings.filter.check_out)
+                .order_by(BookingDB.check_in)
+                .limit(settings.pagination.per_page)
+                .offset(offset)
+            )
 
         db_bookings = self.session.scalars(query).all()
 
