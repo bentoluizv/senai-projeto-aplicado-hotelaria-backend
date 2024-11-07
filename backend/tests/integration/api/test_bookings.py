@@ -2,6 +2,7 @@ from datetime import datetime
 from http import HTTPStatus
 
 import pytest
+from click import echo
 
 from app.entities.Booking import BookingCreateDTO, BookingUpdateDTO
 
@@ -12,6 +13,18 @@ def test_list_all_bookings(client):
     assert response.status_code == HTTPStatus.OK
     assert isinstance(response.json(), dict)
     assert 'bookings' in response.json()
+    assert len(response.json()['bookings']) == TOTAL_BOOKINGS
+
+
+def test_list_all_bookings_by_period(client):
+    TOTAL_BOOKINGS = 1
+    response = client.get(
+        '/bookings/?check_in=2023-05-01&check_out=2023-06-01'
+    )
+    assert response.status_code == HTTPStatus.OK
+    assert isinstance(response.json(), dict)
+    assert 'bookings' in response.json()
+    echo(response.json())
     assert len(response.json()['bookings']) == TOTAL_BOOKINGS
 
 
