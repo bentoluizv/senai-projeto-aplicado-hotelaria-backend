@@ -2,6 +2,7 @@ from datetime import datetime
 from random import choice
 
 from sqlalchemy.orm import Session
+from zoneinfo import ZoneInfo
 
 from app.database.models import (
     AccommodationDB,
@@ -187,11 +188,26 @@ def populate_db(session: Session):
     session.add_all(accommodations)
 
     fixed_dates = [
-        (datetime(2023, 5, 1), datetime(2023, 5, 10)),
-        (datetime(2023, 6, 15), datetime(2023, 6, 20)),
-        (datetime(2023, 7, 1), datetime(2023, 7, 5)),
-        (datetime(2024, 1, 1), datetime(2024, 1, 10)),
-        (datetime(2024, 12, 1), datetime(2024, 12, 15)),
+        (
+            datetime(2023, 5, 1, tzinfo=ZoneInfo('America/Sao_Paulo')),
+            datetime(2023, 5, 10, tzinfo=ZoneInfo('America/Sao_Paulo')),
+        ),
+        (
+            datetime(2023, 6, 15, tzinfo=ZoneInfo('America/Sao_Paulo')),
+            datetime(2023, 6, 20, tzinfo=ZoneInfo('America/Sao_Paulo')),
+        ),
+        (
+            datetime(2023, 7, 1, tzinfo=ZoneInfo('America/Sao_Paulo')),
+            datetime(2023, 7, 5, tzinfo=ZoneInfo('America/Sao_Paulo')),
+        ),
+        (
+            datetime(2024, 1, 1, tzinfo=ZoneInfo('America/Sao_Paulo')),
+            datetime(2024, 1, 10, tzinfo=ZoneInfo('America/Sao_Paulo')),
+        ),
+        (
+            datetime(2024, 12, 1, tzinfo=ZoneInfo('America/Sao_Paulo')),
+            datetime(2024, 12, 15, tzinfo=ZoneInfo('America/Sao_Paulo')),
+        ),
     ]
 
     bookings: list[BookingDB] = []
