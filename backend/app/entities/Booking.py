@@ -1,8 +1,12 @@
 from datetime import datetime
 from typing import Self
 
-from pydantic import BaseModel, model_validator
+from pydantic import (
+    BaseModel,
+    model_validator,
+)
 from ulid import ULID
+from zoneinfo import ZoneInfo
 
 from app.database.models import BookingDB
 from app.entities.Accommodation import Accommodation
@@ -68,6 +72,12 @@ class Booking(BaseModel):
         num_days = (self.check_out - self.check_in).days
         budget = num_days * self.accommodation.price
         self.budget = budget
+        return self
+
+    @model_validator(mode='after')
+    def set_timezone(self) -> Self:
+        self.check_in.replace(tzinfo=ZoneInfo('America/Sao_Paulo'))
+        self.check_out.replace(tzinfo=ZoneInfo('America/Sao_Paulo'))
         return self
 
     def set_status(self, status: str):
