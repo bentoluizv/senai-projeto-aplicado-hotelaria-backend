@@ -7,6 +7,11 @@ from app.database.models import AccommodationDB, BookingDB, GuestDB
 from app.entities.Accommodation import Accommodation
 from app.entities.Booking import Booking, BookingCreateDTO
 from app.entities.Guest import Guest
+from app.entities.schemas.ListSettings import (
+    ListFilter,
+    ListSettings,
+    Pagination,
+)
 
 
 @pytest.fixture()
@@ -21,15 +26,30 @@ def test_list_all_bookings(booking_repository):
     assert len(bookings) == TOTAL_BOOKINGS
 
 
+def test_list_all_bookings_by_period(booking_repository):
+    TOTAL_BOOKINGS = 1
+    settings = ListSettings(
+        pagination=Pagination(),
+        filter=ListFilter(
+            check_in=datetime(year=2023, month=5, day=1),
+            check_out=datetime(year=2023, month=6, day=1),
+        ),
+    )
+    bookings = booking_repository.list_all(settings)
+    assert len(bookings) == TOTAL_BOOKINGS
+
+
 def test_list_all_bookings_20_per_page(booking_repository):
     TOTAL_BOOKINGS = 2
-    bookings = booking_repository.list_all(per_page=2)
+    settings = ListSettings(pagination=Pagination(per_page=2))
+    bookings = booking_repository.list_all(settings)
     assert len(bookings) == TOTAL_BOOKINGS
 
 
 def test_list_all_out_range_return_0(booking_repository):
     TOTAL_BOOKINGS = 0
-    bookings = booking_repository.list_all(page=60, per_page=1)
+    settings = ListSettings(pagination=Pagination(page=60, per_page=1))
+    bookings = booking_repository.list_all(settings)
     assert len(bookings) == TOTAL_BOOKINGS
 
 
