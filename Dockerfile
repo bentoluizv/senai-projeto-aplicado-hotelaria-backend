@@ -14,6 +14,6 @@ COPY ./app ./app
 
 COPY .env .
 
-EXPOSE 8000
+EXPOSE 8001
 
 CMD ["poetry", "run", "uvicorn", "--host", "0.0.0.0", "app.app:app"]
