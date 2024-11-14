@@ -5,8 +5,8 @@ from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 
 from app.controller.UserController import UserController
+from app.entities.schemas.Message import Message
 from app.entities.User import User, UserCreateDTO
-from app.schemas.Message import Message
 
 router = APIRouter(
     prefix='/users',

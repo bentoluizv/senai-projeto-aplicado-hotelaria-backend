@@ -1,20 +1,21 @@
 from datetime import datetime
 from typing import Self
 
-from pydantic import BaseModel, model_validator
+from pydantic import (
+    BaseModel,
+    model_validator,
+)
 from ulid import ULID
+from zoneinfo import ZoneInfo
 
 from app.database.models import BookingDB
 from app.entities.Accommodation import Accommodation
 from app.entities.Guest import Guest
-from app.schemas.Enums import BookingStatus
-from app.utils.generate_locator import generate_locator
+from app.entities.schemas.Enums import BookingStatus
 
 
 class BookingUpdateDTO(BaseModel):
-    check_in: datetime | None = None
-    check_out: datetime | None = None
-    budget: float | None = None
+    status: str | None = None
 
 
 class BookingCreateDTO(BaseModel):
@@ -26,7 +27,7 @@ class BookingCreateDTO(BaseModel):
 
 class Booking(BaseModel):
     ulid: ULID | None = None
-    locator: str = generate_locator()
+    locator: str | None = None
     status: BookingStatus = BookingStatus.PRE_BOOKED
     check_in: datetime
     check_out: datetime
@@ -72,3 +73,12 @@ class Booking(BaseModel):
         budget = num_days * self.accommodation.price
         self.budget = budget
         return self
+
+    @model_validator(mode='after')
+    def set_timezone(self) -> Self:
+        self.check_in.replace(tzinfo=ZoneInfo('America/Sao_Paulo'))
+        self.check_out.replace(tzinfo=ZoneInfo('America/Sao_Paulo'))
+        return self
+
+    def set_status(self, status: str):
+        self.status = BookingStatus(status)

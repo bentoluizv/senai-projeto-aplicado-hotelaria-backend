@@ -6,7 +6,7 @@ from pydantic import BaseModel
 
 from app.controller.AmenitieController import AmenitieController
 from app.entities.Amenitie import Amenitie, AmenitieCreateDTO
-from app.schemas.Message import Message
+from app.entities.schemas.Message import Message
 
 router = APIRouter(
     prefix='/amenities',

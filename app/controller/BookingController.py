@@ -8,6 +8,7 @@ from app.database.repositories.AccommodationRepository import (
 from app.database.repositories.BookingRepository import BookingRepository
 from app.database.repositories.GuestRepository import GuestRepository
 from app.entities.Booking import Booking, BookingCreateDTO, BookingUpdateDTO
+from app.entities.schemas.ListSettings import ListSettings
 from app.errors.ConflictBookingError import ConflictBookingError
 from app.errors.NotFoundError import NotFoundError
 from app.errors.OutOfRangeError import OutOfRangeError
@@ -33,17 +34,23 @@ class BookingController:
             repository_factory.create_accommodation_respository()
         )
 
-    def list_all(self, page: int = 1, per_page: int = 10) -> list[Booking]:
+    def list_all(self, settings: ListSettings) -> list[Booking]:
         total_bookings = self.booking_repository.count()
 
         if total_bookings == 0:
             return []
 
-        total_pages = (total_bookings + per_page - 1) // per_page
+        total_pages = (
+            total_bookings + settings.pagination.per_page - 1
+        ) // settings.pagination.per_page
 
-        if page < 1 or page > total_pages:
-            raise OutOfRangeError(page, total_pages)
-        bookings = self.booking_repository.list_all(page, per_page)
+        if (
+            settings.pagination.page < 1
+            or settings.pagination.page > total_pages
+        ):
+            raise OutOfRangeError(settings.pagination.page, total_pages)
+
+        bookings = self.booking_repository.list_all(settings)
 
         return bookings
 
@@ -79,12 +86,15 @@ class BookingController:
         self.booking_repository.create(booking)
 
     def update(self, id: str, dto: BookingUpdateDTO):
-        existing = self.booking_repository.find_by_id(id)
+        booking = self.booking_repository.find_by_id(id)
 
-        if not existing:
+        if not booking:
             raise NotFoundError('Booking', id)
 
-        self.booking_repository.update(id, dto)
+        if dto.status:
+            booking.set_status(dto.status)
+
+        self.booking_repository.update(booking)
 
     def delete(self, id: str):
         existing = self.booking_repository.find_by_id(id)

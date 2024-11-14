@@ -1,14 +1,17 @@
 from datetime import datetime
 
 import pytest
-from sqlalchemy import select
 from sqlalchemy.exc import NoResultFound
 
 from app.database.models import AccommodationDB, BookingDB, GuestDB
 from app.entities.Accommodation import Accommodation
-from app.entities.Booking import Booking, BookingCreateDTO, BookingUpdateDTO
+from app.entities.Booking import Booking, BookingCreateDTO
 from app.entities.Guest import Guest
-from app.schemas.Enums import BookingStatus
+from app.entities.schemas.ListSettings import (
+    ListFilter,
+    ListSettings,
+    Pagination,
+)
 
 
 @pytest.fixture()
@@ -23,15 +26,30 @@ def test_list_all_bookings(booking_repository):
     assert len(bookings) == TOTAL_BOOKINGS
 
 
+def test_list_all_bookings_by_period(booking_repository):
+    TOTAL_BOOKINGS = 1
+    settings = ListSettings(
+        pagination=Pagination(),
+        filter=ListFilter(
+            check_in=datetime(year=2023, month=5, day=1),
+            check_out=datetime(year=2023, month=6, day=1),
+        ),
+    )
+    bookings = booking_repository.list_all(settings)
+    assert len(bookings) == TOTAL_BOOKINGS
+
+
 def test_list_all_bookings_20_per_page(booking_repository):
     TOTAL_BOOKINGS = 2
-    bookings = booking_repository.list_all(per_page=2)
+    settings = ListSettings(pagination=Pagination(per_page=2))
+    bookings = booking_repository.list_all(settings)
     assert len(bookings) == TOTAL_BOOKINGS
 
 
 def test_list_all_out_range_return_0(booking_repository):
     TOTAL_BOOKINGS = 0
-    bookings = booking_repository.list_all(page=60, per_page=1)
+    settings = ListSettings(pagination=Pagination(page=60, per_page=1))
+    bookings = booking_repository.list_all(settings)
     assert len(bookings) == TOTAL_BOOKINGS
 
 
@@ -64,36 +82,22 @@ def test_create_booking(booking_repository, session):
         accommodation=Accommodation.from_db(db_accommodation),
     )
 
-    booking_repository.create(booking)
+    booking_created = booking_repository.create(booking)
 
-    booking_created = session.scalar(
-        select(BookingDB).where(BookingDB.locator == booking.locator)
-    )
     assert booking_created is not None
+    assert booking_created.locator
     assert booking_created.check_in == booking.check_in
     assert booking_created.check_out == booking.check_out
 
 
-def test_update_booking(booking_repository):
-    update_data = BookingUpdateDTO(
-        check_in=datetime(2024, 10, 20), check_out=datetime(2024, 10, 25)
-    )
+def test_update_booking(booking_repository, session):
+    db_booking = session.get_one(BookingDB, '01JB3HNXD570W7V12DSQWS2XMJ')
+    booking = Booking.from_db(db_booking)
+    booking.set_status('booked')
 
-    updated_booking = booking_repository.update(
-        '01JB3HNXD570W7V12DSQWS2XMJ', update_data
-    )
+    updated_booking = booking_repository.update(booking)
 
-    assert updated_booking.check_in == update_data.check_in
-    assert updated_booking.check_out == update_data.check_out
-
-
-def test_update_status_booking(booking_repository):
-    new_status = BookingStatus.ACTIVE
-    updated_booking = booking_repository.update_status(
-        '01JB3HNXD570W7V12DSQWS2XMJ', new_status
-    )
-
-    assert updated_booking.status == new_status.value
+    assert updated_booking.status == booking.status
 
 
 def test_delete_booking(booking_repository):
