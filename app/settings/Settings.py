@@ -9,3 +9,7 @@ class Settings(BaseSettings):
     ALGORITHM: str
     SECRET_KEY: str
     DATABASE_URL: str
+
+
+def get_settings():
+    return Settings()  # type: ignore
