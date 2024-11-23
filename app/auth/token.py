@@ -3,9 +3,12 @@ from datetime import datetime, timedelta
 from jwt import encode
 from zoneinfo import ZoneInfo
 
-from app.settings.Settings import Settings
+from app.settings.Settings import get_settings
 
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
+
+
+settings = get_settings()
 
 
 def create_access_token(data: dict):
@@ -16,7 +19,7 @@ def create_access_token(data: dict):
     to_encode.update({'exp': expire})
     encoded_jwt = encode(
         to_encode,
-        Settings().SECRET_KEY,  # type: ignore
-        algorithm=Settings().ALGORITHM,  # type: ignore
+        settings.SECRET_KEY,
+        algorithm=settings.ALGORITHM,
     )
     return encoded_jwt
