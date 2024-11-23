@@ -21,6 +21,7 @@ Session = Annotated[Session, Depends(get_database_session)]
 CurrentUser = Annotated[UserDB, Depends(get_current_user)]
 
 
+
 @router.post('/token', response_model=Token)
 def login_for_access_token(form_data: OAuth2Form, session: Session):  # type: ignore
     user = session.scalar(
@@ -45,6 +46,7 @@ def login_for_access_token(form_data: OAuth2Form, session: Session):  # type: ig
 
 
 @router.post('/refresh_token', response_model=Token)
+
 def refresh_access_token(user: CurrentUser):
     new_access_token = create_access_token(data={'sub': user.email})
     return {'access_token': new_access_token, 'token_type': 'bearer'}

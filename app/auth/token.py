@@ -5,6 +5,7 @@ from zoneinfo import ZoneInfo
 
 from app.settings.Settings import get_settings
 
+
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 
