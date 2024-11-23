@@ -44,3 +44,9 @@ class User(BaseModel):
             password=db_user.password,
             role=Role(db_user.role),
         )
+
+
+class PublicUser(BaseModel):
+    ulid: ULID
+    email: EmailStr
+    role: Role

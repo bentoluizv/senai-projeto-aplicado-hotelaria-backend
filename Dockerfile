@@ -1,19 +1,19 @@
 FROM python:3.12.3
 
-RUN apt update; apt upgrade -y
-
-RUN pip install poetry
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
 
 WORKDIR /app
 
-COPY ./pyproject.toml .
+COPY pyproject.toml poetry.lock ./
 
-RUN poetry install --without dev
+RUN python -m pip install --upgrade pip \
+    && pip install poetry \
+    && poetry config virtualenvs.create false \
+    && poetry install --no-root --only main
 
-COPY ./app ./app
+COPY . .
 
-COPY .env .
+EXPOSE 8050
 
-EXPOSE 8001
-
-CMD ["poetry", "run", "uvicorn", "--host", "0.0.0.0", "app.app:app"]
+CMD ["uvicorn", "app.app:app", "--host", "0.0.0.0", "--port", "8050"]

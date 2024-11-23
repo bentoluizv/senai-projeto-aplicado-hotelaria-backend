@@ -17,7 +17,9 @@ settings = get_settings()
 
 def get_current_user(
     session: Annotated[Session, Depends(get_database_session)],
-    token: Annotated[str, Depends(OAuth2PasswordBearer(tokenUrl='auth'))],
+    token: Annotated[
+        str, Depends(OAuth2PasswordBearer(tokenUrl='/auth/token'))
+    ],
 ):
     credentials_exception = HTTPException(
         status_code=HTTPStatus.UNAUTHORIZED,
