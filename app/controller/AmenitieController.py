@@ -46,6 +46,14 @@ class AmenitieController:
 
         return amenitie
 
+    def find_by_id(self, id: str):
+        amenitie = self.amenitie_repository.find_by_id(id)
+
+        if not amenitie:
+            raise NotFoundError('Amenitie', id)
+
+        return amenitie
+
     def create(self, dto: AmenitieCreateDTO):
         amenitie = self.amenitie_repository.find_by_name(dto.name)
 
@@ -55,3 +63,11 @@ class AmenitieController:
         amenitie = Amenitie.create(dto)
 
         self.amenitie_repository.create(amenitie)
+
+    def delete(self, id: str):
+        existing = self.amenitie_repository.find_by_id(id)
+
+        if not existing:
+            raise NotFoundError('Guest', id)
+
+        self.amenitie_repository.delete(int(id))

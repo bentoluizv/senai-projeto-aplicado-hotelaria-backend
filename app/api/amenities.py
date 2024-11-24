@@ -31,9 +31,9 @@ def list_all_amenities(
     return AmenitieList(amenities=amenities)
 
 
-@router.get('/{name}', status_code=HTTPStatus.OK, response_model=Amenitie)
-def find_amenitie_by_name(amenitie_controller: AmenitieController, name: str):  # type: ignore
-    amenitie = amenitie_controller.find_by_name(name)
+@router.get('/{id}', status_code=HTTPStatus.OK, response_model=Amenitie)
+def find_amenitie_by_id(amenitie_controller: AmenitieController, id: str):  # type: ignore
+    amenitie = amenitie_controller.find_by_id(id)
     return amenitie
 
 
@@ -48,3 +48,12 @@ def create_new_amenitie(
 ):
     amenitie_controller.create(data)
     return Message(message='CREATED')
+
+
+@router.delete('/{id}', status_code=HTTPStatus.OK, response_model=Message)
+def delete_guest(
+    amenitie_controller: AmenitieController,  # type: ignore
+    id: str,
+):
+    amenitie_controller.delete(id)
+    return Message(message='DELETED')

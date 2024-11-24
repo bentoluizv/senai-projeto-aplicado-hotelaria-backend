@@ -46,3 +46,21 @@ class AmenitieRepository:
         amenitie = Amenitie(id=db_amenitie.id, name=db_amenitie.name)
 
         return amenitie
+
+    def find_by_id(self, id: str) -> Amenitie | None:
+        db_amenitie = self.session.scalar(
+            select(AmenitieDB).where(AmenitieDB.id == id)
+        )
+
+        if not db_amenitie:
+            return None
+
+        amenitie = Amenitie(id=db_amenitie.id, name=db_amenitie.name)
+
+        return amenitie
+
+    def delete(self, id: int):
+        db_guest = self.session.get_one(AmenitieDB, id)
+
+        self.session.delete(db_guest)
+        self.session.commit()
