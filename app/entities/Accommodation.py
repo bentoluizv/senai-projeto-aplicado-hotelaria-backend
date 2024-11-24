@@ -12,7 +12,7 @@ class AccommodationUpdateDTO(BaseModel):
     single_beds: int | None = None
     double_beds: int | None = None
     price: float | None = None
-    amenities: list[str] | None = None
+    amenities: list[str] = []
     status: str | None = None
 
 
