@@ -81,7 +81,9 @@ class AccommodationController:
                 if value is not None:
                     setattr(accommodation, field, value)
 
-        if dto.amenities:
+        if len(dto.amenities) == 0:
+            accommodation.amenities = []
+        else:
             accommodation.amenities = [
                 Amenitie(name=amenitie) for amenitie in dto.amenities
             ]
