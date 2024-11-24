@@ -32,8 +32,8 @@ def test_list_all_out_range(client):
     )
 
 
-def test_find_amenitie_by_name(client):
-    response = client.get('/amenities/WiFi')
+def test_find_amenitie_by_id(client):
+    response = client.get('/amenities/1')
     amenitie = response.json()
 
     assert response.status_code == HTTPStatus.OK
