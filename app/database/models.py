@@ -9,6 +9,7 @@ from sqlalchemy import (
     Integer,
     String,
     Table,
+    event,
 )
 from sqlalchemy.orm import (
     DeclarativeBase,
@@ -17,6 +18,7 @@ from sqlalchemy.orm import (
     mapped_column,
     relationship,
 )
+from sqlalchemy.orm.session import object_session
 
 from app.utils.generate_locator import generate_locator
 from app.utils.generate_ulid import generate_ulid
@@ -116,3 +118,40 @@ class BookingDB(Base):
         String,
         ForeignKey('accommodations.ulid', ondelete='RESTRICT'),
     )
+
+
+@event.listens_for(GuestDB, 'before_delete')
+def prevent_delete_of_guest(mapper, connection, target):
+    session = object_session(target)
+
+    if not session:
+        raise ValueError('Cannot get Session')
+
+    if (
+        session.query(BookingDB)
+        .filter(BookingDB.guest_ulid == target.ulid)
+        .count()
+        > 0
+    ):
+        raise ValueError(
+            f"""Cannot delete Guest {target.ulid} because it is referenced in
+            bookings."""
+        )
+
+
+@event.listens_for(AccommodationDB, 'before_delete')
+def prevent_delete_of_accommodation(mapper, connection, target):
+    session = object_session(target)
+
+    if not session:
+        raise ValueError('Cannot get Session')
+    if (
+        session.query(BookingDB)
+        .filter(BookingDB.accommodation_ulid == target.ulid)
+        .count()
+        > 0
+    ):
+        raise ValueError(
+            f"""Cannot delete Accommodation {target.ulid} because it is
+            referenced in bookings."""
+        )
