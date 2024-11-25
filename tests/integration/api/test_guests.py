@@ -28,7 +28,7 @@ def test_list_all_out_range(client):
     assert 'detail' in response.json()
     assert (
         response.json()['detail']
-        == 'Page 8 is out of range. There are only 2 pages.'
+        == 'Page 8 is out of range. There are only 3 pages.'
     )
 
 
@@ -103,8 +103,8 @@ def test_update_non_existent_guest(client):
     assert response.status_code == HTTPStatus.NOT_FOUND
 
 
-def test_delete_guest(client):
-    response = client.delete('/guests/01JB3HNWQ2D7XPPJ181G3YTH8T')
+def test_delete_guest(client, db_guest):
+    response = client.delete(f'/guests/{db_guest.ulid}')
     assert response.status_code == HTTPStatus.OK
 
 
