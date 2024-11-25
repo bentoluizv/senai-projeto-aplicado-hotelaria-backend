@@ -7,7 +7,9 @@ from sqlalchemy.pool import StaticPool
 from app.app import app
 from app.database.db import get_database_session
 from app.database.models import (
+    AccommodationDB,
     Base,
+    GuestDB,
     UserDB,
 )
 from app.entities.User import User, UserCreateDTO
@@ -73,3 +75,36 @@ def db_user(session):
     session.add(db_user)
     session.commit()
     return db_user
+
+
+@pytest.fixture()
+def db_guest(session):
+    guest = GuestDB(
+        document='82634274',
+        name='Carlos',
+        surname='Anderson',
+        country='Brasil',
+        phone='389201221',
+    )
+
+    db_guest.ulid = '01JDHPW6E1C2Z60AWCJPP6RMN5'
+    session.add(guest)
+    session.commit()
+    return guest
+
+
+@pytest.fixture()
+def db_accommodation(session):
+    db_accommodation = AccommodationDB(
+        name='Downhill Tent',
+        total_guests=1,
+        single_beds=1,
+        double_beds=0,
+        price=50.0,
+        status='avaiable',
+    )
+
+    db_accommodation.ulid = '01JDHQ1VBNGENRRWSB13J9C9TK'
+    session.add(db_accommodation)
+    session.commit()
+    return db_accommodation
