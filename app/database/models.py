@@ -1,5 +1,7 @@
 from datetime import datetime
+from http import HTTPStatus
 
+from fastapi import HTTPException
 from pydantic import EmailStr
 from sqlalchemy import (
     Column,
@@ -125,7 +127,10 @@ def prevent_delete_of_guest(mapper, connection, target):
     session = object_session(target)
 
     if not session:
-        raise ValueError('Cannot get Session')
+        raise HTTPException(
+            status_code=HTTPStatus.INTERNAL_SERVER_ERROR,
+            detail='Cannot get Session, check database connection',
+        )
 
     if (
         session.query(BookingDB)
@@ -133,9 +138,10 @@ def prevent_delete_of_guest(mapper, connection, target):
         .count()
         > 0
     ):
-        raise ValueError(
-            f"""Cannot delete Guest {target.ulid} because it is referenced in
-            bookings."""
+        raise HTTPException(
+            status_code=HTTPStatus.CONFLICT,
+            detail=f"""Cannot delete Guest {target.ulid} because it is
+            referenced in bookings.""",
         )
 
 
@@ -144,14 +150,18 @@ def prevent_delete_of_accommodation(mapper, connection, target):
     session = object_session(target)
 
     if not session:
-        raise ValueError('Cannot get Session')
+        raise HTTPException(
+            status_code=HTTPStatus.INTERNAL_SERVER_ERROR,
+            detail='Cannot get Session, check database connection',
+        )
     if (
         session.query(BookingDB)
         .filter(BookingDB.accommodation_ulid == target.ulid)
         .count()
         > 0
     ):
-        raise ValueError(
-            f"""Cannot delete Accommodation {target.ulid} because it is
-            referenced in bookings."""
+        raise HTTPException(
+            status_code=HTTPStatus.CONFLICT,
+            detail=f"""Cannot delete Accommodation {target.ulid} because it is
+            referenced in bookings.""",
         )
