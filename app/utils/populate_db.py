@@ -1,5 +1,4 @@
 from datetime import datetime
-from random import choice
 
 from sqlalchemy.orm import Session
 from zoneinfo import ZoneInfo
@@ -80,6 +79,13 @@ def populate_db(session: Session):
         GuestDB(
             document='0123214',
             name='Hank',
+            surname='Anderson',
+            country='Brasil',
+            phone='389201221',
+        ),
+        GuestDB(
+            document='01234274',
+            name='Levis',
             surname='Anderson',
             country='Brasil',
             phone='389201221',
@@ -180,6 +186,14 @@ def populate_db(session: Session):
             price=220.0,
             status='avaiable',
         ),
+        AccommodationDB(
+            name='Seaside Tent',
+            total_guests=1,
+            single_beds=1,
+            double_beds=0,
+            price=50.0,
+            status='avaiable',
+        ),
     ]
 
     accommodations[0].ulid = '01JAFQXR26049VNR64PJE3J1W4'
@@ -212,9 +226,9 @@ def populate_db(session: Session):
 
     bookings: list[BookingDB] = []
 
-    for check_in, check_out in fixed_dates:
-        guest = choice(guests)
-        accommodation = choice(accommodations)
+    for i, (check_in, check_out) in enumerate(fixed_dates):
+        guest = guests[i + 1]
+        accommodation = accommodations[i + 1]
         budget = (check_out - check_in).days * accommodation.price
 
         booking = BookingDB(
