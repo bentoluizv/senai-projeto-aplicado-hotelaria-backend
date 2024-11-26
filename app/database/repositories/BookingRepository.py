@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import func, select
+from sqlalchemy import and_, func, select
 from sqlalchemy.orm import Session
 
 from app.database.models import (
@@ -64,8 +64,12 @@ class BookingRepository:
         if settings.filter:
             query = (
                 select(BookingDB)
-                .where(BookingDB.check_in <= settings.filter.check_in)
-                .where(BookingDB.check_out <= settings.filter.check_out)
+                .where(
+                    and_(
+                        BookingDB.check_in <= settings.filter.check_out,
+                        BookingDB.check_out >= settings.filter.check_in,
+                    )
+                )
                 .order_by(BookingDB.check_in)
                 .limit(settings.pagination.per_page)
                 .offset(offset)
