@@ -83,7 +83,9 @@ class BookingController:
 
         booking = Booking.create(dto, guest, accommodation)
 
-        self.booking_repository.create(booking)
+        created_booking = self.booking_repository.create(booking)
+
+        return created_booking
 
     def update(self, id: str, dto: BookingUpdateDTO):
         booking = self.booking_repository.find_by_id(id)
