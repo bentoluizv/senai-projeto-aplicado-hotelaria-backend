@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
@@ -9,6 +11,7 @@ from app.database.db import get_database_session
 from app.database.models import (
     AccommodationDB,
     Base,
+    BookingDB,
     GuestDB,
     UserDB,
 )
@@ -108,3 +111,20 @@ def db_accommodation(session):
     session.add(db_accommodation)
     session.commit()
     return db_accommodation
+
+
+@pytest.fixture()
+def db_booking(session, db_guest, db_accommodation):
+    booking = BookingDB(
+        status='reservado',
+        check_in=datetime(2025, 1, 1),
+        check_out=datetime(2025, 1, 2),
+        budget=99999,
+        guest=db_guest,
+        guest_ulid=db_guest.ulid,
+        accommodation=db_accommodation,
+        accommodation_ulid=db_accommodation.ulid,
+    )
+    session.add(booking)
+    session.commit()
+    return booking
