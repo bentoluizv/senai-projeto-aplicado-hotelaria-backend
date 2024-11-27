@@ -148,6 +148,30 @@ def test_create_new_booking(client, check_in, check_out, expected_status):
     assert response.status_code == expected_status
 
 
+def test_create_booking_with_same_period_diff_accommodation(client):
+    dto1 = BookingCreateDTO(
+        check_in=datetime(2024, 10, 20),
+        check_out=datetime(2024, 10, 25),
+        guest_document='1234325',
+        accommodation_ulid='01JAFQXR26049VNR64PJE3J1W4',
+    )
+    dto2 = BookingCreateDTO(
+        check_in=datetime(2024, 10, 20),
+        check_out=datetime(2024, 10, 25),
+        guest_document='8901092',
+        accommodation_ulid='01JDPX3130F1SHTN6EYZKTRG6N',
+    )
+
+    data1 = dto1.model_dump_json()
+    response1 = client.post('/bookings', data=data1)
+
+    data2 = dto2.model_dump_json()
+    response2 = client.post('/bookings', data=data2)
+
+    assert response1.status_code == HTTPStatus.CREATED
+    assert response2.status_code == HTTPStatus.CREATED
+
+
 def test_update_booking(client):
     dto = BookingUpdateDTO(status='reservado')
 
