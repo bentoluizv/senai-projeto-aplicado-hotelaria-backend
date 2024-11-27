@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from sqlalchemy import and_, func, select
 from sqlalchemy.orm import Session
 
@@ -106,17 +104,17 @@ class BookingRepository:
         self.session.delete(db_booking)
         self.session.commit()
 
-    def is_in_conflict(self, check_in: datetime, check_out: datetime) -> bool:
-        conflict = self.session.scalars(
-            select(BookingDB)
-            .filter(
-                BookingDB.check_in < check_out,
-                BookingDB.check_out > check_in,
-            )
-            .order_by(BookingDB.check_in)
-        ).first()
-
-        if conflict:
-            return True
-        else:
-            return False
+    def is_in_conflict(self, booking: Booking) -> bool:
+        return (
+            self.session.scalars(
+                select(BookingDB)
+                .filter(
+                    BookingDB.accommodation_ulid
+                    == str(booking.accommodation.ulid),
+                    BookingDB.check_in < booking.check_out,
+                    BookingDB.check_out > booking.check_in,
+                )
+                .order_by(BookingDB.check_in)
+            ).first()
+            is not None
+        )
