@@ -2,18 +2,18 @@ import enum
 
 
 class BookingStatus(enum.Enum):
-    PRE_BOOKED = 'pre-booked'
-    BOOKED = 'booked'
-    WAITING_CHECK_IN = 'waiting check-in'
-    ACTIVE = 'active'
-    WAITING_CHECK_OUT = 'waiting check-out'
-    COMPLETED = 'completed'
-    CANCELED = 'canceled'
+    PRE_RESERVA = 'pre-reserva'
+    RESERVA = 'reservado'
+    AGUARDANDO_CHECK_IN = 'aguardando check-in'
+    ATIVA = 'active'
+    AGUARDANDO_CHECK_OUT = 'aguardando check-out'
+    FINALIZADA = 'finalizada'
+    CANCELADA = 'cancelada'
 
 
 class AccommodationStatus(enum.Enum):
-    AVAIABLE = 'avaiable'
-    OCUPIED = 'ocupied'
+    DISPONIVEL = 'disponivel'
+    OCUPADO = 'ocupado'
 
 
 class Role(enum.Enum):

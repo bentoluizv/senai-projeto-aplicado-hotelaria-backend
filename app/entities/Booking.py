@@ -28,7 +28,7 @@ class BookingCreateDTO(BaseModel):
 class Booking(BaseModel):
     ulid: ULID | None = None
     locator: str | None = None
-    status: BookingStatus = BookingStatus.PRE_BOOKED
+    status: BookingStatus = BookingStatus.PRE_RESERVA
     check_in: datetime
     check_out: datetime
     guest: Guest

@@ -93,7 +93,7 @@ def test_create_booking(booking_repository, session):
 def test_update_booking(booking_repository, session):
     db_booking = session.get_one(BookingDB, '01JB3HNXD570W7V12DSQWS2XMJ')
     booking = Booking.from_db(db_booking)
-    booking.set_status('booked')
+    booking.set_status('reservado')
 
     updated_booking = booking_repository.update(booking)
 

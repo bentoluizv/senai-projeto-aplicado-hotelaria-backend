@@ -39,7 +39,7 @@ class Accommodation(BaseModel):
     def create(cls, dto: AccommodationCreateDTO):
         return cls(
             name=dto.name,
-            status=AccommodationStatus.AVAIABLE,
+            status=AccommodationStatus.DISPONIVEL,
             total_guests=dto.total_guests,
             single_beds=dto.single_beds,
             double_beds=dto.double_beds,

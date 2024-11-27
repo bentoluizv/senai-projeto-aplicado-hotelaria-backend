@@ -101,7 +101,7 @@ def db_accommodation(session):
         single_beds=1,
         double_beds=0,
         price=50.0,
-        status='avaiable',
+        status='disponivel',
     )
 
     db_accommodation.ulid = '01JDHQ1VBNGENRRWSB13J9C9TK'
