@@ -197,6 +197,7 @@ def populate_db(session: Session):
     ]
 
     accommodations[0].ulid = '01JAFQXR26049VNR64PJE3J1W4'
+    accommodations[3].ulid = '01JDPX3130F1SHTN6EYZKTRG6N'
     guests[0].ulid = '01JB3HNWQ2D7XPPJ181G3YTH8T'
 
     session.add_all(accommodations)
@@ -228,7 +229,7 @@ def populate_db(session: Session):
 
     for i, (check_in, check_out) in enumerate(fixed_dates):
         guest = guests[i + 1]
-        accommodation = accommodations[i + 1]
+        accommodation = accommodations[0]
         budget = (check_out - check_in).days * accommodation.price
 
         booking = BookingDB(
