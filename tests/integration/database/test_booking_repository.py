@@ -2,8 +2,9 @@ from datetime import datetime
 
 import pytest
 from sqlalchemy.exc import NoResultFound
+from ulid import ULID
 
-from app.database.models import AccommodationDB, BookingDB, GuestDB
+from app.database.models import BookingDB
 from app.entities.Accommodation import Accommodation
 from app.entities.Booking import Booking, BookingCreateDTO
 from app.entities.Guest import Guest
@@ -63,17 +64,12 @@ def test_find_booking_by_id(booking_repository):
     assert booking
 
 
-def test_create_booking(booking_repository, session):
+def test_create_booking(booking_repository, db_guest, db_accommodation):
     dto = BookingCreateDTO(
         check_in=datetime(2024, 10, 20),
         check_out=datetime(2024, 10, 25),
-        guest_document='1234325',
-        accommodation_ulid='01JAFQXR26049VNR64PJE3J1W4',
-    )
-
-    db_guest = session.get_one(GuestDB, '01JB3HNWQ2D7XPPJ181G3YTH8T')
-    db_accommodation = session.get_one(
-        AccommodationDB, '01JAFQXR26049VNR64PJE3J1W4'
+        guest_document=db_guest.document,
+        accommodation_ulid=db_accommodation.ulid,
     )
 
     booking = Booking.create(
@@ -156,7 +152,11 @@ def test_delete_booking(booking_repository):
     ],
 )
 def test_conflicting_booking(
-    booking_repository, check_in, check_out, expected_result
+    booking_repository, check_in, check_out, expected_result, db_booking
 ):
-    conflict = booking_repository.is_in_conflict(check_in, check_out)
+    booking = Booking.from_db(db_booking)
+    booking.check_in = check_in
+    booking.check_out = check_out
+    booking.accommodation.ulid = ULID.from_str('01JAFQXR26049VNR64PJE3J1W4')
+    conflict = booking_repository.is_in_conflict(booking)
     assert conflict == expected_result
