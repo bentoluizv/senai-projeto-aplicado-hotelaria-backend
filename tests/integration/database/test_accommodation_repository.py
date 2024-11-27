@@ -163,7 +163,7 @@ def test_update_accommodation_amenities(accommodation_repository, session):
 
 
 def test_delete_accommodation(accommodation_repository):
-    accommodation_repository.delete('01JAFQXR26049VNR64PJE3J1W4')
+    accommodation_repository.delete('01JDPX3130F1SHTN6EYZKTRG6N')
 
     with pytest.raises(NoResultFound):
-        accommodation_repository.delete('01JAFQXR26049VNR64PJE3J1W4')
+        accommodation_repository.delete('01JDPX3130F1SHTN6EYZKTRG6N')

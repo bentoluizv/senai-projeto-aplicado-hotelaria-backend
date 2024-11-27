@@ -74,16 +74,18 @@ class BookingController:
         if not guest:
             raise NotFoundError('Guest', dto.guest_document)
 
-        is_in_conflict = self.booking_repository.is_in_conflict(
-            dto.check_in, dto.check_out
-        )
+        booking = Booking.create(dto, guest, accommodation)
+
+        is_in_conflict = self.booking_repository.is_in_conflict(booking)
 
         if is_in_conflict:
-            raise ConflictBookingError('Booking', dto.check_in, dto.check_out)
+            raise ConflictBookingError(booking, dto.check_in, dto.check_out)
 
         booking = Booking.create(dto, guest, accommodation)
 
-        self.booking_repository.create(booking)
+        created_booking = self.booking_repository.create(booking)
+
+        return created_booking
 
     def update(self, id: str, dto: BookingUpdateDTO):
         booking = self.booking_repository.find_by_id(id)

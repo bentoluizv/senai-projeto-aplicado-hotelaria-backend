@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
@@ -7,7 +9,10 @@ from sqlalchemy.pool import StaticPool
 from app.app import app
 from app.database.db import get_database_session
 from app.database.models import (
+    AccommodationDB,
     Base,
+    BookingDB,
+    GuestDB,
     UserDB,
 )
 from app.entities.User import User, UserCreateDTO
@@ -73,3 +78,53 @@ def db_user(session):
     session.add(db_user)
     session.commit()
     return db_user
+
+
+@pytest.fixture()
+def db_guest(session):
+    guest = GuestDB(
+        document='82634274',
+        name='Carlos',
+        surname='Anderson',
+        country='Brasil',
+        phone='389201221',
+    )
+
+    db_guest.ulid = '01JDHPW6E1C2Z60AWCJPP6RMN5'
+    session.add(guest)
+    session.commit()
+    return guest
+
+
+@pytest.fixture()
+def db_accommodation(session):
+    db_accommodation = AccommodationDB(
+        name='Downhill Tent',
+        total_guests=1,
+        single_beds=1,
+        double_beds=0,
+        price=50.0,
+        status='disponivel',
+    )
+
+    db_accommodation.ulid = '01JDHQ1VBNGENRRWSB13J9C9TK'
+    session.add(db_accommodation)
+    session.commit()
+    return db_accommodation
+
+
+@pytest.fixture()
+def db_booking(session, db_guest, db_accommodation):
+    booking = BookingDB(
+        status='reservado',
+        check_in=datetime(2025, 1, 1),
+        check_out=datetime(2025, 1, 2),
+        budget=99999,
+        guest=db_guest,
+        guest_ulid=db_guest.ulid,
+        accommodation=db_accommodation,
+        accommodation_ulid=db_accommodation.ulid,
+    )
+    session.add(booking)
+    session.commit()
+    return booking

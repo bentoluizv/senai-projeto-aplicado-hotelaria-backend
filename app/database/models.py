@@ -1,5 +1,7 @@
 from datetime import datetime
+from http import HTTPStatus
 
+from fastapi import HTTPException
 from pydantic import EmailStr
 from sqlalchemy import (
     Column,
@@ -9,6 +11,7 @@ from sqlalchemy import (
     Integer,
     String,
     Table,
+    event,
 )
 from sqlalchemy.orm import (
     DeclarativeBase,
@@ -17,6 +20,7 @@ from sqlalchemy.orm import (
     mapped_column,
     relationship,
 )
+from sqlalchemy.orm.session import object_session
 
 from app.utils.generate_locator import generate_locator
 from app.utils.generate_ulid import generate_ulid
@@ -116,3 +120,48 @@ class BookingDB(Base):
         String,
         ForeignKey('accommodations.ulid', ondelete='RESTRICT'),
     )
+
+
+@event.listens_for(GuestDB, 'before_delete')
+def prevent_delete_of_guest(mapper, connection, target):
+    session = object_session(target)
+
+    if not session:
+        raise HTTPException(
+            status_code=HTTPStatus.INTERNAL_SERVER_ERROR,
+            detail='Cannot get Session, check database connection',
+        )
+
+    if (
+        session.query(BookingDB)
+        .filter(BookingDB.guest_ulid == target.ulid)
+        .count()
+        > 0
+    ):
+        raise HTTPException(
+            status_code=HTTPStatus.CONFLICT,
+            detail=f"""Cannot delete Guest {target.ulid} because it is
+            referenced in bookings.""",
+        )
+
+
+@event.listens_for(AccommodationDB, 'before_delete')
+def prevent_delete_of_accommodation(mapper, connection, target):
+    session = object_session(target)
+
+    if not session:
+        raise HTTPException(
+            status_code=HTTPStatus.INTERNAL_SERVER_ERROR,
+            detail='Cannot get Session, check database connection',
+        )
+    if (
+        session.query(BookingDB)
+        .filter(BookingDB.accommodation_ulid == target.ulid)
+        .count()
+        > 0
+    ):
+        raise HTTPException(
+            status_code=HTTPStatus.CONFLICT,
+            detail=f"""Cannot delete Accommodation {target.ulid} because it is
+            referenced in bookings.""",
+        )

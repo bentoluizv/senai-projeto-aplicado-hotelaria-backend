@@ -13,7 +13,7 @@ class AccommodationUpdateDTO(BaseModel):
     double_beds: int | None = None
     price: float | None = None
     amenities: list[str] = []
-    status: str | None = None
+    status: AccommodationStatus | None = None
 
 
 class AccommodationCreateDTO(BaseModel):
@@ -39,7 +39,7 @@ class Accommodation(BaseModel):
     def create(cls, dto: AccommodationCreateDTO):
         return cls(
             name=dto.name,
-            status=AccommodationStatus.AVAIABLE,
+            status=AccommodationStatus.DISPONIVEL,
             total_guests=dto.total_guests,
             single_beds=dto.single_beds,
             double_beds=dto.double_beds,

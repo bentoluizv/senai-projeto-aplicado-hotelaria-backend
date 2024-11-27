@@ -59,14 +59,14 @@ def find_by_id(booking_controller: BookingController, id: str):  # type: ignore
 @router.post(
     '/',
     status_code=HTTPStatus.CREATED,
-    response_model=Message,
+    response_model=Booking,
 )
 def create_new_booking(
     data: BookingCreateDTO,
     booking_controller: BookingController,  # type: ignore
 ):
-    booking_controller.create(data)
-    return Message(message='CREATED')
+    booking = booking_controller.create(data)
+    return booking
 
 
 @router.put('/{id}', status_code=HTTPStatus.OK, response_model=Message)

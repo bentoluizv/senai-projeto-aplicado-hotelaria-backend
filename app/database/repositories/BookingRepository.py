@@ -1,6 +1,4 @@
-from datetime import datetime
-
-from sqlalchemy import func, select
+from sqlalchemy import and_, func, select
 from sqlalchemy.orm import Session
 
 from app.database.models import (
@@ -64,8 +62,12 @@ class BookingRepository:
         if settings.filter:
             query = (
                 select(BookingDB)
-                .where(BookingDB.check_in <= settings.filter.check_in)
-                .where(BookingDB.check_out <= settings.filter.check_out)
+                .where(
+                    and_(
+                        BookingDB.check_in <= settings.filter.check_out,
+                        BookingDB.check_out >= settings.filter.check_in,
+                    )
+                )
                 .order_by(BookingDB.check_in)
                 .limit(settings.pagination.per_page)
                 .offset(offset)
@@ -102,17 +104,17 @@ class BookingRepository:
         self.session.delete(db_booking)
         self.session.commit()
 
-    def is_in_conflict(self, check_in: datetime, check_out: datetime) -> bool:
-        conflict = self.session.scalars(
-            select(BookingDB)
-            .filter(
-                BookingDB.check_in < check_out,
-                BookingDB.check_out > check_in,
-            )
-            .order_by(BookingDB.check_in)
-        ).first()
-
-        if conflict:
-            return True
-        else:
-            return False
+    def is_in_conflict(self, booking: Booking) -> bool:
+        return (
+            self.session.scalars(
+                select(BookingDB)
+                .filter(
+                    BookingDB.accommodation_ulid
+                    == str(booking.accommodation.ulid),
+                    BookingDB.check_in < booking.check_out,
+                    BookingDB.check_out > booking.check_in,
+                )
+                .order_by(BookingDB.check_in)
+            ).first()
+            is not None
+        )

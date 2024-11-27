@@ -1,5 +1,4 @@
 from datetime import datetime
-from random import choice
 
 from sqlalchemy.orm import Session
 from zoneinfo import ZoneInfo
@@ -84,6 +83,13 @@ def populate_db(session: Session):
             country='Brasil',
             phone='389201221',
         ),
+        GuestDB(
+            document='01234274',
+            name='Levis',
+            surname='Anderson',
+            country='Brasil',
+            phone='389201221',
+        ),
     ]
 
     session.add_all(guests)
@@ -106,7 +112,7 @@ def populate_db(session: Session):
             single_beds=2,
             double_beds=2,
             price=250.0,
-            status='avaiable',
+            status='disponivel',
         ),
         AccommodationDB(
             name='Mountain Retreat',
@@ -114,7 +120,7 @@ def populate_db(session: Session):
             single_beds=1,
             double_beds=1,
             price=180.0,
-            status='avaiable',
+            status='disponivel',
         ),
         AccommodationDB(
             name='City Center Apartment',
@@ -122,7 +128,7 @@ def populate_db(session: Session):
             single_beds=0,
             double_beds=1,
             price=120.0,
-            status='avaiable',
+            status='disponivel',
         ),
         AccommodationDB(
             name='Luxury Penthouse',
@@ -130,7 +136,7 @@ def populate_db(session: Session):
             single_beds=2,
             double_beds=3,
             price=500.0,
-            status='avaiable',
+            status='disponivel',
         ),
         AccommodationDB(
             name='Cozy Cottage',
@@ -138,7 +144,7 @@ def populate_db(session: Session):
             single_beds=1,
             double_beds=1,
             price=150.0,
-            status='avaiable',
+            status='disponivel',
         ),
         AccommodationDB(
             name='Suburban Family Home',
@@ -146,7 +152,7 @@ def populate_db(session: Session):
             single_beds=3,
             double_beds=4,
             price=300.0,
-            status='avaiable',
+            status='disponivel',
         ),
         AccommodationDB(
             name='Modern Loft',
@@ -154,7 +160,7 @@ def populate_db(session: Session):
             single_beds=0,
             double_beds=1,
             price=200.0,
-            status='avaiable',
+            status='disponivel',
         ),
         AccommodationDB(
             name='Country Inn',
@@ -162,7 +168,7 @@ def populate_db(session: Session):
             single_beds=2,
             double_beds=1,
             price=170.0,
-            status='avaiable',
+            status='disponivel',
         ),
         AccommodationDB(
             name='Charming Bungalow',
@@ -170,7 +176,7 @@ def populate_db(session: Session):
             single_beds=2,
             double_beds=0,
             price=140.0,
-            status='avaiable',
+            status='disponivel',
         ),
         AccommodationDB(
             name='Seaside Cabin',
@@ -178,11 +184,20 @@ def populate_db(session: Session):
             single_beds=3,
             double_beds=1,
             price=220.0,
-            status='avaiable',
+            status='disponivel',
+        ),
+        AccommodationDB(
+            name='Seaside Tent',
+            total_guests=1,
+            single_beds=1,
+            double_beds=0,
+            price=50.0,
+            status='disponivel',
         ),
     ]
 
     accommodations[0].ulid = '01JAFQXR26049VNR64PJE3J1W4'
+    accommodations[3].ulid = '01JDPX3130F1SHTN6EYZKTRG6N'
     guests[0].ulid = '01JB3HNWQ2D7XPPJ181G3YTH8T'
 
     session.add_all(accommodations)
@@ -212,13 +227,13 @@ def populate_db(session: Session):
 
     bookings: list[BookingDB] = []
 
-    for check_in, check_out in fixed_dates:
-        guest = choice(guests)
-        accommodation = choice(accommodations)
+    for i, (check_in, check_out) in enumerate(fixed_dates):
+        guest = guests[i + 1]
+        accommodation = accommodations[0]
         budget = (check_out - check_in).days * accommodation.price
 
         booking = BookingDB(
-            status='booked',
+            status='reservado',
             check_in=check_in,
             check_out=check_out,
             budget=budget,
