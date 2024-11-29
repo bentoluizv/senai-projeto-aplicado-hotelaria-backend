@@ -1,4 +1,4 @@
-from sqlalchemy import func, select
+from sqlalchemy import desc, func, select
 from sqlalchemy.orm import Session
 
 from app.database.models import AmenitieDB
@@ -28,7 +28,10 @@ class AmenitieRepository:
     def list_all(self, page: int = 1, per_page: int = 10) -> list[Amenitie]:
         offset = (page - 1) * per_page
         db_amenities = self.session.scalars(
-            select(AmenitieDB).limit(per_page).offset(offset)
+            select(AmenitieDB)
+            .limit(per_page)
+            .offset(offset)
+            .order_by(desc(AmenitieDB.id))
         )
         amenities = [
             Amenitie.from_db(db_amenitie) for db_amenitie in db_amenities

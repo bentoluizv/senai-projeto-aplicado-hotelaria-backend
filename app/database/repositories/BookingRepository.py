@@ -1,4 +1,4 @@
-from sqlalchemy import and_, func, select
+from sqlalchemy import and_, desc, func, select
 from sqlalchemy.orm import Session
 
 from app.database.models import (
@@ -54,7 +54,7 @@ class BookingRepository:
 
         query = (
             select(BookingDB)
-            .order_by(BookingDB.check_in)
+            .order_by(desc(BookingDB.ulid))
             .limit(settings.pagination.per_page)
             .offset(offset)
         )
