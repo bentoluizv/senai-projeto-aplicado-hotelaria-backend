@@ -19,7 +19,7 @@ def test_not_found_user_by_id(client):
     assert isinstance(response.json(), dict)
     assert (
         user['detail']
-        == """User with ID '01JAKF4V6FMQ7BEB62XVCA9KZH' not found."""
+        == "User com o ID '01JAKF4V6FMQ7BEB62XVCA9KZH' não encontrada!"
     )
 
 

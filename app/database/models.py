@@ -18,9 +18,9 @@ from sqlalchemy.orm import (
     Mapped,
     MappedAsDataclass,
     mapped_column,
+    object_session,
     relationship,
 )
-from sqlalchemy.orm.session import object_session
 
 from app.utils.generate_locator import generate_locator
 from app.utils.generate_ulid import generate_ulid

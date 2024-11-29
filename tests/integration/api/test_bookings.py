@@ -60,7 +60,7 @@ def test_list_all_out_range(client):
     assert 'detail' in response.json()
     assert (
         response.json()['detail']
-        == 'Page 8 is out of range. There are only 1 pages.'
+        == 'Página 8 fora do range. Máximo de 1 páginas.'
     )
 
 
@@ -83,7 +83,7 @@ def test_not_found_booking_by_id(client):
     assert isinstance(response.json(), dict)
     assert (
         booking['detail']
-        == """Booking with ID '01JA5EZ0BBQRGDX69PNTVG3N5E' not found."""
+        == "Booking com o ID '01JA5EZ0BBQRGDX69PNTVG3N5E' não encontrada!"
     )
 
 
