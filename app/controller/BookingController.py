@@ -54,6 +54,30 @@ class BookingController:
 
         return bookings
 
+    def list_all_by_guest(
+        self, settings: ListSettings, guest_ulid: str
+    ) -> list[Booking]:
+        total_bookings = self.booking_repository.count_by_guest(guest_ulid)
+
+        if total_bookings == 0:
+            return []
+
+        total_pages = (
+            total_bookings + settings.pagination.per_page - 1
+        ) // settings.pagination.per_page
+
+        if (
+            settings.pagination.page < 1
+            or settings.pagination.page > total_pages
+        ):
+            raise OutOfRangeError(settings.pagination.page, total_pages)
+
+        bookings = self.booking_repository.list_all_by_guest(
+            guest_ulid, settings
+        )
+
+        return bookings
+
     def find_by_id(self, id: str):
         booking = self.booking_repository.find_by_id(id)
 
