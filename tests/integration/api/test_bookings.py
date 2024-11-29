@@ -180,6 +180,20 @@ def test_update_booking(client):
     assert response.status_code == HTTPStatus.OK
 
 
+def test_update_booking_error(client):
+    dto = BookingUpdateDTO(status='reservado')
+
+    data = dto.model_dump_json()
+    response = client.put('/bookings/01JB3HNXD570W7V12DSQWS2XMJ', data=data)
+    assert response.status_code == HTTPStatus.OK
+
+    dto = BookingUpdateDTO(status='cancelada')
+
+    data = dto.model_dump_json()
+    response = client.put('/bookings/01JB3HNXD570W7V12DSQWS2XMJ', data=data)
+    assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
+
+
 def test_update_non_existent_booking(client):
     dto = BookingUpdateDTO(status='reservado')
 

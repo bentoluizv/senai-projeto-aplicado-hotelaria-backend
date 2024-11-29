@@ -8,11 +8,14 @@ from app.database.repositories.AccommodationRepository import (
 from app.database.repositories.BookingRepository import BookingRepository
 from app.database.repositories.GuestRepository import GuestRepository
 from app.entities.Booking import Booking, BookingCreateDTO, BookingUpdateDTO
+from app.entities.schemas.Enums import BookingStatus
 from app.entities.schemas.ListSettings import ListSettings
 from app.errors.ConflictBookingError import ConflictBookingError
+from app.errors.InvalidStatusChangeError import InvalidStatusChangeError
 from app.errors.NotFoundError import NotFoundError
 from app.errors.OutOfRangeError import OutOfRangeError
 from app.factory.RepositoryFactory import RepositoryFactory
+from app.utils.validateStatusChange import validateStatusChange
 
 
 class BookingController:
@@ -118,6 +121,18 @@ class BookingController:
             raise NotFoundError('Booking', id)
 
         if dto.status:
+            if dto.status == booking.status.value:
+                return
+
+            isValid = validateStatusChange(
+                BookingStatus(dto.status), booking.status
+            )
+
+            if not isValid:
+                raise InvalidStatusChangeError(
+                    dto.status, booking.status.value
+                )
+
             booking.set_status(dto.status)
 
         self.booking_repository.update(booking)
