@@ -10,7 +10,7 @@ class ConflictBookingError(HTTPException):
         self, booking: Booking, check_in: datetime, check_out: datetime
     ):
         detail = f"""
-        Conflict!!! {booking.model_dump_json()}
-        with {check_in.isoformat()} and {check_out.isoformat()}
+        Conflito com a reserva {booking.model_dump_json()}
+        com checkin {check_in.isoformat()} e checkout {check_out.isoformat()}
         """
         super().__init__(status_code=409, detail=detail)
