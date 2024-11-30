@@ -18,9 +18,9 @@ from sqlalchemy.orm import (
     Mapped,
     MappedAsDataclass,
     mapped_column,
+    object_session,
     relationship,
 )
-from sqlalchemy.orm.session import object_session
 
 from app.utils.generate_locator import generate_locator
 from app.utils.generate_ulid import generate_ulid
@@ -129,7 +129,7 @@ def prevent_delete_of_guest(mapper, connection, target):
     if not session:
         raise HTTPException(
             status_code=HTTPStatus.INTERNAL_SERVER_ERROR,
-            detail='Cannot get Session, check database connection',
+            detail='Verifique a conexão com o banco de dados',
         )
 
     if (
@@ -140,8 +140,8 @@ def prevent_delete_of_guest(mapper, connection, target):
     ):
         raise HTTPException(
             status_code=HTTPStatus.CONFLICT,
-            detail=f"""Cannot delete Guest {target.ulid} because it is
-            referenced in bookings.""",
+            detail=f"""Hóspede {target.name} não pode ser deletado pois tem
+            reserva ativa""",
         )
 
 
@@ -152,8 +152,9 @@ def prevent_delete_of_accommodation(mapper, connection, target):
     if not session:
         raise HTTPException(
             status_code=HTTPStatus.INTERNAL_SERVER_ERROR,
-            detail='Cannot get Session, check database connection',
+            detail='Verifique a conexão com o banco de dados',
         )
+
     if (
         session.query(BookingDB)
         .filter(BookingDB.accommodation_ulid == target.ulid)
@@ -162,6 +163,6 @@ def prevent_delete_of_accommodation(mapper, connection, target):
     ):
         raise HTTPException(
             status_code=HTTPStatus.CONFLICT,
-            detail=f"""Cannot delete Accommodation {target.ulid} because it is
-            referenced in bookings.""",
+            detail=f"""Acomodação {target.name} não pode ser deletada por que
+            está com alguma reserva ativa""",
         )

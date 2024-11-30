@@ -1,4 +1,4 @@
-from sqlalchemy import func, select
+from sqlalchemy import desc, func, select
 from sqlalchemy.orm import Session
 
 from app.database.models import AccommodationDB, AmenitieDB
@@ -51,7 +51,10 @@ class AccommodationRepository:
     ) -> list[Accommodation]:
         offset = (page - 1) * per_page
         db_accommodations = self.session.scalars(
-            select(AccommodationDB).limit(per_page).offset(offset)
+            select(AccommodationDB)
+            .limit(per_page)
+            .offset(offset)
+            .order_by(desc(AccommodationDB.ulid))
         )
 
         accommodations = [

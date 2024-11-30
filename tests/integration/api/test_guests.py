@@ -28,7 +28,7 @@ def test_list_all_out_range(client):
     assert 'detail' in response.json()
     assert (
         response.json()['detail']
-        == 'Page 8 is out of range. There are only 3 pages.'
+        == 'Página 8 fora do range. Máximo de 3 páginas.'
     )
 
 
@@ -58,7 +58,7 @@ def test_not_found_guest_by_id(client):
     assert isinstance(response.json(), dict)
     assert (
         guest['detail']
-        == """Guest with ID '01JA5EZ0BBQRGDX69PNTVG3N5E' not found."""
+        == "Guest com o ID '01JA5EZ0BBQRGDX69PNTVG3N5E' não encontrada!"
     )
 
 
@@ -68,7 +68,7 @@ def test_not_found_guest_by_document(client):
 
     assert response.status_code == HTTPStatus.NOT_FOUND
     assert isinstance(response.json(), dict)
-    assert guest['detail'] == """Guest with ID '99999999' not found."""
+    assert guest['detail'] == "Guest com o ID '99999999' não encontrada!"
 
 
 def test_create_new_guest(

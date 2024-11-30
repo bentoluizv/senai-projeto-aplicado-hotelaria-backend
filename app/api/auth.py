@@ -30,13 +30,13 @@ def login_for_access_token(form_data: OAuth2Form, session: Session):  # type: ig
     if not user:
         raise HTTPException(
             status_code=HTTPStatus.BAD_REQUEST,
-            detail='Incorrect email or password',
+            detail='E-mail ou Senhas errados',
         )
 
     if not verify_password(form_data.password, user.password):
         raise HTTPException(
             status_code=HTTPStatus.BAD_REQUEST,
-            detail='Incorrect email or password',
+            detail='E-mail ou Senhas errados',
         )
 
     access_token = create_access_token(data={'sub': user.email})

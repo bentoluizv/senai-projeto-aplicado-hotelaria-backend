@@ -60,7 +60,7 @@ def test_list_all_out_range(client):
     assert 'detail' in response.json()
     assert (
         response.json()['detail']
-        == 'Page 8 is out of range. There are only 1 pages.'
+        == 'Página 8 fora do range. Máximo de 1 páginas.'
     )
 
 
@@ -83,7 +83,7 @@ def test_not_found_booking_by_id(client):
     assert isinstance(response.json(), dict)
     assert (
         booking['detail']
-        == """Booking with ID '01JA5EZ0BBQRGDX69PNTVG3N5E' not found."""
+        == "Booking com o ID '01JA5EZ0BBQRGDX69PNTVG3N5E' não encontrada!"
     )
 
 
@@ -178,6 +178,20 @@ def test_update_booking(client):
     data = dto.model_dump_json()
     response = client.put('/bookings/01JB3HNXD570W7V12DSQWS2XMJ', data=data)
     assert response.status_code == HTTPStatus.OK
+
+
+def test_update_booking_error(client):
+    dto = BookingUpdateDTO(status='reservado')
+
+    data = dto.model_dump_json()
+    response = client.put('/bookings/01JB3HNXD570W7V12DSQWS2XMJ', data=data)
+    assert response.status_code == HTTPStatus.OK
+
+    dto = BookingUpdateDTO(status='cancelada')
+
+    data = dto.model_dump_json()
+    response = client.put('/bookings/01JB3HNXD570W7V12DSQWS2XMJ', data=data)
+    assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
 
 
 def test_update_non_existent_booking(client):

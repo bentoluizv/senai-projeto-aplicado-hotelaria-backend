@@ -28,7 +28,7 @@ def test_list_all_out_range(client):
     assert 'detail' in response.json()
     assert (
         response.json()['detail']
-        == 'Page 8 is out of range. There are only 2 pages.'
+        == 'Página 8 fora do range. Máximo de 2 páginas.'
     )
 
 
@@ -47,7 +47,7 @@ def test_not_found_amenitie_by_id(client):
 
     assert response.status_code == HTTPStatus.NOT_FOUND
     assert isinstance(response.json(), dict)
-    assert guest['detail'] == """Amenitie with ID '84' not found."""
+    assert guest['detail'] == """Amenitie com o ID '84' não encontrada!"""
 
 
 def test_create_new_amenitie(

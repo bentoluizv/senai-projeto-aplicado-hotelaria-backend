@@ -1,4 +1,4 @@
-from sqlalchemy import func, select
+from sqlalchemy import desc, func, select
 from sqlalchemy.orm import Session
 
 from app.database.models import GuestDB
@@ -55,8 +55,12 @@ class GuestRepository:
 
     def list_all(self, page: int = 1, per_page: int = 10) -> list[Guest]:
         offset = (page - 1) * per_page
+
         db_guests = self.session.scalars(
-            select(GuestDB).limit(per_page).offset(offset)
+            select(GuestDB)
+            .limit(per_page)
+            .offset(offset)
+            .order_by(desc(GuestDB.ulid))
         ).all()
 
         guests = [Guest.from_db(db_guest) for db_guest in db_guests]

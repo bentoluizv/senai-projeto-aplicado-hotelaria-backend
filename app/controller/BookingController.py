@@ -8,11 +8,14 @@ from app.database.repositories.AccommodationRepository import (
 from app.database.repositories.BookingRepository import BookingRepository
 from app.database.repositories.GuestRepository import GuestRepository
 from app.entities.Booking import Booking, BookingCreateDTO, BookingUpdateDTO
+from app.entities.schemas.Enums import BookingStatus
 from app.entities.schemas.ListSettings import ListSettings
 from app.errors.ConflictBookingError import ConflictBookingError
+from app.errors.InvalidStatusChangeError import InvalidStatusChangeError
 from app.errors.NotFoundError import NotFoundError
 from app.errors.OutOfRangeError import OutOfRangeError
 from app.factory.RepositoryFactory import RepositoryFactory
+from app.utils.validateStatusChange import validateStatusChange
 
 
 class BookingController:
@@ -51,6 +54,30 @@ class BookingController:
             raise OutOfRangeError(settings.pagination.page, total_pages)
 
         bookings = self.booking_repository.list_all(settings)
+
+        return bookings
+
+    def list_all_by_guest(
+        self, settings: ListSettings, guest_ulid: str
+    ) -> list[Booking]:
+        total_bookings = self.booking_repository.count_by_guest(guest_ulid)
+
+        if total_bookings == 0:
+            return []
+
+        total_pages = (
+            total_bookings + settings.pagination.per_page - 1
+        ) // settings.pagination.per_page
+
+        if (
+            settings.pagination.page < 1
+            or settings.pagination.page > total_pages
+        ):
+            raise OutOfRangeError(settings.pagination.page, total_pages)
+
+        bookings = self.booking_repository.list_all_by_guest(
+            guest_ulid, settings
+        )
 
         return bookings
 
@@ -94,6 +121,18 @@ class BookingController:
             raise NotFoundError('Booking', id)
 
         if dto.status:
+            if dto.status == booking.status.value:
+                return
+
+            isValid = validateStatusChange(
+                BookingStatus(dto.status), booking.status
+            )
+
+            if not isValid:
+                raise InvalidStatusChangeError(
+                    dto.status, booking.status.value
+                )
+
             booking.set_status(dto.status)
 
         self.booking_repository.update(booking)

@@ -1,4 +1,4 @@
-from sqlalchemy import and_, func, select
+from sqlalchemy import and_, desc, func, select
 from sqlalchemy.orm import Session
 
 from app.database.models import (
@@ -19,6 +19,15 @@ class BookingRepository:
     def count(self) -> int:
         total_bookings = self.session.scalar(
             select(func.count()).select_from(BookingDB)
+        )
+
+        return total_bookings or 0
+
+    def count_by_guest(self, guest_ulid: str) -> int:
+        total_bookings = self.session.scalar(
+            select(func.count())
+            .select_from(BookingDB)
+            .where(BookingDB.guest_ulid == guest_ulid)
         )
 
         return total_bookings or 0
@@ -54,7 +63,7 @@ class BookingRepository:
 
         query = (
             select(BookingDB)
-            .order_by(BookingDB.check_in)
+            .order_by(desc(BookingDB.ulid))
             .limit(settings.pagination.per_page)
             .offset(offset)
         )
@@ -62,6 +71,42 @@ class BookingRepository:
         if settings.filter:
             query = (
                 select(BookingDB)
+                .where(
+                    and_(
+                        BookingDB.check_in <= settings.filter.check_out,
+                        BookingDB.check_out >= settings.filter.check_in,
+                    )
+                )
+                .order_by(BookingDB.check_in)
+                .limit(settings.pagination.per_page)
+                .offset(offset)
+            )
+
+        db_bookings = self.session.scalars(query).all()
+
+        bookings = [Booking.from_db(db_booking) for db_booking in db_bookings]
+
+        return bookings
+
+    def list_all_by_guest(
+        self,
+        guest_ulid: str,
+        settings: ListSettings = ListSettings(pagination=Pagination()),
+    ) -> list[Booking]:
+        offset = (settings.pagination.page - 1) * settings.pagination.per_page
+
+        query = (
+            select(BookingDB)
+            .where(BookingDB.guest_ulid == guest_ulid)
+            .order_by(desc(BookingDB.ulid))
+            .limit(settings.pagination.per_page)
+            .offset(offset)
+        )
+
+        if settings.filter:
+            query = (
+                select(BookingDB)
+                .where(BookingDB.guest_ulid == guest_ulid)
                 .where(
                     and_(
                         BookingDB.check_in <= settings.filter.check_out,
