@@ -1,0 +1,27 @@
+# Ignorar arquivos desnecessários no contêiner
+
+# Pastas e arquivos de cache
+__pycache__/
+*.py[cod]
+*.so
+
+# Cache de pacotes
+*.egg-info/
+.dist/
+.build/
+
+# Configurações de IDEs
+.vscode/
+.idea/
+*.swp
+
+# Controle de versão
+.git/
+.gitignore
+
+# Arquivos temporários e sensíveis
+*.log
+*.tmp
+.DS_Store
+Thumbs.db
+*.db

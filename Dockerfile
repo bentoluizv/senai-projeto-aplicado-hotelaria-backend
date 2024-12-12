@@ -1,18 +1,20 @@
 FROM python:3.12.3
 
-ENV PYTHONUNBUFFERED=1
-ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1
 
 WORKDIR /app
 
-COPY pyproject.toml poetry.lock ./
+COPY requirements.txt ./
 
-RUN python -m pip install --upgrade pip \
-    && pip install poetry \
-    && poetry config virtualenvs.create false \
-    && poetry install --no-root --only main
+RUN apt-get update && apt-get install -y --no-install-recommends build-essential \
+    && pip install --no-cache-dir --upgrade pip \
+    && pip install --no-cache-dir --upgrade -r requirements.txt \
+    && apt-get purge -y --auto-remove build-essential \
+    && rm -rf /var/lib/apt/lists/*
 
 COPY . .
+COPY .env ./
 
 EXPOSE 8050
 
