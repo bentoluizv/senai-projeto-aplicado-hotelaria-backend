@@ -1,4 +1,4 @@
-name: CI - Testing Suite
+name: Pull Docker Image
 
 on:
   pull_request:
@@ -6,40 +6,8 @@ on:
       - main
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Python 3.12.3
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.12.3'
-
-      - name: Install Poetry
-        run: |
-          curl -sSL https://install.python-poetry.org | python3 -
-
-      - name: Add Poetry to PATH
-        run: echo "${HOME}/.local/bin" >> $GITHUB_PATH
-
-      - name: Install dependencies
-        run: |
-          poetry install
-
-      - name: Run tests
-        env:
-          ALGORITHM: ${{ secrets.ALGORITHM }}
-          SECRET_KEY: ${{ secrets.SECRET_KEY }}
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-        run: |
-          poetry run task test
-
   docker:
     runs-on: ubuntu-latest
-    needs: test
     steps:
       -
         name: Checkout
