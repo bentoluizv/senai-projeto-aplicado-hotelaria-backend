@@ -1,4 +1,4 @@
-name: CI
+name: CI - Testing Suite
 
 on:
   pull_request:
@@ -36,3 +36,30 @@ jobs:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
           poetry run task test
+
+  docker:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v4
+      -
+        name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: name/app
+      -
+        name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      -
+        name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
